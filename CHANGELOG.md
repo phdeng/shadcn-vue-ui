@@ -6,6 +6,25 @@
 
 ## 2026-03-21
 
+### Round 20 — 最终进化：订单详情 + 完整闭环
+- Business 订单详情页（订单信息 + 流程时间线 + 操作记录）
+- 订单列表行点击跳转详情
+- 所有列表页→详情页导航完整闭环
+
+### Round 19 — Mock 数据架构 + 用户详情
+- Business Mock 数据模块（8 用户 + 8 订单 + 类型 + 查询函数）
+- Business 用户详情页（信息卡片 + 操作记录）
+- Console Mock 统一导出模块
+
+### Round 18 — 双子项目功能完全对齐
+- Business 快捷键面板（? 触发）
+- 功能矩阵 100% 对齐
+
+### Round 17 — Business 图表 + 快捷键面板
+- Business Dashboard 折线图 + 环形图
+- Business 报表页折线图（12 月营收 vs 成本）
+- Console 快捷键提示面板（? 触发）
+
 ### Round 16 — 全项目收官打磨
 - HTML meta 中文化（lang/title/description）
 - Business ⌘K 命令面板集成

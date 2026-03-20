@@ -4,6 +4,7 @@
  * @author Timon
  */
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { Search, Download, MoreHorizontal, Eye, Settings2, XCircle } from 'lucide-vue-next'
 import { Card, CardContent } from '@ui/components/ui/card'
 import { Button } from '@ui/components/ui/button'
@@ -49,6 +50,9 @@ const orders: Order[] = [
   { id: 'ORD-2026-0007', customer: '南京紫金大数据', product: '企业版年度订阅', amount: 128000, status: 'processing', createdAt: '2026-03-21 09:12' },
   { id: 'ORD-2026-0008', customer: '武汉光谷创新科技', product: '专业版年度订阅', amount: 96000, status: 'pending', createdAt: '2026-03-21 10:45' },
 ]
+
+// ==================== 路由 ====================
+const router = useRouter()
 
 // ==================== 搜索与筛选 ====================
 const searchQuery = ref('')
@@ -109,6 +113,11 @@ const statusConfig: Record<OrderStatus, { label: string; class: string; dotClass
 function formatAmount(amount: number): string {
   return amount.toLocaleString('zh-CN')
 }
+
+/** 跳转到订单详情页 */
+function handleRowClick(orderId: string) {
+  router.push(`/orders/${orderId}`)
+}
 </script>
 
 <template>
@@ -166,7 +175,12 @@ function formatAmount(amount: number): string {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow v-for="order in filteredOrders" :key="order.id">
+            <TableRow
+              v-for="order in filteredOrders"
+              :key="order.id"
+              class="cursor-pointer"
+              @click="handleRowClick(order.id)"
+            >
               <!-- 订单号 -->
               <TableCell class="font-mono text-sm">{{ order.id }}</TableCell>
 
