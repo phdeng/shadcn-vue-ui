@@ -13,10 +13,12 @@
   "scripts": {
     "dev:console": "yarn workspace shadcn-vue-ui-console dev",
     "dev:business": "yarn workspace shadcn-vue-ui-business dev",
+    "build": "yarn build:console && yarn build:business",
     "build:console": "yarn workspace shadcn-vue-ui-console build",
     "build:business": "yarn workspace shadcn-vue-ui-business build",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "clean": "rm -rf shadcn-vue-ui-console/dist shadcn-vue-ui-business/dist"
   },
   "dependencies": {
     "@vueuse/core": "^14.2.1",
