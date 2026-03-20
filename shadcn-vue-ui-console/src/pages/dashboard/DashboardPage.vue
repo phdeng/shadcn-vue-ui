@@ -3,7 +3,9 @@
  * @description 控制台概览页 — 云平台产品风格
  * @author Timon
  */
+import { computed } from 'vue'
 import { Box, Bot, BookOpen, Activity, ArrowUpRight, ArrowDownRight, Sparkles } from 'lucide-vue-next'
+import { useAuthStore } from '@/stores/auth'
 import {
   Card,
   CardContent,
@@ -18,6 +20,20 @@ import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
 import { cn } from '@ui/lib/utils'
 import LineChart from '@/components/charts/LineChart.vue'
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
+
+const authStore = useAuthStore()
+
+// 根据时段动态问候
+const greeting = computed(() => {
+  const hour = new Date().getHours()
+  if (hour < 6) return '夜深了'
+  if (hour < 12) return '早上好'
+  if (hour < 14) return '中午好'
+  if (hour < 18) return '下午好'
+  return '晚上好'
+})
+
+const userName = computed(() => authStore.user?.name || 'Timon')
 
 // ==================== 统计卡片数据 ====================
 const stats = [
@@ -177,7 +193,7 @@ const quickActions = [
     <!-- 欢迎区 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">欢迎回来，Timon</h2>
+        <h2 class="text-2xl font-semibold tracking-tight">{{ greeting }}，{{ userName }}</h2>
         <p class="mt-1 text-sm text-muted-foreground">以下是你的 AI 平台运行概况</p>
       </div>
     </div>

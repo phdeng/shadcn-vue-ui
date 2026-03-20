@@ -131,8 +131,25 @@ function isModelActive() {
       </SidebarGroup>
     </SidebarContent>
 
-    <!-- 底部用户 -->
+    <!-- 底部：配额 + 用户 -->
     <SidebarFooter>
+      <!-- 配额用量指示 -->
+      <div class="px-3 pb-2">
+        <div class="rounded-lg bg-muted/50 p-3 space-y-2">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-muted-foreground">API 调用量</span>
+            <span class="text-foreground font-medium tabular-nums">1,847 / 10,000</span>
+          </div>
+          <div class="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+            <div class="h-full rounded-full bg-primary/70" style="width: 18.5%" />
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-muted-foreground">
+            <span>存储 2.1 / 10 GB</span>
+            <span>本月</span>
+          </div>
+        </div>
+      </div>
+
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg">
