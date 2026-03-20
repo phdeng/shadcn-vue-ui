@@ -1,9 +1,18 @@
 import type { RouteRecordRaw } from 'vue-router'
 
 export const routes: RouteRecordRaw[] = [
+  // 登录页 — 独立布局，不嵌套 DefaultLayout
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/pages/auth/LoginPage.vue'),
+    meta: { title: '登录', guest: true },
+  },
+
   {
     path: '/',
     component: () => import('@/layouts/DefaultLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       // 概览
       {

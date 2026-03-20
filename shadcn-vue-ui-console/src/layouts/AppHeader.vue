@@ -4,24 +4,42 @@
  * @author Timon
  */
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { Sun, Moon, Search, Bell } from 'lucide-vue-next'
+import { useRoute, useRouter } from 'vue-router'
+import { Sun, Moon, Search, Bell, Settings, HelpCircle, LogOut } from 'lucide-vue-next'
 import { SidebarTrigger } from '@ui/components/ui/sidebar'
 import { Separator } from '@ui/components/ui/separator'
 import { Button } from '@ui/components/ui/button'
 import { Input } from '@ui/components/ui/input'
 import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@ui/components/ui/tooltip'
 import { useTheme } from '@/composables/useTheme'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const router = useRouter()
 const { mode, toggleTheme } = useTheme()
+const authStore = useAuthStore()
 
 const pageTitle = computed(() => (route.meta?.title as string) || '')
+
+/** 退出登录 */
+function handleLogout() {
+  authStore.logout()
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -70,9 +88,43 @@ const pageTitle = computed(() => (route.meta?.title as string) || '')
 
       <Separator orientation="vertical" class="!h-4" />
 
-      <Avatar class="size-7 cursor-pointer">
-        <AvatarFallback class="bg-primary/10 text-primary text-xs font-medium">T</AvatarFallback>
-      </Avatar>
+      <!-- 用户下拉菜单 -->
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <Avatar class="size-7 cursor-pointer">
+            <AvatarFallback class="bg-primary/10 text-primary text-xs font-medium">T</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent class="w-56" align="end">
+          <!-- 用户信息 -->
+          <DropdownMenuLabel class="font-normal">
+            <div class="flex flex-col gap-1">
+              <p class="text-sm font-medium leading-none">{{ authStore.user?.name || '用户' }}</p>
+              <p class="text-xs leading-none text-muted-foreground">{{ authStore.user?.email || '' }}</p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+
+          <!-- 功能菜单 -->
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <Settings class="mr-2 size-4" />
+              <span>个人设置</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <HelpCircle class="mr-2 size-4" />
+              <span>帮助文档</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+
+          <!-- 退出登录 -->
+          <DropdownMenuItem class="text-destructive focus:text-destructive" @click="handleLogout">
+            <LogOut class="mr-2 size-4" />
+            <span>退出登录</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   </header>
 </template>
