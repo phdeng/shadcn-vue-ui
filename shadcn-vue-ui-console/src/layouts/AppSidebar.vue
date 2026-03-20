@@ -3,9 +3,10 @@
  * @description 控制台侧边栏 — 配置驱动导航
  * @author Timon
  */
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { ChevronDown, ChevronRight } from 'lucide-vue-next'
+import { useAuthStore } from '@/stores/auth'
 import {
   Sidebar,
   SidebarContent,
@@ -30,7 +31,13 @@ import {
 } from '@/config/navigation'
 
 const route = useRoute()
+const authStore = useAuthStore()
 const modelMenuOpen = ref(true)
+
+// 用户信息 — 从 Auth Store 动态读取
+const userAvatar = computed(() => authStore.user?.avatar || authStore.user?.name?.charAt(0) || 'U')
+const userName = computed(() => authStore.user?.name || '用户')
+const userRole = computed(() => authStore.user?.role === 'admin' ? '管理员' : '成员')
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
@@ -153,12 +160,12 @@ function isModelActive() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg">
-            <div class="flex size-8 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-medium">
-              T
+            <div class="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-medium">
+              {{ userAvatar }}
             </div>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">Timon</span>
-              <span class="truncate text-xs text-muted-foreground">管理员</span>
+              <span class="truncate font-medium">{{ userName }}</span>
+              <span class="truncate text-xs text-muted-foreground">{{ userRole }}</span>
             </div>
             <ChevronDown class="ml-auto size-4" />
           </SidebarMenuButton>

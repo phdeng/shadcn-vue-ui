@@ -6,6 +6,37 @@
 
 ## 2026-03-21
 
+### Round 8 — 代码质量与细节打磨
+- 侧边栏用户信息从 authStore 动态读取
+- 模型卡片 hover 上浮效果（translateY）
+- CHANGELOG 补充 Round 3-7 记录
+
+### Round 7 — README 升级 + 产品细节
+- README 全面重写：shields.io 徽章 + 快速开始 + 页面清单
+- Dashboard 时段动态问候（早上好/下午好/晚上好）
+- 侧边栏底部配额用量指示器
+
+### Round 6 — 404 页面 + 主题过渡
+- 404 页面：产品风格友好提示
+- 暗色模式平滑过渡动画（CSS transition）
+- .env.example 环境变量模板
+
+### Round 5 — 知识库详情 + 全局进度条
+- 知识库详情页：文档列表表格 + 上传入口
+- NProgress 全局路由进度条
+- 知识库列表卡片点击跳转详情
+
+### Round 4 — Dialog 接入 + Toast + 面包屑
+- 模型注册 Dialog + Agent 创建 Dialog 接入页面
+- 登录/注册/创建操作 Toast 通知
+- 面包屑多级化 + Console 可点击
+
+### Round 3 — 消灭占位页 + Command Palette
+- 数据集管理页（表格布局 + 状态筛选）
+- 模型训练页（任务表格 + 进度条 + Loss）
+- 系统设置页（3 Tab + Toast 保存）
+- Command Palette（⌘K 全局搜索跳转）
+
 ### Sprint 4 — 数据可视化 + Toast 通知
 - 集成 Chart.js（vue-chartjs）轻量图表方案
 - Dashboard 折线图：7 天调用趋势（面积填充 + 平滑曲线）

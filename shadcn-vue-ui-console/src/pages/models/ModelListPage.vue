@@ -273,7 +273,7 @@ function handleModelSubmit(data: { name: string }) {
       <Card
         v-for="model in filteredModels"
         :key="model.id"
-        class="group relative cursor-pointer border-0 shadow-sm transition-all duration-200 hover:shadow-md"
+        class="group relative cursor-pointer border-0 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
         @click="navigateToDetail(model.id)"
       >
         <!-- 卡片顶部渐变装饰条 -->
