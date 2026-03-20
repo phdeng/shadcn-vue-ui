@@ -4,6 +4,7 @@
  * @author Timon
  */
 import { ref, computed } from 'vue'
+import { toast } from 'vue-sonner'
 import { Plus, Search, MoreHorizontal, Clock } from 'lucide-vue-next'
 import { Button } from '@ui/components/ui/button'
 import { Input } from '@ui/components/ui/input'
@@ -25,6 +26,7 @@ import {
 } from '@ui/components/ui/dropdown-menu'
 import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import { cn } from '@ui/lib/utils'
+import AgentCreateDialog from '@/components/agents/AgentCreateDialog.vue'
 
 // ========== 类型定义 ==========
 
@@ -119,6 +121,11 @@ const agents = ref<Agent[]>([
   },
 ])
 
+// ========== 对话框状态 ==========
+
+/** 创建 Agent 对话框开关 */
+const showCreateDialog = ref(false)
+
 // ========== 搜索与筛选 ==========
 
 /** 搜索关键词 */
@@ -152,7 +159,13 @@ function handleCardClick(agent: Agent) {
 
 /** 创建 Agent 按钮点击 */
 function handleCreate() {
-  console.log('[AgentListPage] 点击创建 Agent')
+  showCreateDialog.value = true
+}
+
+/** Agent 创建表单提交回调 */
+function handleAgentSubmit(data: { name: string }) {
+  toast.success('Agent 创建成功', { description: data.name })
+  showCreateDialog.value = false
 }
 
 /** 下拉菜单操作 */
@@ -321,5 +334,11 @@ function handleMenuAction(action: string, agent: Agent) {
         尝试更换搜索关键词或筛选条件
       </p>
     </div>
+
+    <!-- 创建 Agent 对话框 -->
+    <AgentCreateDialog
+      v-model:open="showCreateDialog"
+      @submit="handleAgentSubmit"
+    />
   </div>
 </template>

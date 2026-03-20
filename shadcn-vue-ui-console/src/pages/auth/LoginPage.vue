@@ -5,6 +5,7 @@
  */
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { toast } from 'vue-sonner'
 import { Loader2, Sparkles, Brain, Shield, Zap } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { Button } from '@ui/components/ui/button'
@@ -46,10 +47,12 @@ async function handleLogin() {
   try {
     const success = await authStore.login(email.value, password.value)
     if (success) {
+      toast.success('登录成功', { description: '欢迎回来' })
       // 跳转到之前访问的页面或首页
       const redirect = (route.query.redirect as string) || '/'
       router.push(redirect)
     } else {
+      toast.error('登录失败', { description: '请检查邮箱和密码' })
       errorMessage.value = '登录失败，请检查邮箱和密码'
     }
   } catch {

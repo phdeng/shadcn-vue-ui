@@ -12,6 +12,7 @@
  */
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
 import {
   Plus,
   Search,
@@ -47,9 +48,13 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/components/ui/tooltip'
 import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import { cn } from '@ui/lib/utils'
+import ModelRegisterDialog from '@/components/models/ModelRegisterDialog.vue'
 
 // 路由实例
 const router = useRouter()
+
+// 注册对话框开关
+const showRegisterDialog = ref(false)
 
 // 搜索关键词
 const searchQuery = ref('')
@@ -183,6 +188,14 @@ const modelCounts = computed(() => ({
 function navigateToDetail(modelId: string) {
   router.push(`/models/${modelId}`)
 }
+
+/**
+ * 模型注册表单提交回调
+ */
+function handleModelSubmit(data: { name: string }) {
+  toast.success('模型注册成功', { description: data.name })
+  showRegisterDialog.value = false
+}
 </script>
 
 <template>
@@ -195,7 +208,7 @@ function navigateToDetail(modelId: string) {
           管理已注册的大语言模型及推理服务，监控运行状态与调用指标
         </p>
       </div>
-      <Button class="shrink-0">
+      <Button class="shrink-0" @click="showRegisterDialog = true">
         <Plus class="mr-2 size-4" />
         注册模型
       </Button>
@@ -408,5 +421,11 @@ function navigateToDetail(modelId: string) {
         </p>
       </div>
     </div>
+
+    <!-- 模型注册对话框 -->
+    <ModelRegisterDialog
+      v-model:open="showRegisterDialog"
+      @submit="handleModelSubmit"
+    />
   </div>
 </template>

@@ -32,7 +32,20 @@ const router = useRouter()
 const { mode, toggleTheme } = useTheme()
 const authStore = useAuthStore()
 
-const pageTitle = computed(() => (route.meta?.title as string) || '')
+/** 多级面包屑 — 从路由 matched 链提取 */
+const breadcrumbs = computed(() => {
+  return route.matched
+    .filter(r => r.meta?.title)
+    .map(r => ({
+      title: r.meta.title as string,
+      path: r.path || '/',
+      isLast: false,
+    }))
+    .map((item, i, arr) => ({
+      ...item,
+      isLast: i === arr.length - 1,
+    }))
+})
 
 /** 退出登录 */
 function handleLogout() {
@@ -50,8 +63,17 @@ function handleLogout() {
       <RouterLink to="/" class="text-muted-foreground hover:text-foreground transition-colors">
         Console
       </RouterLink>
-      <span class="text-muted-foreground/50">/</span>
-      <span class="font-medium">{{ pageTitle }}</span>
+      <template v-for="crumb in breadcrumbs" :key="crumb.path">
+        <span class="text-muted-foreground/40">/</span>
+        <span v-if="crumb.isLast" class="font-medium truncate max-w-[200px]">{{ crumb.title }}</span>
+        <RouterLink
+          v-else
+          :to="crumb.path"
+          class="text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {{ crumb.title }}
+        </RouterLink>
+      </template>
     </nav>
 
     <!-- 右：搜索 + 操作 -->
