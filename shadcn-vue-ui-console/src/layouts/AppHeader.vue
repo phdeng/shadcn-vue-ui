@@ -4,12 +4,11 @@
  * @author Timon
  */
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { Sun, Moon, Search, Bell, Settings, HelpCircle, LogOut } from 'lucide-vue-next'
 import { SidebarTrigger } from '@ui/components/ui/sidebar'
 import { Separator } from '@ui/components/ui/separator'
 import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
 import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
 import {
   DropdownMenu,
@@ -48,20 +47,26 @@ function handleLogout() {
     <SidebarTrigger class="-ml-1 size-7" />
     <Separator orientation="vertical" class="!h-4" />
     <nav class="flex items-center gap-1.5 text-sm">
-      <span class="text-muted-foreground">Console</span>
+      <RouterLink to="/" class="text-muted-foreground hover:text-foreground transition-colors">
+        Console
+      </RouterLink>
       <span class="text-muted-foreground/50">/</span>
       <span class="font-medium">{{ pageTitle }}</span>
     </nav>
 
     <!-- 右：搜索 + 操作 -->
     <div class="ml-auto flex items-center gap-2">
-      <div class="relative hidden md:block">
-        <Search class="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-        <Input
-          placeholder="搜索..."
-          class="h-8 w-52 rounded-lg bg-muted/50 pl-8 text-xs focus:w-72 transition-all duration-300"
-        />
-      </div>
+      <!-- 搜索框 — 点击触发 Command Palette -->
+      <button
+        class="hidden md:flex items-center gap-2 h-8 w-52 rounded-lg border border-border/50 bg-muted/40 px-3 text-xs text-muted-foreground hover:bg-muted/60 transition-colors"
+        @click="$emit('openCommand')"
+      >
+        <Search class="size-3.5" />
+        <span class="flex-1 text-left">搜索...</span>
+        <kbd class="pointer-events-none inline-flex h-5 select-none items-center gap-0.5 rounded border border-border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+          ⌘K
+        </kbd>
+      </button>
 
       <Separator orientation="vertical" class="!h-4 hidden md:block" />
 

@@ -6,6 +6,7 @@
 import { RouterView } from 'vue-router'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
+import CommandPalette from '@/components/common/CommandPalette.vue'
 import {
   SidebarInset,
   SidebarProvider,
@@ -27,6 +28,9 @@ import {
         </div>
       </main>
     </SidebarInset>
+
+    <!-- 全局命令面板 ⌘K -->
+    <CommandPalette />
   </SidebarProvider>
 </template>
 
