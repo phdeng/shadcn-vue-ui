@@ -3,12 +3,250 @@
  * @description 数据报表页 — 业务数据分析与可视化
  * @author Timon
  */
-import PlaceholderPage from '@/components/common/PlaceholderPage.vue'
+import {
+  DollarSign,
+  ShoppingCart,
+  TrendingUp,
+  CreditCard,
+  ArrowUpRight,
+  ArrowDownRight,
+  BarChart3,
+} from 'lucide-vue-next'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@ui/components/ui/card'
+import { Badge } from '@ui/components/ui/badge'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@ui/components/ui/table'
+import { cn } from '@ui/lib/utils'
+
+// ==================== 统计卡片数据 ====================
+const stats = [
+  {
+    title: '总营收',
+    value: '¥128,450',
+    change: '+18%',
+    trend: 'up' as const,
+    desc: '较上月',
+    icon: DollarSign,
+    color: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+  },
+  {
+    title: '订单总量',
+    value: '1,234',
+    change: '+12%',
+    trend: 'up' as const,
+    desc: '较上月',
+    icon: ShoppingCart,
+    color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    title: '用户转化率',
+    value: '12.8%',
+    change: '+2.1%',
+    trend: 'up' as const,
+    desc: '较上月',
+    icon: TrendingUp,
+    color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20',
+    iconColor: 'text-violet-600 dark:text-violet-400',
+  },
+  {
+    title: '平均客单价',
+    value: '¥104',
+    change: '-3%',
+    trend: 'down' as const,
+    desc: '较上月',
+    icon: CreditCard,
+    color: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+  },
+]
+
+// ==================== 热门商品 TOP 5 ====================
+interface TopProduct {
+  name: string
+  sales: number
+  percentage: number
+  color: string
+}
+
+const topProducts: TopProduct[] = [
+  { name: '企业版年度订阅', sales: 326, percentage: 100, color: 'bg-blue-500' },
+  { name: 'API 调用额度包', sales: 258, percentage: 79, color: 'bg-violet-500' },
+  { name: '专业版季度订阅', sales: 194, percentage: 60, color: 'bg-emerald-500' },
+  { name: '定制化部署服务', sales: 147, percentage: 45, color: 'bg-amber-500' },
+  { name: '基础版月度订阅', sales: 103, percentage: 32, color: 'bg-rose-500' },
+]
+
+// ==================== 近期订单统计 ====================
+interface OrderSummary {
+  date: string
+  orderCount: number
+  revenue: number
+  refund: number
+}
+
+const orderSummary: OrderSummary[] = [
+  { date: '2026-03-21', orderCount: 48, revenue: 18420, refund: 1200 },
+  { date: '2026-03-20', orderCount: 52, revenue: 21350, refund: 0 },
+  { date: '2026-03-19', orderCount: 39, revenue: 15680, refund: 3200 },
+  { date: '2026-03-18', orderCount: 61, revenue: 24900, refund: 800 },
+  { date: '2026-03-17', orderCount: 44, revenue: 17200, refund: 1500 },
+  { date: '2026-03-16', orderCount: 37, revenue: 14800, refund: 0 },
+  { date: '2026-03-15', orderCount: 55, revenue: 22100, refund: 2400 },
+]
+
+/**
+ * 格式化金额
+ */
+function formatAmount(amount: number): string {
+  return amount.toLocaleString('zh-CN')
+}
 </script>
 
 <template>
-  <PlaceholderPage
-    title="数据报表"
-    description="业务数据分析与可视化"
-  />
+  <div class="flex flex-col gap-6">
+    <!-- 页面头部 -->
+    <div class="flex items-end justify-between">
+      <div>
+        <h2 class="text-2xl font-semibold tracking-tight">数据报表</h2>
+        <p class="mt-1 text-sm text-muted-foreground">业务数据分析与可视化</p>
+      </div>
+    </div>
+
+    <!-- 统计卡片 — 渐变背景风格 -->
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <Card
+        v-for="item in stats"
+        :key="item.title"
+        class="overflow-hidden border-0 shadow-sm transition-all hover:shadow-md"
+      >
+        <div :class="cn('bg-gradient-to-br', item.color)">
+          <CardHeader class="flex flex-row items-center justify-between pb-2">
+            <CardTitle class="text-sm font-medium text-muted-foreground">{{ item.title }}</CardTitle>
+            <div :class="cn('rounded-lg bg-background/60 p-2 backdrop-blur-sm', item.iconColor)">
+              <component :is="item.icon" class="size-4" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div class="text-3xl font-bold tracking-tight">{{ item.value }}</div>
+            <div class="mt-2 flex items-center gap-1.5 text-xs">
+              <Badge
+                :variant="item.trend === 'up' ? 'secondary' : 'destructive'"
+                class="gap-0.5 rounded-full px-1.5 py-0 text-[10px] font-medium"
+              >
+                <ArrowUpRight v-if="item.trend === 'up'" class="size-3" />
+                <ArrowDownRight v-else class="size-3" />
+                {{ item.change }}
+              </Badge>
+              <span class="text-muted-foreground">{{ item.desc }}</span>
+            </div>
+          </CardContent>
+        </div>
+      </Card>
+    </div>
+
+    <!-- 中间区 — 营收趋势 + 热门商品 -->
+    <div class="grid gap-4 lg:grid-cols-7">
+      <!-- 营收趋势 -->
+      <Card class="lg:col-span-4 border-0 shadow-sm">
+        <CardHeader>
+          <div class="flex items-center justify-between">
+            <div>
+              <CardTitle class="text-base">营收趋势</CardTitle>
+              <CardDescription>近 7 日营收变化</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div class="flex h-[240px] items-center justify-center rounded-lg border border-dashed border-border/60 bg-muted/20">
+            <div class="flex flex-col items-center gap-2 text-muted-foreground">
+              <BarChart3 class="size-8 opacity-40" />
+              <p class="text-sm">图表区域 — 待接入数据可视化</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <!-- 热门商品 TOP 5 -->
+      <Card class="lg:col-span-3 border-0 shadow-sm">
+        <CardHeader>
+          <CardTitle class="text-base">热门商品 TOP 5</CardTitle>
+          <CardDescription>按销量排名的商品列表</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div class="space-y-4">
+            <div
+              v-for="(product, index) in topProducts"
+              :key="product.name"
+              class="space-y-2"
+            >
+              <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2">
+                  <span class="flex size-5 shrink-0 items-center justify-center rounded text-[10px] font-bold text-muted-foreground bg-muted">
+                    {{ index + 1 }}
+                  </span>
+                  <span class="font-medium">{{ product.name }}</span>
+                </div>
+                <span class="font-mono text-xs tabular-nums text-muted-foreground">{{ product.sales }} 件</span>
+              </div>
+              <!-- 进度条 -->
+              <div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  :class="cn('h-full rounded-full transition-all', product.color)"
+                  :style="{ width: `${product.percentage}%` }"
+                />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <!-- 近期订单统计表 -->
+    <Card class="border-0 shadow-sm">
+      <CardHeader>
+        <CardTitle class="text-base">近期订单统计</CardTitle>
+        <CardDescription>近 7 日订单汇总数据</CardDescription>
+      </CardHeader>
+      <CardContent class="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>日期</TableHead>
+              <TableHead class="text-right">订单数</TableHead>
+              <TableHead class="text-right">营收</TableHead>
+              <TableHead class="text-right">退款</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="row in orderSummary" :key="row.date">
+              <TableCell class="font-mono text-sm">{{ row.date }}</TableCell>
+              <TableCell class="text-right font-mono tabular-nums">{{ row.orderCount }}</TableCell>
+              <TableCell class="text-right font-mono tabular-nums text-emerald-600 dark:text-emerald-400">
+                ¥{{ formatAmount(row.revenue) }}
+              </TableCell>
+              <TableCell class="text-right font-mono tabular-nums">
+                <span :class="row.refund > 0 ? 'text-destructive' : 'text-muted-foreground'">
+                  {{ row.refund > 0 ? `¥${formatAmount(row.refund)}` : '—' }}
+                </span>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  </div>
 </template>
