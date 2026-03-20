@@ -6,6 +6,30 @@
 
 ## 2026-03-21
 
+### Round 27-28 — 最终收官
+- README 7 张产品截图（Console 5 + Business 2）
+- CONTRIBUTING.md 贡献指南
+- .gitattributes 统一 LF 换行符
+- ESLint 全项目审计（6458 问题自动修复）
+- Business SystemStatus 系统状态面板
+- 便捷脚本：yarn build / yarn clean
+- 浏览器全页面巡检验证通过
+
+### Round 24 — Business 系统状态 + Dashboard
+- Business Dashboard SystemStatus 组件
+- 双项目 yarn build 一键构建
+
+### Round 23 — 便捷脚本
+- yarn build 一键构建双项目
+- yarn clean 清理构建产物
+
+### Round 22 — 工程收尾
+- CONTRIBUTING.md 贡献指南
+- .gitattributes 统一换行符
+
+### Round 21 — ESLint 审计
+- 全项目 ESLint --fix，333 文件格式化
+
 ### Round 20 — 最终进化：订单详情 + 完整闭环
 - Business 订单详情页（订单信息 + 流程时间线 + 操作记录）
 - 订单列表行点击跳转详情
