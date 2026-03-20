@@ -1,0 +1,36 @@
+{
+  "name": "shadcn-vue-ui",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "shadcn-vue-ui-console",
+    "shadcn-vue-ui-business"
+  ],
+  "scripts": {
+    "dev:console": "yarn workspace shadcn-vue-ui-console dev",
+    "dev:business": "yarn workspace shadcn-vue-ui-business dev",
+    "build:console": "yarn workspace shadcn-vue-ui-console build",
+    "build:business": "yarn workspace shadcn-vue-ui-business build",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "vue": "^3.5.30",
+    "reka-ui": "^2.9.2",
+    "@vueuse/core": "^14.2.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.2",
+    "lucide-vue-next": "^0.474.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^4.13.2",
+    "eslint": "^9.21.0",
+    "prettier": "^3.5.3",
+    "typescript": "~5.8.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

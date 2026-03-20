@@ -1,0 +1,64 @@
+<task id=".bmad/core/tasks/index-docs" name="索引文档"
+  description="为指定目录中的所有文档生成或更新 index.md" webskip="true" standalone="true">
+  <llm critical="true">
+    <i>强制：按确切顺序执行 flow 部分中的所有步骤</i>
+    <i>不要跳过步骤或更改顺序</i>
+    <i>满足 halt-conditions 时立即停止</i>
+    <i>步骤 xml 标签中的每个 action xml 标签都是完成该步骤所需的操作</i>
+    <i>flow 之外的部分（validation、output、critical-context）提供重要上下文 - 在执行过程中审查并应用</i>
+  </llm>
+
+  <flow>
+    <step n="1" title="扫描目录">
+      <i>列出目标位置中的所有文件和子目录</i>
+    </step>
+
+    <step n="2" title="分组内容">
+      <i>按类型、用途或子目录组织文件</i>
+    </step>
+
+    <step n="3" title="生成描述">
+      <i>读取每个文件以了解其实际用途，并根据内容（而非仅文件名）创建简短（3-10 个词）的描述</i>
+    </step>
+
+    <step n="4" title="创建/更新索引">
+      <i>编写或更新 index.md，包含组织好的文件列表</i>
+    </step>
+  </flow>
+
+  <output-format>
+    <example>
+      # 目录索引
+
+      ## 文件
+
+      - **[filename.ext](./filename.ext)** - 简要描述
+      - **[another-file.ext](./another-file.ext)** - 简要描述
+
+      ## 子目录
+
+      ### subfolder/
+
+      - **[file1.ext](./subfolder/file1.ext)** - 简要描述
+      - **[file2.ext](./subfolder/file2.ext)** - 简要描述
+
+      ### another-folder/
+
+      - **[file3.ext](./another-folder/file3.ext)** - 简要描述
+    </example>
+  </output-format>
+
+  <halt-conditions critical="true">
+    <i>如果目标目录不存在或无法访问则停止</i>
+    <i>如果用户没有创建 index.md 的写入权限则停止</i>
+  </halt-conditions>
+
+  <validation>
+    <i>使用以 ./ 开头的相对路径</i>
+    <i>将相似文件分组在一起</i>
+    <i>读取文件内容以生成准确的描述 - 不要仅根据文件名猜测</i>
+    <i>保持描述简洁但信息丰富（3-10 个词）</i>
+    <i>在组内按字母顺序排序</i>
+    <i>跳过隐藏文件（以 . 开头的），除非另有指定</i>
+  </validation>
+</task>

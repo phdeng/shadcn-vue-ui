@@ -1,0 +1,88 @@
+<task id=".bmad/core/tasks/validate-workflow.xml" name="验证工作流输出">
+  <objective>对文档运行检查清单进行全面分析并生成验证报告</objective>
+
+  <inputs>
+    <input name="workflow" desc="包含 checklist.md 的工作流路径" />
+    <input name="checklist" desc="要验证的检查清单（默认为工作流的 checklist.md）" />
+    <input name="document" desc="要验证的文档（如果未指定则询问用户）" />
+  </inputs>
+
+  <flow>
+    <step n="1" title="设置">
+      <action>如果未提供检查清单，从工作流位置加载 checklist.md</action>
+      <action>尝试模糊匹配类似输入文档名称的文件，或者如果用户未提供文档。如果未提供文档或不确定，询问用户："我应该验证哪个文档？"</action>
+      <action>加载检查清单和文档</action>
+    </step>
+
+    <step n="2" title="验证" critical="true">
+      <mandate>对于每个检查清单项目，不跳过任何一个：</mandate>
+
+      <for-each-item>
+        <action>仔细阅读需求</action>
+        <action>在文档以及任何辅助加载的文档或产出物中搜索证据（带行号的引用）</action>
+        <action>深入分析 - 寻找显式和隐式的覆盖</action>
+
+        <mark-as>
+          ✓ 通过 - 需求完全满足（提供证据）
+          ⚠ 部分 - 有一些覆盖但不完整（解释差距）
+          ✗ 失败 - 未满足或严重不足（解释原因）
+          ➖ 不适用 - 不适用（解释原因）
+        </mark-as>
+      </for-each-item>
+
+      <critical>不要跳过任何章节或项目</critical>
+    </step>
+
+    <step n="3" title="生成报告">
+      <action>在文档的文件夹中创建 validation-report-{timestamp}.md</action>
+
+      <report-format>
+        # 验证报告
+
+        **文档：** {document-path}
+        **检查清单：** {checklist-path}
+        **日期：** {timestamp}
+
+        ## 摘要
+        - 总体：X/Y 通过 (Z%)
+        - 关键问题：{count}
+
+        ## 章节结果
+
+        ### {章节名称}
+        通过率：X/Y (Z%)
+
+        {对于每个项目：}
+        [标记] {项目描述}
+        证据：{带行号的引用或解释}
+        {如果失败/部分：影响：{为什么这很重要}}
+
+        ## 失败项目
+        {所有 ✗ 项目及建议}
+
+        ## 部分项目
+        {所有 ⚠ 项目及缺失内容}
+
+        ## 建议
+        1. 必须修复：{关键失败}
+        2. 应该改进：{重要差距}
+        3. 考虑：{次要改进}
+      </report-format>
+    </step>
+
+    <step n="4" title="用户摘要">
+      <action>逐章节呈现摘要</action>
+      <action>突出显示所有关键问题</action>
+      <action>提供已保存报告的路径</action>
+      <action>停止 - 除非用户要求否则不继续</action>
+    </step>
+  </flow>
+
+  <critical-rules>
+    <rule>绝不跳过章节 - 验证所有内容</rule>
+    <rule>始终为标记提供证据（引用 + 行号）</rule>
+    <rule>深入思考每个需求 - 不要急</rule>
+    <rule>自动将报告保存到文档的文件夹</rule>
+    <rule>呈现摘要后停止 - 等待用户</rule>
+  </critical-rules>
+</task>

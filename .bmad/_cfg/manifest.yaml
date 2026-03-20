@@ -1,0 +1,10 @@
+installation:
+  version: 6.0.0-alpha.16
+  installDate: '2026-03-20T09:47:59.659Z'
+  lastUpdated: '2026-03-20T09:47:59.659Z'
+modules:
+  - core
+  - bmm
+customModules: []
+ides:
+  - claude-code

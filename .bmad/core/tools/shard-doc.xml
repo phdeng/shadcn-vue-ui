@@ -1,0 +1,109 @@
+<tool id=".bmad/core/tasks/shard-doc" name="分片文档"
+  description="根据二级（默认）章节将大型 markdown 文档拆分为较小的、有组织的文件" webskip="true"
+  standalone="true">
+  <objective>使用 @kayvan/markdown-tree-parser 工具，根据二级章节将大型 markdown 文档拆分为较小的、有组织的文件</objective>
+
+  <llm critical="true">
+    <i>强制：按确切顺序执行 flow 部分中的所有步骤</i>
+    <i>不要跳过步骤或更改顺序</i>
+    <i>满足 halt-conditions 时立即停止</i>
+    <i>步骤 xml 标签中的每个 action xml 标签都是完成该步骤所需的操作</i>
+    <i>flow 之外的部分（validation、output、critical-context）提供重要上下文 - 在执行过程中审查并应用</i>
+  </llm>
+
+  <critical-context>
+    <i>使用 `npx @kayvan/markdown-tree-parser` 按二级标题自动分片文档并生成索引</i>
+  </critical-context>
+
+  <flow>
+    <step n="1" title="获取源文档">
+      <action>如果尚未提供，询问用户源文档路径</action>
+      <action>验证文件存在且可访问</action>
+      <action>验证文件是 markdown 格式（.md 扩展名）</action>
+      <action if="文件未找到或不是 markdown">停止并显示错误消息</action>
+    </step>
+
+    <step n="2" title="获取目标文件夹">
+      <action>确定默认目标：与源文件相同的位置，文件夹以源文件名（不含 .md 扩展名）命名</action>
+      <action>示例：/path/to/architecture.md → /path/to/architecture/</action>
+      <action>询问用户目标文件夹路径（[y] 确认使用默认：[建议路径]，否则输入新路径）</action>
+      <action if="用户接受默认">使用建议的目标路径</action>
+      <action if="用户提供自定义路径">使用自定义目标路径</action>
+      <action>验证目标文件夹存在或可以创建</action>
+      <action>检查目标的写入权限</action>
+      <action if="权限被拒绝">停止并显示错误消息</action>
+    </step>
+
+    <step n="3" title="执行分片">
+      <action>通知用户分片正在开始</action>
+      <action>执行命令：`npx @kayvan/markdown-tree-parser explode [源文档] [目标文件夹]`</action>
+      <action>捕获命令输出和任何错误</action>
+      <action if="命令失败">停止并向用户显示错误</action>
+    </step>
+
+    <step n="4" title="验证输出">
+      <action>检查目标文件夹包含分片文件</action>
+      <action>验证 index.md 已在目标文件夹中创建</action>
+      <action>计算创建的文件数量</action>
+      <action if="没有创建文件">停止并显示错误消息</action>
+    </step>
+
+    <step n="5" title="报告完成">
+      <action>向用户显示完成报告，包括：</action>
+      <i>- 源文档路径和名称</i>
+      <i>- 目标文件夹路径</i>
+      <i>- 创建的章节文件数量</i>
+      <i>- 确认 index.md 已创建</i>
+      <i>- 任何工具输出或警告</i>
+      <action>通知用户分片已成功完成</action>
+    </step>
+
+    <step n="6" title="处理原始文档">
+      <critical>同时保留原始版本和分片版本会违背分片的目的，并可能导致混淆</critical>
+      <action>向用户展示原始文档的选项：</action>
+
+      <ask>你想如何处理原始文档 `[源文档名称]`？
+
+选项：
+[d] 删除 - 移除原始文档（推荐 - 分片可以随时重新合并）
+[m] 移至存档 - 将原始文档移动到备份/存档位置
+[k] 保留 - 保留原始文档（不推荐 - 违背分片目的）
+
+你的选择 (d/m/k)：</ask>
+
+      <check if="用户选择 'd'（删除）">
+        <action>删除原始源文档文件</action>
+        <action>向用户确认删除："✓ 原始文档已删除：[源文档路径]"</action>
+        <note>文档可以通过按顺序连接所有章节文件从分片重建</note>
+      </check>
+
+      <check if="用户选择 'm'（移动）">
+        <action>确定默认存档位置：与源相同的目录，在 "archive" 子文件夹中</action>
+        <action>示例：/path/to/architecture.md → /path/to/archive/architecture.md</action>
+        <ask>存档位置（[y] 使用默认：[默认存档路径]，或提供自定义路径）：</ask>
+        <action if="用户接受默认">使用默认存档路径</action>
+        <action if="用户提供自定义路径">使用自定义存档路径</action>
+        <action>如果存档目录不存在则创建</action>
+        <action>将原始文档移动到存档位置</action>
+        <action>向用户确认移动："✓ 原始文档已移至：[存档路径]"</action>
+      </check>
+
+      <check if="用户选择 'k'（保留）">
+        <action>向用户显示警告：</action>
+        <output>⚠️ 警告：同时保留原始版本和分片版本不推荐。
+
+这会造成混淆，因为：
+- discover_inputs 协议可能加载错误的版本
+- 对一个版本的更新不会反映在另一个版本中
+- 你将有重复的内容占用空间
+
+考虑删除或存档原始文档。</output>
+        <action>确认用户选择："原始文档保留在：[源文档路径]"</action>
+      </check>
+    </step>
+  </flow>
+
+  <halt-conditions critical="true">
+    <i>如果 npx 命令失败或没有生成输出文件则停止</i>
+  </halt-conditions>
+</tool>

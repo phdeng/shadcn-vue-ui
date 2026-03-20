@@ -1,0 +1,97 @@
+# Sprint 状态跟踪文件
+# 生成时间: {date}
+# 项目: {project_name}
+#
+# ═══════════════════════════════════════════════════════════════
+# 状态定义
+# ═══════════════════════════════════════════════════════════════
+#
+# Epic 状态:
+#   - backlog: Epic 未开始
+#   - in-progress: Epic 中有 Story 正在开发
+#   - done: Epic 所有 Story 完成
+#
+# Story 状态:
+#   - backlog: Story 仅存在于 Epic 中
+#   - drafted: Story 文件已创建
+#   - ready-for-dev: Story 详情已完善，可开始开发
+#   - in-progress: 开发进行中
+#   - review: 代码审查中
+#   - done: Story 完成
+#
+# Retrospective 状态:
+#   - optional: 可选，未执行
+#   - completed: 已完成回顾
+#
+# ═══════════════════════════════════════════════════════════════
+# 工作流说明
+# ═══════════════════════════════════════════════════════════════
+#
+# 1. Epic 自动状态变更:
+#    - 当第一个 Story 进入 in-progress 时，Epic 自动变为 in-progress
+#    - 当所有 Story 变为 done 时，Epic 自动变为 done
+#
+# 2. 并行开发支持:
+#    - 三个 Track 可以并行开发
+#    - 同一 Track 内多个 Story 也可并行（如团队容量允许）
+#
+# 3. 联调时机:
+#    - Integration Story 需等待对应的 Backend 和 Frontend Story 完成
+#
+# ═══════════════════════════════════════════════════════════════
+
+metadata:
+  generated: "{date}"
+  project: "{project_name}"
+  project_key: "{project_key}"
+  version: "1.0"
+
+tracks:
+  # ─────────────────────────────────────────────────────────────
+  # Backend Track - 后端开发
+  # ─────────────────────────────────────────────────────────────
+  backend:
+    # Epic 1: {Epic 名称}
+    epic-1: backlog
+    story-1.1-entity-{name}: backlog
+    story-1.2-api-{name}: backlog
+    story-1.3-service-{name}: backlog
+    epic-1-retrospective: optional
+
+    # Epic 2: {Epic 名称}
+    epic-2: backlog
+    story-2.1-entity-{name}: backlog
+    story-2.2-api-{name}: backlog
+    epic-2-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────
+  # Frontend Track - 前端开发
+  # ─────────────────────────────────────────────────────────────
+  frontend:
+    # Epic 1: {Epic 名称}
+    epic-1: backlog
+    story-1.1-page-{name}: backlog
+    story-1.2-page-{name}: backlog
+    story-1.3-component-{name}: backlog
+    epic-1-retrospective: optional
+
+    # Epic 2: {Epic 名称}
+    epic-2: backlog
+    story-2.1-page-{name}: backlog
+    story-2.2-feature-{name}: backlog
+    epic-2-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────
+  # Integration Track - 前后端联调
+  # ─────────────────────────────────────────────────────────────
+  integration:
+    # Epic 1: {Epic 名称}
+    epic-1: backlog
+    story-1.1-flow-{name}: backlog
+    story-1.2-flow-{name}: backlog
+    epic-1-retrospective: optional
+
+    # Epic 2: {Epic 名称}
+    epic-2: backlog
+    story-2.1-flow-{name}: backlog
+    epic-2-retrospective: optional

@@ -1,0 +1,6 @@
+name,displayName,description,module,path,standalone
+"advanced-elicitation","高级引导","从工作流调用时","core",".bmad/core/tasks/advanced-elicitation.xml","true"
+"index-docs","索引文档","为指定目录中的所有文档生成或更新 index.md","core",".bmad/core/tasks/index-docs.xml","true"
+"validate-workflow","验证工作流输出","对文档运行检查清单进行全面分析并生成验证报告","core",".bmad/core/tasks/validate-workflow.xml","false"
+"workflow","执行工作流","通过加载配置、遵循指令并生成输出来执行给定的工作流","core",".bmad/core/tasks/workflow.xml","false"
+"daily-standup","Daily Standup","","bmm",".bmad/bmm/tasks/daily-standup.xml","false"
