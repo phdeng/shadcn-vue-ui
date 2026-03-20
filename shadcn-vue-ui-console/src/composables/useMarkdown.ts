@@ -1,10 +1,10 @@
+import DOMPurify from 'dompurify'
+import { marked } from 'marked'
 /**
  * @description Markdown 渲染 composable — 用于 ChatAgent 消息
  * @author Timon
  */
 import { computed } from 'vue'
-import { marked } from 'marked'
-import DOMPurify from 'dompurify'
 
 // 配置 marked — 简洁模式，不生成额外包裹标签
 marked.setOptions({

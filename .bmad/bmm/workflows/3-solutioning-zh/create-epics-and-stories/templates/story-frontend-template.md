@@ -247,20 +247,20 @@ interface {ResourceForm} {
 ```typescript
 interface PageState {
   // 加载状态
-  loading: boolean;
-  submitting: boolean;
+  loading: boolean
+  submitting: boolean
 
   // 数据
-  list: {ResourceItem}[];
-  total: number;
-  currentItem: {ResourceItem} | null;
+  list: { ResourceItem }[]
+  total: number
+  currentItem: { ResourceItem } | null
 
   // 查询参数
-  query: {ResourceQuery};
+  query: { ResourceQuery }
 
   // UI 状态
-  dialogVisible: boolean;
-  dialogMode: 'add' | 'edit' | 'view';
+  dialogVisible: boolean
+  dialogMode: 'add' | 'edit' | 'view'
 }
 ```
 
@@ -331,13 +331,13 @@ interface PageState {
 
 **代码示例** (可选):
 ```vue
-<template>
-  <!-- 关键模板结构 -->
-</template>
-
 <script setup lang="ts">
 // 关键逻辑代码
 </script>
+
+<template>
+  <!-- 关键模板结构 -->
+</template>
 ```
 
 ---

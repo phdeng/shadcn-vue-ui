@@ -1,28 +1,20 @@
 <script setup lang="ts">
-/**
- * @description 模型训练页 — 管理微调任务与训练日志
- * @author Timon
- */
-import { ref } from 'vue'
-import {
-  Plus,
-  Search,
-  Play,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  MoreHorizontal,
-  Activity,
-} from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
+import { Input } from '@ui/components/ui/input'
 import {
   Table,
   TableBody,
@@ -31,14 +23,22 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@ui/components/ui/dropdown-menu'
 import { cn } from '@ui/lib/utils'
+import {
+  Activity,
+  CheckCircle2,
+  Clock,
+  MoreHorizontal,
+  Play,
+  Plus,
+  Search,
+  XCircle,
+} from 'lucide-vue-next'
+/**
+ * @description 模型训练页 — 管理微调任务与训练日志
+ * @author Timon
+ */
+import { ref } from 'vue'
 
 const searchQuery = ref('')
 
@@ -65,7 +65,7 @@ const jobs = ref<TrainingJob[]>([
   { id: 't5', name: '多轮对话增强', baseModel: 'Claude 3.5', dataset: '多轮对话', status: 'completed', progress: 100, epochs: '4/4', loss: '0.091', duration: '6h 12m', createdAt: '1 天前' },
 ])
 
-const statusConfig: Record<TrainingStatus, { label: string; icon: typeof Play; dotClass: string; badgeClass: string }> = {
+const statusConfig: Record<TrainingStatus, { label: string, icon: typeof Play, dotClass: string, badgeClass: string }> = {
   running: { label: '训练中', icon: Activity, dotClass: 'bg-blue-500 animate-pulse', badgeClass: 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400' },
   completed: { label: '已完成', icon: CheckCircle2, dotClass: 'bg-emerald-500', badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400' },
   failed: { label: '失败', icon: XCircle, dotClass: 'bg-red-500', badgeClass: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400' },
@@ -85,8 +85,12 @@ const stats = {
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">模型训练</h2>
-        <p class="mt-1 text-sm text-muted-foreground">管理微调任务、训练参数与训练日志</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          模型训练
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          管理微调任务、训练参数与训练日志
+        </p>
       </div>
       <Button size="sm">
         <Plus class="mr-2 size-4" />
@@ -99,8 +103,12 @@ const stats = {
       <Card class="border-0 shadow-sm">
         <CardContent class="flex items-center justify-between pt-5">
           <div>
-            <p class="text-xs text-muted-foreground">总任务数</p>
-            <p class="text-2xl font-bold">{{ stats.total }}</p>
+            <p class="text-xs text-muted-foreground">
+              总任务数
+            </p>
+            <p class="text-2xl font-bold">
+              {{ stats.total }}
+            </p>
           </div>
           <div class="rounded-lg bg-muted p-2.5">
             <Activity class="size-4 text-muted-foreground" />
@@ -110,8 +118,12 @@ const stats = {
       <Card class="border-0 shadow-sm">
         <CardContent class="flex items-center justify-between pt-5">
           <div>
-            <p class="text-xs text-muted-foreground">训练中</p>
-            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ stats.running }}</p>
+            <p class="text-xs text-muted-foreground">
+              训练中
+            </p>
+            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              {{ stats.running }}
+            </p>
           </div>
           <div class="rounded-lg bg-blue-50 p-2.5 dark:bg-blue-950/50">
             <Play class="size-4 text-blue-600 dark:text-blue-400" />
@@ -121,8 +133,12 @@ const stats = {
       <Card class="border-0 shadow-sm">
         <CardContent class="flex items-center justify-between pt-5">
           <div>
-            <p class="text-xs text-muted-foreground">已完成</p>
-            <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ stats.completed }}</p>
+            <p class="text-xs text-muted-foreground">
+              已完成
+            </p>
+            <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+              {{ stats.completed }}
+            </p>
           </div>
           <div class="rounded-lg bg-emerald-50 p-2.5 dark:bg-emerald-950/50">
             <CheckCircle2 class="size-4 text-emerald-600 dark:text-emerald-400" />
@@ -135,7 +151,9 @@ const stats = {
     <Card class="border-0 shadow-sm">
       <CardHeader class="pb-3">
         <div class="flex items-center justify-between">
-          <CardTitle class="text-base">训练任务</CardTitle>
+          <CardTitle class="text-base">
+            训练任务
+          </CardTitle>
           <div class="relative w-64">
             <Search class="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <Input v-model="searchQuery" placeholder="搜索任务..." class="pl-8 h-8 text-xs" />
@@ -159,9 +177,15 @@ const stats = {
           </TableHeader>
           <TableBody>
             <TableRow v-for="job in jobs" :key="job.id" class="group">
-              <TableCell class="font-medium">{{ job.name }}</TableCell>
-              <TableCell class="text-muted-foreground text-xs">{{ job.baseModel }}</TableCell>
-              <TableCell class="text-muted-foreground text-xs">{{ job.dataset }}</TableCell>
+              <TableCell class="font-medium">
+                {{ job.name }}
+              </TableCell>
+              <TableCell class="text-muted-foreground text-xs">
+                {{ job.baseModel }}
+              </TableCell>
+              <TableCell class="text-muted-foreground text-xs">
+                {{ job.dataset }}
+              </TableCell>
               <TableCell>
                 <Badge
                   variant="secondary"
@@ -182,9 +206,15 @@ const stats = {
                   <span class="text-xs text-muted-foreground tabular-nums">{{ job.progress }}%</span>
                 </div>
               </TableCell>
-              <TableCell class="text-xs tabular-nums">{{ job.epochs }}</TableCell>
-              <TableCell class="text-xs tabular-nums font-mono">{{ job.loss }}</TableCell>
-              <TableCell class="text-xs text-muted-foreground">{{ job.duration }}</TableCell>
+              <TableCell class="text-xs tabular-nums">
+                {{ job.epochs }}
+              </TableCell>
+              <TableCell class="text-xs tabular-nums font-mono">
+                {{ job.loss }}
+              </TableCell>
+              <TableCell class="text-xs text-muted-foreground">
+                {{ job.duration }}
+              </TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>
@@ -196,9 +226,15 @@ const stats = {
                     <DropdownMenuItem>查看日志</DropdownMenuItem>
                     <DropdownMenuItem>导出模型</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem v-if="job.status === 'running'" class="text-amber-600">暂停训练</DropdownMenuItem>
-                    <DropdownMenuItem v-if="job.status === 'failed'" class="text-blue-600">重新训练</DropdownMenuItem>
-                    <DropdownMenuItem class="text-destructive">删除</DropdownMenuItem>
+                    <DropdownMenuItem v-if="job.status === 'running'" class="text-amber-600">
+                      暂停训练
+                    </DropdownMenuItem>
+                    <DropdownMenuItem v-if="job.status === 'failed'" class="text-blue-600">
+                      重新训练
+                    </DropdownMenuItem>
+                    <DropdownMenuItem class="text-destructive">
+                      删除
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

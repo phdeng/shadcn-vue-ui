@@ -35,7 +35,9 @@ const overallStatus = services.every(s => s.status === 'healthy')
   <Card class="border-0 shadow-sm">
     <CardHeader class="pb-3">
       <div class="flex items-center justify-between">
-        <CardTitle class="text-base">服务状态</CardTitle>
+        <CardTitle class="text-base">
+          服务状态
+        </CardTitle>
         <div class="flex items-center gap-1.5">
           <span :class="cn('size-2 rounded-full', overallStatus.includes('正常') ? 'bg-emerald-500' : 'bg-amber-500')" />
           <span class="text-[11px] text-muted-foreground">{{ overallStatus }}</span>

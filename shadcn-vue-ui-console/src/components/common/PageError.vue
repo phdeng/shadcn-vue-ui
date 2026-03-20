@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { Button } from '@ui/components/ui/button'
 /**
  * @description 页面错误状态组件
  * @author Timon
  */
 import { AlertCircle, RotateCcw } from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
 
 defineProps<{
   message?: string

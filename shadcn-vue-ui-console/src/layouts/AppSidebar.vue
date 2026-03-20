@@ -1,15 +1,8 @@
 <script setup lang="ts">
-/**
- * @description 控制台侧边栏 — 配置驱动导航
- * @author Timon
- */
-import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { ChevronDown, ChevronRight } from 'lucide-vue-next'
-import { useAuthStore } from '@/stores/auth'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -20,15 +13,22 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarFooter,
   SidebarRail,
 } from '@ui/components/ui/sidebar'
+import { ChevronDown, ChevronRight } from 'lucide-vue-next'
+/**
+ * @description 控制台侧边栏 — 配置驱动导航
+ * @author Timon
+ */
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import {
+  featureNavItems,
   mainNavItems,
   modelNavGroup,
-  featureNavItems,
   systemNavItems,
 } from '@/config/navigation'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -40,12 +40,13 @@ const userName = computed(() => authStore.user?.name || '用户')
 const userRole = computed(() => authStore.user?.role === 'admin' ? '管理员' : '成员')
 
 function isActive(path: string) {
-  if (path === '/') return route.path === '/'
+  if (path === '/')
+    return route.path === '/'
   return route.path.startsWith(path)
 }
 
 function isModelActive() {
-  return modelNavGroup.children.some((c) => route.path.startsWith(c.path))
+  return modelNavGroup.children.some(c => route.path.startsWith(c.path))
 }
 </script>
 

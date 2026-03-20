@@ -1,20 +1,5 @@
 <script setup lang="ts">
-/**
- * @description 业务管理后台概览页 — 运营数据看板
- * @author Timon
- */
-import { computed } from 'vue'
-import { RouterLink } from 'vue-router'
-import {
-  Users,
-  ShoppingCart,
-  DollarSign,
-  UserCheck,
-  ArrowUpRight,
-  ArrowDownRight,
-  Sparkles,
-} from 'lucide-vue-next'
-import { useAuthStore } from '@/stores/auth'
+import { Badge } from '@ui/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -22,20 +7,39 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
-import { Badge } from '@ui/components/ui/badge'
 import { cn } from '@ui/lib/utils'
-import LineChart from '@/components/charts/LineChart.vue'
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  DollarSign,
+  ShoppingCart,
+  Sparkles,
+  UserCheck,
+  Users,
+} from 'lucide-vue-next'
+/**
+ * @description 业务管理后台概览页 — 运营数据看板
+ * @author Timon
+ */
+import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
+import LineChart from '@/components/charts/LineChart.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
 // 根据时段动态问候
 const greeting = computed(() => {
   const hour = new Date().getHours()
-  if (hour < 6) return '夜深了'
-  if (hour < 12) return '早上好'
-  if (hour < 14) return '中午好'
-  if (hour < 18) return '下午好'
+  if (hour < 6)
+    return '夜深了'
+  if (hour < 12)
+    return '早上好'
+  if (hour < 14)
+    return '中午好'
+  if (hour < 18)
+    return '下午好'
   return '晚上好'
 })
 
@@ -92,7 +96,7 @@ const userGrowthChartData = {
     {
       label: '新增用户',
       data: [45, 62, 58, 89, 112, 95, 128],
-      borderColor: 'rgba(59, 130, 246, 0.9)',       // 蓝色
+      borderColor: 'rgba(59, 130, 246, 0.9)', // 蓝色
       backgroundColor: 'rgba(59, 130, 246, 0.08)',
       fill: true,
       tension: 0.4,
@@ -155,10 +159,10 @@ const orderStatusChartData = {
     {
       data: [30, 25, 35, 10],
       backgroundColor: [
-        'rgba(245, 158, 11, 0.8)',    // 琥珀色 — 待处理
-        'rgba(59, 130, 246, 0.8)',    // 蓝色 — 处理中
-        'rgba(16, 185, 129, 0.8)',    // 翡翠色 — 已完成
-        'rgba(156, 163, 175, 0.5)',   // 灰色 — 已取消
+        'rgba(245, 158, 11, 0.8)', // 琥珀色 — 待处理
+        'rgba(59, 130, 246, 0.8)', // 蓝色 — 处理中
+        'rgba(16, 185, 129, 0.8)', // 翡翠色 — 已完成
+        'rgba(156, 163, 175, 0.5)', // 灰色 — 已取消
       ],
       borderColor: [
         'rgba(245, 158, 11, 1)',
@@ -212,8 +216,12 @@ const quickActions = [
     <!-- 欢迎区 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">{{ greeting }}，{{ userName }}</h2>
-        <p class="mt-1 text-sm text-muted-foreground">以下是你的业务运营概况</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          {{ greeting }}，{{ userName }}
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          以下是你的业务运营概况
+        </p>
       </div>
     </div>
 
@@ -226,13 +234,17 @@ const quickActions = [
       >
         <div :class="cn('bg-gradient-to-br', item.color)">
           <CardHeader class="flex flex-row items-center justify-between pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground">{{ item.title }}</CardTitle>
+            <CardTitle class="text-sm font-medium text-muted-foreground">
+              {{ item.title }}
+            </CardTitle>
             <div :class="cn('rounded-lg bg-background/60 p-2 backdrop-blur-sm', item.iconColor)">
               <component :is="item.icon" class="size-4" />
             </div>
           </CardHeader>
           <CardContent>
-            <div class="text-3xl font-bold tracking-tight">{{ item.value }}</div>
+            <div class="text-3xl font-bold tracking-tight">
+              {{ item.value }}
+            </div>
             <div class="mt-2 flex items-center gap-1.5 text-xs">
               <Badge
                 :variant="item.trend === 'up' ? 'secondary' : 'destructive'"
@@ -256,7 +268,9 @@ const quickActions = [
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
-              <CardTitle class="text-base">用户增长趋势</CardTitle>
+              <CardTitle class="text-base">
+                用户增长趋势
+              </CardTitle>
               <CardDescription>近 7 日新增用户变化</CardDescription>
             </div>
           </div>
@@ -271,7 +285,9 @@ const quickActions = [
       <!-- 订单状态分布环形图 -->
       <Card class="lg:col-span-3 shadow-sm border-0">
         <CardHeader>
-          <CardTitle class="text-base">订单状态分布</CardTitle>
+          <CardTitle class="text-base">
+            订单状态分布
+          </CardTitle>
           <CardDescription>当前订单状态占比</CardDescription>
         </CardHeader>
         <CardContent>
@@ -284,7 +300,9 @@ const quickActions = [
 
     <!-- 快速操作 -->
     <div>
-      <h3 class="mb-3 text-sm font-medium text-muted-foreground">快速开始</h3>
+      <h3 class="mb-3 text-sm font-medium text-muted-foreground">
+        快速开始
+      </h3>
       <div class="grid gap-3 sm:grid-cols-3">
         <RouterLink
           v-for="action in quickActions"
@@ -296,8 +314,12 @@ const quickActions = [
             <Sparkles class="size-4" />
           </div>
           <div>
-            <p class="text-sm font-medium">{{ action.label }}</p>
-            <p class="text-[11px] text-muted-foreground">{{ action.desc }}</p>
+            <p class="text-sm font-medium">
+              {{ action.label }}
+            </p>
+            <p class="text-[11px] text-muted-foreground">
+              {{ action.desc }}
+            </p>
           </div>
         </RouterLink>
       </div>

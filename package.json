@@ -1,12 +1,15 @@
 {
   "name": "shadcn-vue-ui",
-  "private": true,
   "type": "module",
+  "private": true,
   "workspaces": [
     "packages/*",
     "shadcn-vue-ui-console",
     "shadcn-vue-ui-business"
   ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev:console": "yarn workspace shadcn-vue-ui-console dev",
     "dev:business": "yarn workspace shadcn-vue-ui-business dev",
@@ -30,8 +33,5 @@
     "eslint": "^9.21.0",
     "prettier": "^3.5.3",
     "typescript": "~5.8.3"
-  },
-  "engines": {
-    "node": ">=20.0.0"
   }
 }

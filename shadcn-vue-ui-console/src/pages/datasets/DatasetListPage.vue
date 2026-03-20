@@ -1,25 +1,16 @@
 <script setup lang="ts">
-/**
- * @description 数据集管理列表页 — 表格布局，支持搜索与状态筛选
- * @author Timon
- */
-import { ref, computed } from 'vue'
-import {
-  Plus,
-  Search,
-  MoreHorizontal,
-  Download,
-  Eye,
-  Trash2,
-  RefreshCw,
-  Database,
-} from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
 import { Card, CardContent } from '@ui/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
+import { Input } from '@ui/components/ui/input'
 import { Separator } from '@ui/components/ui/separator'
-import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import {
   Table,
   TableBody,
@@ -28,14 +19,23 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@ui/components/ui/dropdown-menu'
+import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import { cn } from '@ui/lib/utils'
+import {
+  Database,
+  Download,
+  Eye,
+  MoreHorizontal,
+  Plus,
+  RefreshCw,
+  Search,
+  Trash2,
+} from 'lucide-vue-next'
+/**
+ * @description 数据集管理列表页 — 表格布局，支持搜索与状态筛选
+ * @author Timon
+ */
+import { computed, ref } from 'vue'
 
 // ==================== 类型定义 ====================
 
@@ -115,7 +115,7 @@ const datasets = ref<DatasetItem[]>([
 
 const statusConfig: Record<
   DatasetStatus,
-  { label: string; dotClass: string; badgeClass: string }
+  { label: string, dotClass: string, badgeClass: string }
 > = {
   processed: {
     label: '已处理',
@@ -152,16 +152,16 @@ const filteredDatasets = computed(() => {
 
   // 按状态筛选
   if (activeTab.value !== 'all') {
-    result = result.filter((d) => d.status === activeTab.value)
+    result = result.filter(d => d.status === activeTab.value)
   }
 
   // 按关键词搜索
   const query = searchQuery.value.trim().toLowerCase()
   if (query) {
     result = result.filter(
-      (d) =>
-        d.name.toLowerCase().includes(query) ||
-        d.format.toLowerCase().includes(query),
+      d =>
+        d.name.toLowerCase().includes(query)
+        || d.format.toLowerCase().includes(query),
     )
   }
 
@@ -171,9 +171,9 @@ const filteredDatasets = computed(() => {
 /** 各状态的数据集数量 */
 const datasetCounts = computed(() => ({
   all: datasets.value.length,
-  processed: datasets.value.filter((d) => d.status === 'processed').length,
-  processing: datasets.value.filter((d) => d.status === 'processing').length,
-  pending: datasets.value.filter((d) => d.status === 'pending').length,
+  processed: datasets.value.filter(d => d.status === 'processed').length,
+  processing: datasets.value.filter(d => d.status === 'processing').length,
+  pending: datasets.value.filter(d => d.status === 'pending').length,
 }))
 
 /**
@@ -189,7 +189,9 @@ function formatNumber(num: number): string {
     <!-- 页面头部：标题 + 操作按钮 -->
     <div class="flex items-start justify-between">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold tracking-tight">数据集</h1>
+        <h1 class="text-2xl font-semibold tracking-tight">
+          数据集
+        </h1>
         <p class="text-sm text-muted-foreground leading-relaxed">
           管理训练数据集、数据标注与预处理
         </p>
@@ -268,13 +270,27 @@ function formatNumber(num: number): string {
         <Table>
           <TableHeader>
             <TableRow class="hover:bg-transparent">
-              <TableHead class="w-[240px]">名称</TableHead>
-              <TableHead class="w-[100px]">记录数</TableHead>
-              <TableHead class="w-[100px]">大小</TableHead>
-              <TableHead class="w-[90px]">格式</TableHead>
-              <TableHead class="w-[110px]">状态</TableHead>
-              <TableHead class="w-[160px]">更新时间</TableHead>
-              <TableHead class="w-[60px] text-right">操作</TableHead>
+              <TableHead class="w-[240px]">
+                名称
+              </TableHead>
+              <TableHead class="w-[100px]">
+                记录数
+              </TableHead>
+              <TableHead class="w-[100px]">
+                大小
+              </TableHead>
+              <TableHead class="w-[90px]">
+                格式
+              </TableHead>
+              <TableHead class="w-[110px]">
+                状态
+              </TableHead>
+              <TableHead class="w-[160px]">
+                更新时间
+              </TableHead>
+              <TableHead class="w-[60px] text-right">
+                操作
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -386,7 +402,9 @@ function formatNumber(num: number): string {
     >
       <Search class="size-10 text-muted-foreground/40" />
       <div class="text-center">
-        <p class="text-sm font-medium text-muted-foreground">未找到匹配的数据集</p>
+        <p class="text-sm font-medium text-muted-foreground">
+          未找到匹配的数据集
+        </p>
         <p class="mt-1 text-xs text-muted-foreground/60">
           尝试调整搜索关键词或筛选条件
         </p>

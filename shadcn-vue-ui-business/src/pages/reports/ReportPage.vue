@@ -1,16 +1,5 @@
 <script setup lang="ts">
-/**
- * @description 数据报表页 — 业务数据分析与可视化
- * @author Timon
- */
-import {
-  DollarSign,
-  ShoppingCart,
-  TrendingUp,
-  CreditCard,
-  ArrowUpRight,
-  ArrowDownRight,
-} from 'lucide-vue-next'
+import { Badge } from '@ui/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -18,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
-import { Badge } from '@ui/components/ui/badge'
 import {
   Table,
   TableBody,
@@ -28,6 +16,18 @@ import {
   TableRow,
 } from '@ui/components/ui/table'
 import { cn } from '@ui/lib/utils'
+/**
+ * @description 数据报表页 — 业务数据分析与可视化
+ * @author Timon
+ */
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  CreditCard,
+  DollarSign,
+  ShoppingCart,
+  TrendingUp,
+} from 'lucide-vue-next'
 import LineChart from '@/components/charts/LineChart.vue'
 
 // ==================== 统计卡片数据 ====================
@@ -81,7 +81,7 @@ const revenueChartData = {
     {
       label: '营收（万元）',
       data: [8.2, 9.1, 7.8, 10.5, 12.3, 11.8, 13.2, 14.1, 12.8, 15.3, 14.7, 16.2],
-      borderColor: 'rgba(59, 130, 246, 0.9)',       // 蓝色
+      borderColor: 'rgba(59, 130, 246, 0.9)', // 蓝色
       backgroundColor: 'rgba(59, 130, 246, 0.08)',
       fill: true,
       tension: 0.4,
@@ -95,7 +95,7 @@ const revenueChartData = {
     {
       label: '成本（万元）',
       data: [5.1, 5.8, 5.2, 6.3, 7.1, 6.8, 7.5, 8.2, 7.4, 8.8, 8.3, 9.1],
-      borderColor: 'rgba(245, 158, 11, 0.9)',       // 橙色
+      borderColor: 'rgba(245, 158, 11, 0.9)', // 橙色
       backgroundColor: 'rgba(245, 158, 11, 0.08)',
       fill: true,
       tension: 0.4,
@@ -198,8 +198,12 @@ function formatAmount(amount: number): string {
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">数据报表</h2>
-        <p class="mt-1 text-sm text-muted-foreground">业务数据分析与可视化</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          数据报表
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          业务数据分析与可视化
+        </p>
       </div>
     </div>
 
@@ -212,13 +216,17 @@ function formatAmount(amount: number): string {
       >
         <div :class="cn('bg-gradient-to-br', item.color)">
           <CardHeader class="flex flex-row items-center justify-between pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground">{{ item.title }}</CardTitle>
+            <CardTitle class="text-sm font-medium text-muted-foreground">
+              {{ item.title }}
+            </CardTitle>
             <div :class="cn('rounded-lg bg-background/60 p-2 backdrop-blur-sm', item.iconColor)">
               <component :is="item.icon" class="size-4" />
             </div>
           </CardHeader>
           <CardContent>
-            <div class="text-3xl font-bold tracking-tight">{{ item.value }}</div>
+            <div class="text-3xl font-bold tracking-tight">
+              {{ item.value }}
+            </div>
             <div class="mt-2 flex items-center gap-1.5 text-xs">
               <Badge
                 :variant="item.trend === 'up' ? 'secondary' : 'destructive'"
@@ -242,7 +250,9 @@ function formatAmount(amount: number): string {
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
-              <CardTitle class="text-base">营收趋势</CardTitle>
+              <CardTitle class="text-base">
+                营收趋势
+              </CardTitle>
               <CardDescription>年度营收与成本对比</CardDescription>
             </div>
           </div>
@@ -257,7 +267,9 @@ function formatAmount(amount: number): string {
       <!-- 热门商品 TOP 5 -->
       <Card class="lg:col-span-3 border-0 shadow-sm">
         <CardHeader>
-          <CardTitle class="text-base">热门商品 TOP 5</CardTitle>
+          <CardTitle class="text-base">
+            热门商品 TOP 5
+          </CardTitle>
           <CardDescription>按销量排名的商品列表</CardDescription>
         </CardHeader>
         <CardContent>
@@ -292,7 +304,9 @@ function formatAmount(amount: number): string {
     <!-- 近期订单统计表 -->
     <Card class="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle class="text-base">近期订单统计</CardTitle>
+        <CardTitle class="text-base">
+          近期订单统计
+        </CardTitle>
         <CardDescription>近 7 日订单汇总数据</CardDescription>
       </CardHeader>
       <CardContent class="p-0">
@@ -300,15 +314,25 @@ function formatAmount(amount: number): string {
           <TableHeader>
             <TableRow>
               <TableHead>日期</TableHead>
-              <TableHead class="text-right">订单数</TableHead>
-              <TableHead class="text-right">营收</TableHead>
-              <TableHead class="text-right">退款</TableHead>
+              <TableHead class="text-right">
+                订单数
+              </TableHead>
+              <TableHead class="text-right">
+                营收
+              </TableHead>
+              <TableHead class="text-right">
+                退款
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow v-for="row in orderSummary" :key="row.date">
-              <TableCell class="font-mono text-sm">{{ row.date }}</TableCell>
-              <TableCell class="text-right font-mono tabular-nums">{{ row.orderCount }}</TableCell>
+              <TableCell class="font-mono text-sm">
+                {{ row.date }}
+              </TableCell>
+              <TableCell class="text-right font-mono tabular-nums">
+                {{ row.orderCount }}
+              </TableCell>
               <TableCell class="text-right font-mono tabular-nums text-emerald-600 dark:text-emerald-400">
                 ¥{{ formatAmount(row.revenue) }}
               </TableCell>

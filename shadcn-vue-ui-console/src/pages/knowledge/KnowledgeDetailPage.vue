@@ -1,26 +1,19 @@
 <script setup lang="ts">
-/**
- * @description 知识库详情页 — 展示知识库信息与文档列表
- * @author Timon
- */
-import { useRouter, useRoute } from 'vue-router'
-import {
-  ArrowLeft,
-  Upload,
-  FileText,
-  Database,
-  Layers,
-  Clock,
-  MoreHorizontal,
-} from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -29,14 +22,21 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@ui/components/ui/dropdown-menu'
 import { cn } from '@ui/lib/utils'
+import {
+  ArrowLeft,
+  Clock,
+  Database,
+  FileText,
+  Layers,
+  MoreHorizontal,
+  Upload,
+} from 'lucide-vue-next'
+/**
+ * @description 知识库详情页 — 展示知识库信息与文档列表
+ * @author Timon
+ */
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
@@ -136,8 +136,12 @@ const documents = [
           <component :is="stat.icon" class="size-4 text-muted-foreground" />
         </div>
         <div>
-          <p class="text-xs text-muted-foreground">{{ stat.label }}</p>
-          <p class="text-sm font-semibold tabular-nums">{{ stat.value }}</p>
+          <p class="text-xs text-muted-foreground">
+            {{ stat.label }}
+          </p>
+          <p class="text-sm font-semibold tabular-nums">
+            {{ stat.value }}
+          </p>
         </div>
       </div>
     </div>
@@ -145,7 +149,9 @@ const documents = [
     <!-- 文档列表 -->
     <Card class="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle class="text-base">文档列表</CardTitle>
+        <CardTitle class="text-base">
+          文档列表
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
@@ -156,7 +162,9 @@ const documents = [
               <TableHead>段落数</TableHead>
               <TableHead>状态</TableHead>
               <TableHead>上传时间</TableHead>
-              <TableHead class="w-[60px]">操作</TableHead>
+              <TableHead class="w-[60px]">
+                操作
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -167,8 +175,12 @@ const documents = [
                   <span class="font-medium">{{ doc.name }}</span>
                 </div>
               </TableCell>
-              <TableCell class="tabular-nums text-muted-foreground">{{ doc.size }}</TableCell>
-              <TableCell class="tabular-nums text-muted-foreground">{{ doc.segments }}</TableCell>
+              <TableCell class="tabular-nums text-muted-foreground">
+                {{ doc.size }}
+              </TableCell>
+              <TableCell class="tabular-nums text-muted-foreground">
+                {{ doc.segments }}
+              </TableCell>
               <TableCell>
                 <Badge
                   :variant="docStatusConfig[doc.status].badgeVariant"
@@ -178,7 +190,9 @@ const documents = [
                   {{ docStatusConfig[doc.status].label }}
                 </Badge>
               </TableCell>
-              <TableCell class="text-muted-foreground">{{ doc.uploadedAt }}</TableCell>
+              <TableCell class="text-muted-foreground">
+                {{ doc.uploadedAt }}
+              </TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>
@@ -190,7 +204,9 @@ const documents = [
                     <DropdownMenuItem>查看详情</DropdownMenuItem>
                     <DropdownMenuItem>重新索引</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem class="text-destructive">删除</DropdownMenuItem>
+                    <DropdownMenuItem class="text-destructive">
+                      删除
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

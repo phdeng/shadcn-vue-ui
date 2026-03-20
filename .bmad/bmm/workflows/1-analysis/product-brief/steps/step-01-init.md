@@ -122,7 +122,7 @@ Discover and load context documents using smart discovery:
 ---
 stepsCompleted: []
 inputDocuments: []
-workflowType: 'product-brief'
+workflowType: product-brief
 lastStep: 0
 project_name: '{{project_name}}'
 user_name: '{{user_name}}'

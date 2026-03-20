@@ -167,10 +167,10 @@ def test_bug_reproduction():
     """
     # 1. 设置最小必要条件
     setup_minimal_context()
-    
+
     # 2. 触发问题条件
     result = trigger_bug_condition()
-    
+
     # 3. 验证问题存在（修复前应失败）
     assert result == expected_behavior
 ```

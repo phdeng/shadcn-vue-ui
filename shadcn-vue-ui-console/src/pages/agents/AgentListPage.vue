@@ -1,15 +1,6 @@
 <script setup lang="ts">
-/**
- * @description Agent 管理页面 — 管理智能体、工作流与编排规则
- * @author Timon
- */
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { toast } from 'vue-sonner'
-import { Plus, Search, MoreHorizontal, Clock } from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
@@ -17,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
-import { Separator } from '@ui/components/ui/separator'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,8 +15,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@ui/components/ui/dropdown-menu'
+import { Input } from '@ui/components/ui/input'
+import { Separator } from '@ui/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import { cn } from '@ui/lib/utils'
+import { Clock, MoreHorizontal, Plus, Search } from 'lucide-vue-next'
+/**
+ * @description Agent 管理页面 — 管理智能体、工作流与编排规则
+ * @author Timon
+ */
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
 import AgentCreateDialog from '@/components/agents/AgentCreateDialog.vue'
 
 const router = useRouter()
@@ -51,14 +51,14 @@ interface Agent {
 // ========== 状态配置 ==========
 
 /** 各状态的显示配置 */
-const statusConfig: Record<AgentStatus, { label: string; dotClass: string }> = {
+const statusConfig: Record<AgentStatus, { label: string, dotClass: string }> = {
   running: { label: '运行中', dotClass: 'bg-emerald-500' },
   draft: { label: '草稿', dotClass: 'bg-amber-400' },
   stopped: { label: '已停止', dotClass: 'bg-muted-foreground/50' },
 }
 
 /** 筛选标签页配置 */
-const filterTabs: { value: string; label: string }[] = [
+const filterTabs: { value: string, label: string }[] = [
   { value: 'all', label: '全部' },
   { value: 'running', label: '运行中' },
   { value: 'draft', label: '草稿' },
@@ -144,11 +144,11 @@ const filteredAgents = computed(() => {
     const matchStatus = activeTab.value === 'all' || agent.status === activeTab.value
     // 关键词搜索（匹配名称、描述、标签）
     const keyword = searchQuery.value.trim().toLowerCase()
-    const matchSearch =
-      !keyword ||
-      agent.name.toLowerCase().includes(keyword) ||
-      agent.description.toLowerCase().includes(keyword) ||
-      agent.tags.some((tag) => tag.toLowerCase().includes(keyword))
+    const matchSearch
+      = !keyword
+        || agent.name.toLowerCase().includes(keyword)
+        || agent.description.toLowerCase().includes(keyword)
+        || agent.tags.some(tag => tag.toLowerCase().includes(keyword))
     return matchStatus && matchSearch
   })
 })
@@ -182,8 +182,12 @@ function handleMenuAction(action: string, agent: Agent) {
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">Agent 管理</h2>
-        <p class="text-sm text-muted-foreground">管理智能体、工作流与编排规则</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          Agent 管理
+        </h2>
+        <p class="text-sm text-muted-foreground">
+          管理智能体、工作流与编排规则
+        </p>
       </div>
       <Button size="sm" @click="handleCreate">
         <Plus class="mr-2 size-4" />
@@ -332,7 +336,9 @@ function handleMenuAction(action: string, agent: Agent) {
       v-if="filteredAgents.length === 0"
       class="flex flex-col items-center justify-center py-20 text-center"
     >
-      <p class="text-sm text-muted-foreground">没有找到匹配的 Agent</p>
+      <p class="text-sm text-muted-foreground">
+        没有找到匹配的 Agent
+      </p>
       <p class="mt-1 text-xs text-muted-foreground/60">
         尝试更换搜索关键词或筛选条件
       </p>

@@ -1,19 +1,13 @@
 <script setup lang="ts">
-/**
- * @description ChatAgent 对话页 — 类 Dify 对话界面
- * @author Timon
- */
-import { ref } from 'vue'
-import { Send, Bot, User, Sparkles, RotateCcw, Settings2 } from 'lucide-vue-next'
-import { renderMarkdown } from '@/composables/useMarkdown'
-import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
 import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
 } from '@ui/components/ui/card'
+import { Input } from '@ui/components/ui/input'
+import { ScrollArea } from '@ui/components/ui/scroll-area'
 import {
   Select,
   SelectContent,
@@ -22,8 +16,14 @@ import {
   SelectValue,
 } from '@ui/components/ui/select'
 import { Separator } from '@ui/components/ui/separator'
-import { ScrollArea } from '@ui/components/ui/scroll-area'
 import { cn } from '@ui/lib/utils'
+import { Bot, RotateCcw, Send, Settings2, Sparkles, User } from 'lucide-vue-next'
+/**
+ * @description ChatAgent 对话页 — 类 Dify 对话界面
+ * @author Timon
+ */
+import { ref } from 'vue'
+import { renderMarkdown } from '@/composables/useMarkdown'
 
 // 当前选择的 Agent
 const selectedAgent = ref('customer-service')
@@ -57,7 +57,8 @@ const agents = [
 ]
 
 function sendMessage() {
-  if (!inputMessage.value.trim()) return
+  if (!inputMessage.value.trim())
+    return
 
   messages.value.push({
     role: 'user',
@@ -84,7 +85,9 @@ function sendMessage() {
     <!-- 顶部工具栏 -->
     <div class="flex items-center justify-between pb-4">
       <div class="flex items-center gap-3">
-        <h2 class="text-lg font-semibold tracking-tight">ChatAgent</h2>
+        <h2 class="text-lg font-semibold tracking-tight">
+          ChatAgent
+        </h2>
         <Separator orientation="vertical" class="!h-5" />
         <Select v-model="selectedAgent">
           <SelectTrigger class="h-8 w-40 text-xs">
@@ -121,12 +124,14 @@ function sendMessage() {
             :class="cn('flex gap-3', msg.role === 'user' && 'flex-row-reverse')"
           >
             <Avatar class="size-8 shrink-0">
-              <AvatarFallback :class="cn(
-                'text-xs font-medium',
-                msg.role === 'assistant'
-                  ? 'bg-primary/10 text-primary'
-                  : 'bg-muted text-muted-foreground',
-              )">
+              <AvatarFallback
+                :class="cn(
+                  'text-xs font-medium',
+                  msg.role === 'assistant'
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-muted text-muted-foreground',
+                )"
+              >
                 <Bot v-if="msg.role === 'assistant'" class="size-4" />
                 <User v-else class="size-4" />
               </AvatarFallback>
@@ -144,7 +149,9 @@ function sendMessage() {
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <div v-else class="prose prose-sm dark:prose-invert max-w-none" v-html="renderMarkdown(msg.content)" />
               </div>
-              <p class="text-[10px] text-muted-foreground/60 px-1">{{ msg.time }}</p>
+              <p class="text-[10px] text-muted-foreground/60 px-1">
+                {{ msg.time }}
+              </p>
             </div>
           </div>
         </div>

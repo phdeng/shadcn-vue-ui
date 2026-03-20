@@ -1,26 +1,6 @@
 <script setup lang="ts">
-/**
- * @description Agent 详情页 — Dify 风格 Agent 配置与测试面板
- * @author Timon
- */
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import {
-  ArrowLeft,
-  Activity,
-  Clock,
-  TrendingUp,
-  Zap,
-  MessageSquare,
-  LayoutGrid,
-  ScrollText,
-  Send,
-  Bot,
-  User,
-} from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
 import { Badge } from '@ui/components/ui/badge'
-import { Input } from '@ui/components/ui/input'
+import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
@@ -28,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Input } from '@ui/components/ui/input'
 import {
   Table,
   TableBody,
@@ -37,7 +17,27 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import { cn } from '@ui/lib/utils'
+import {
+  Activity,
+  ArrowLeft,
+  Bot,
+  Clock,
+  LayoutGrid,
+  MessageSquare,
+  ScrollText,
+  Send,
+  TrendingUp,
+  User,
+  Zap,
+} from 'lucide-vue-next'
+/**
+ * @description Agent 详情页 — Dify 风格 Agent 配置与测试面板
+ * @author Timon
+ */
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -120,7 +120,8 @@ const chatInput = ref('')
 /** 发送消息（仅前端模拟） */
 function handleSendMessage() {
   const text = chatInput.value.trim()
-  if (!text) return
+  if (!text)
+    return
   chatMessages.value.push({ role: 'user', content: text })
   chatInput.value = ''
   // 模拟 AI 回复
@@ -218,7 +219,9 @@ const callLogs = [
             </div>
           </CardHeader>
           <CardContent>
-            <div class="text-3xl font-bold tracking-tight">{{ item.value }}</div>
+            <div class="text-3xl font-bold tracking-tight">
+              {{ item.value }}
+            </div>
           </CardContent>
         </div>
       </Card>
@@ -245,7 +248,9 @@ const callLogs = [
       <TabsContent value="chat">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">对话测试</CardTitle>
+            <CardTitle class="text-base">
+              对话测试
+            </CardTitle>
             <CardDescription>在此处测试 Agent 的对话能力</CardDescription>
           </CardHeader>
           <CardContent>
@@ -309,7 +314,9 @@ const callLogs = [
       <TabsContent value="config">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">配置详情</CardTitle>
+            <CardTitle class="text-base">
+              配置详情
+            </CardTitle>
             <CardDescription>Agent 的运行参数与关联信息</CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
@@ -320,7 +327,9 @@ const callLogs = [
                 :key="item.label"
                 class="space-y-1 rounded-lg bg-muted/40 px-4 py-3"
               >
-                <p class="text-xs font-medium text-muted-foreground">{{ item.label }}</p>
+                <p class="text-xs font-medium text-muted-foreground">
+                  {{ item.label }}
+                </p>
                 <p class="break-all font-mono text-sm font-medium text-foreground">
                   {{ item.value }}
                 </p>
@@ -329,7 +338,9 @@ const callLogs = [
 
             <!-- 系统提示词（多行展示） -->
             <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-              <p class="text-xs font-medium text-muted-foreground">系统提示词</p>
+              <p class="text-xs font-medium text-muted-foreground">
+                系统提示词
+              </p>
               <p class="whitespace-pre-line text-sm leading-relaxed text-foreground">
                 {{ agent.systemPrompt }}
               </p>
@@ -337,7 +348,9 @@ const callLogs = [
 
             <!-- 能力标签 -->
             <div class="space-y-2 rounded-lg bg-muted/40 px-4 py-3">
-              <p class="text-xs font-medium text-muted-foreground">能力标签</p>
+              <p class="text-xs font-medium text-muted-foreground">
+                能力标签
+              </p>
               <div class="flex flex-wrap gap-1.5">
                 <Badge
                   v-for="tag in agent.tags"
@@ -357,7 +370,9 @@ const callLogs = [
       <TabsContent value="logs">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">调用日志</CardTitle>
+            <CardTitle class="text-base">
+              调用日志
+            </CardTitle>
             <CardDescription>最近 5 条 Agent 调用记录</CardDescription>
           </CardHeader>
           <CardContent>
@@ -374,11 +389,19 @@ const callLogs = [
               </TableHeader>
               <TableBody>
                 <TableRow v-for="(log, i) in callLogs" :key="i">
-                  <TableCell class="font-mono text-sm whitespace-nowrap">{{ log.time }}</TableCell>
+                  <TableCell class="font-mono text-sm whitespace-nowrap">
+                    {{ log.time }}
+                  </TableCell>
                   <TableCell>{{ log.user }}</TableCell>
-                  <TableCell class="max-w-[200px] truncate">{{ log.input }}</TableCell>
-                  <TableCell class="tabular-nums">{{ log.tokens.toLocaleString() }}</TableCell>
-                  <TableCell class="tabular-nums">{{ log.latency }}</TableCell>
+                  <TableCell class="max-w-[200px] truncate">
+                    {{ log.input }}
+                  </TableCell>
+                  <TableCell class="tabular-nums">
+                    {{ log.tokens.toLocaleString() }}
+                  </TableCell>
+                  <TableCell class="tabular-nums">
+                    {{ log.latency }}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       :variant="log.status === '成功' ? 'secondary' : 'destructive'"

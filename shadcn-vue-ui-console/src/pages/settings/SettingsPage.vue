@@ -1,18 +1,8 @@
 <script setup lang="ts">
-/**
- * @description 系统设置页面 — 基本设置、安全设置、通知设置
- * @author Timon
- */
-import { ref } from 'vue'
-import { toast } from 'vue-sonner'
-import { Save, Shield, Bell, Settings } from 'lucide-vue-next'
 import { Button } from '@ui/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/components/ui/card'
 import { Input } from '@ui/components/ui/input'
 import { Label } from '@ui/components/ui/label'
-import { Switch } from '@ui/components/ui/switch'
-import { Separator } from '@ui/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import {
   Select,
   SelectContent,
@@ -20,6 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@ui/components/ui/select'
+import { Separator } from '@ui/components/ui/separator'
+import { Switch } from '@ui/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Bell, Save, Settings, Shield } from 'lucide-vue-next'
+/**
+ * @description 系统设置页面 — 基本设置、安全设置、通知设置
+ * @author Timon
+ */
+import { ref } from 'vue'
+import { toast } from 'vue-sonner'
 
 // ==================== 基本设置 ====================
 const platformName = ref('shadcn-vue-ui')
@@ -99,7 +99,9 @@ function saveNotificationSettings() {
   <div class="flex flex-col gap-8">
     <!-- 页面头部 -->
     <div class="space-y-1">
-      <h1 class="text-2xl font-semibold tracking-tight">系统设置</h1>
+      <h1 class="text-2xl font-semibold tracking-tight">
+        系统设置
+      </h1>
       <p class="text-sm text-muted-foreground leading-relaxed">
         管理平台配置、安全策略与通知偏好
       </p>
@@ -126,7 +128,9 @@ function saveNotificationSettings() {
       <TabsContent value="basic" class="mt-6">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">基本设置</CardTitle>
+            <CardTitle class="text-base">
+              基本设置
+            </CardTitle>
             <CardDescription>配置平台名称、默认模型与界面语言</CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
@@ -169,10 +173,18 @@ function saveNotificationSettings() {
                   <SelectValue placeholder="选择默认模型" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="gpt-4o">GPT-4o</SelectItem>
-                  <SelectItem value="claude-3-5-sonnet">Claude 3.5 Sonnet</SelectItem>
-                  <SelectItem value="deepseek-v3">DeepSeek-V3</SelectItem>
-                  <SelectItem value="qwen2-5-72b">Qwen2.5-72B</SelectItem>
+                  <SelectItem value="gpt-4o">
+                    GPT-4o
+                  </SelectItem>
+                  <SelectItem value="claude-3-5-sonnet">
+                    Claude 3.5 Sonnet
+                  </SelectItem>
+                  <SelectItem value="deepseek-v3">
+                    DeepSeek-V3
+                  </SelectItem>
+                  <SelectItem value="qwen2-5-72b">
+                    Qwen2.5-72B
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <p class="text-xs text-muted-foreground">
@@ -188,8 +200,12 @@ function saveNotificationSettings() {
                   <SelectValue placeholder="选择界面语言" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="zh-CN">中文</SelectItem>
-                  <SelectItem value="en-US">English</SelectItem>
+                  <SelectItem value="zh-CN">
+                    中文
+                  </SelectItem>
+                  <SelectItem value="en-US">
+                    English
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <p class="text-xs text-muted-foreground">
@@ -214,13 +230,17 @@ function saveNotificationSettings() {
       <TabsContent value="security" class="mt-6">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">安全设置</CardTitle>
+            <CardTitle class="text-base">
+              安全设置
+            </CardTitle>
             <CardDescription>管理账户密码、双因素认证与会话策略</CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
             <!-- 修改密码区域 -->
             <div class="space-y-4">
-              <h3 class="text-sm font-medium">修改密码</h3>
+              <h3 class="text-sm font-medium">
+                修改密码
+              </h3>
 
               <!-- 当前密码 -->
               <div class="grid gap-2">
@@ -292,12 +312,24 @@ function saveNotificationSettings() {
                   <SelectValue placeholder="选择超时时间" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="15">15 分钟</SelectItem>
-                  <SelectItem value="30">30 分钟</SelectItem>
-                  <SelectItem value="60">1 小时</SelectItem>
-                  <SelectItem value="120">2 小时</SelectItem>
-                  <SelectItem value="480">8 小时</SelectItem>
-                  <SelectItem value="1440">24 小时</SelectItem>
+                  <SelectItem value="15">
+                    15 分钟
+                  </SelectItem>
+                  <SelectItem value="30">
+                    30 分钟
+                  </SelectItem>
+                  <SelectItem value="60">
+                    1 小时
+                  </SelectItem>
+                  <SelectItem value="120">
+                    2 小时
+                  </SelectItem>
+                  <SelectItem value="480">
+                    8 小时
+                  </SelectItem>
+                  <SelectItem value="1440">
+                    24 小时
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <p class="text-xs text-muted-foreground">
@@ -322,7 +354,9 @@ function saveNotificationSettings() {
       <TabsContent value="notification" class="mt-6">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">通知设置</CardTitle>
+            <CardTitle class="text-base">
+              通知设置
+            </CardTitle>
             <CardDescription>配置告警通知渠道和偏好</CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">

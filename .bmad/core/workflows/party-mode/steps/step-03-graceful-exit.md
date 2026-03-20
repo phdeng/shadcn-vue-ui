@@ -92,7 +92,7 @@
 ```yaml
 ---
 stepsCompleted: [1, 2, 3]
-workflowType: 'party-mode'
+workflowType: party-mode
 user_name: '{{user_name}}'
 date: '{{date}}'
 agents_loaded: true

@@ -1,22 +1,6 @@
 <script setup lang="ts">
-/**
- * @description 知识库管理页 — 产品控制台风格
- * @author Timon
- */
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import {
-  Plus,
-  Search,
-  Database,
-  MoreHorizontal,
-  Upload,
-  Clock,
-  File,
-} from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
@@ -24,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
-import { Separator } from '@ui/components/ui/separator'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +15,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@ui/components/ui/dropdown-menu'
+import { Input } from '@ui/components/ui/input'
+import { Separator } from '@ui/components/ui/separator'
 import { cn } from '@ui/lib/utils'
+import {
+  Clock,
+  Database,
+  File,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Upload,
+} from 'lucide-vue-next'
+/**
+ * @description 知识库管理页 — 产品控制台风格
+ * @author Timon
+ */
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const searchQuery = ref('')
@@ -56,8 +56,12 @@ const statusConfig = {
   <div class="flex flex-col gap-6">
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">知识库</h2>
-        <p class="mt-1 text-sm text-muted-foreground">管理文档、数据集与向量索引</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          知识库
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          管理文档、数据集与向量索引
+        </p>
       </div>
       <div class="flex items-center gap-2">
         <Button variant="outline" size="sm">
@@ -94,8 +98,12 @@ const statusConfig = {
                 {{ kb.icon }}
               </div>
               <div>
-                <CardTitle class="text-base leading-none">{{ kb.name }}</CardTitle>
-                <p class="mt-1.5 text-xs text-muted-foreground line-clamp-1">{{ kb.description }}</p>
+                <CardTitle class="text-base leading-none">
+                  {{ kb.name }}
+                </CardTitle>
+                <p class="mt-1.5 text-xs text-muted-foreground line-clamp-1">
+                  {{ kb.description }}
+                </p>
               </div>
             </div>
             <DropdownMenu>
@@ -109,7 +117,9 @@ const statusConfig = {
                 <DropdownMenuItem>上传文档</DropdownMenuItem>
                 <DropdownMenuItem>重建索引</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem class="text-destructive">删除</DropdownMenuItem>
+                <DropdownMenuItem class="text-destructive">
+                  删除
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

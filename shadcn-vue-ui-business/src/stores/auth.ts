@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 
 /**
  * 认证状态管理 — 负责登录/登出、Token 持久化

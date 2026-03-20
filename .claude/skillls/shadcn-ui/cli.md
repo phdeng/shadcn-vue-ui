@@ -152,7 +152,7 @@ pnpm dlx shadcn@latest migrate rtl "src/components/ui/**"
 Transforms imports:
 ```tsx
 // Before
-import * as DialogPrimitive from "@radix-ui/react-dialog"
+import * as DialogPrimitive from '@radix-ui/react-dialog'
 // After
-import { Dialog as DialogPrimitive } from "radix-ui"
+import { Dialog as DialogPrimitive } from 'radix-ui'
 ```

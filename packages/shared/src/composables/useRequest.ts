@@ -8,7 +8,8 @@
  * @module @shadcn-vue-ui/shared/composables
  */
 
-import { ref, type Ref } from 'vue'
+import type { Ref } from 'vue'
+import { ref } from 'vue'
 
 /** useRequest 配置项 */
 export interface UseRequestOptions {
@@ -69,16 +70,20 @@ export function useRequest<T>(
     try {
       const result = await fetcher()
       data.value = result
-    } catch (err: unknown) {
+    }
+    catch (err: unknown) {
       // 统一提取错误信息
       if (err instanceof Error) {
         error.value = err.message
-      } else if (typeof err === 'string') {
+      }
+      else if (typeof err === 'string') {
         error.value = err
-      } else {
+      }
+      else {
         error.value = '请求失败，发生未知错误'
       }
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }

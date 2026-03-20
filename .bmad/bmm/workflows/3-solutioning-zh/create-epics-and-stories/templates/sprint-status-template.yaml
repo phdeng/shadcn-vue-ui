@@ -41,10 +41,10 @@
 # ═══════════════════════════════════════════════════════════════
 
 metadata:
-  generated: "{date}"
-  project: "{project_name}"
-  project_key: "{project_key}"
-  version: "1.0"
+  generated: '{date}'
+  project: '{project_name}'
+  project_key: '{project_key}'
+  version: '1.0'
 
 tracks:
   # ─────────────────────────────────────────────────────────────

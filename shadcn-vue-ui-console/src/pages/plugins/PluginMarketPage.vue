@@ -1,21 +1,6 @@
 <script setup lang="ts">
-/**
- * @description 插件市场页 — Prompt / MCP / Skill
- * @author Timon
- */
-import { ref } from 'vue'
-import {
-  Search,
-  MessageSquareText,
-  Server,
-  Puzzle,
-  Download,
-  Star,
-  ExternalLink,
-} from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
@@ -23,9 +8,24 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
+import { Input } from '@ui/components/ui/input'
 import { Separator } from '@ui/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import { cn } from '@ui/lib/utils'
+import {
+  Download,
+  ExternalLink,
+  MessageSquareText,
+  Puzzle,
+  Search,
+  Server,
+  Star,
+} from 'lucide-vue-next'
+/**
+ * @description 插件市场页 — Prompt / MCP / Skill
+ * @author Timon
+ */
+import { ref } from 'vue'
 
 const searchQuery = ref('')
 const activeTab = ref('all')
@@ -52,7 +52,7 @@ const plugins = ref<PluginItem[]>([
   { id: '6', name: '数据可视化 Skill', description: '根据数据自动生成图表配置，支持 ECharts 和 Chart.js', type: 'skill', author: 'Community', stars: 95, downloads: '1.2k', tags: ['图表', '可视化'] },
 ])
 
-const typeConfig: Record<PluginType, { label: string; icon: typeof MessageSquareText; color: string }> = {
+const typeConfig: Record<PluginType, { label: string, icon: typeof MessageSquareText, color: string }> = {
   prompt: { label: 'Prompt', icon: MessageSquareText, color: 'from-blue-500/10 to-indigo-500/5' },
   mcp: { label: 'MCP', icon: Server, color: 'from-emerald-500/10 to-teal-500/5' },
   skill: { label: 'Skill', icon: Puzzle, color: 'from-violet-500/10 to-purple-500/5' },
@@ -63,8 +63,12 @@ const typeConfig: Record<PluginType, { label: string; icon: typeof MessageSquare
   <div class="flex flex-col gap-6">
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">插件市场</h2>
-        <p class="mt-1 text-sm text-muted-foreground">浏览和安装 Prompt、MCP Server、Skill 插件</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          插件市场
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          浏览和安装 Prompt、MCP Server、Skill 插件
+        </p>
       </div>
       <Button variant="outline" size="sm">
         <ExternalLink class="mr-2 size-4" />
@@ -82,10 +86,18 @@ const typeConfig: Record<PluginType, { label: string; icon: typeof MessageSquare
         <Separator orientation="vertical" class="!h-5" />
         <Tabs v-model="activeTab">
           <TabsList class="h-9">
-            <TabsTrigger value="all" class="text-xs px-3">全部</TabsTrigger>
-            <TabsTrigger value="prompt" class="text-xs px-3">Prompt</TabsTrigger>
-            <TabsTrigger value="mcp" class="text-xs px-3">MCP</TabsTrigger>
-            <TabsTrigger value="skill" class="text-xs px-3">Skill</TabsTrigger>
+            <TabsTrigger value="all" class="text-xs px-3">
+              全部
+            </TabsTrigger>
+            <TabsTrigger value="prompt" class="text-xs px-3">
+              Prompt
+            </TabsTrigger>
+            <TabsTrigger value="mcp" class="text-xs px-3">
+              MCP
+            </TabsTrigger>
+            <TabsTrigger value="skill" class="text-xs px-3">
+              Skill
+            </TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -106,7 +118,9 @@ const typeConfig: Record<PluginType, { label: string; icon: typeof MessageSquare
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
-                <CardTitle class="text-sm leading-none">{{ plugin.name }}</CardTitle>
+                <CardTitle class="text-sm leading-none">
+                  {{ plugin.name }}
+                </CardTitle>
                 <Badge variant="outline" class="text-[10px] px-1.5 py-0">
                   {{ typeConfig[plugin.type].label }}
                 </Badge>

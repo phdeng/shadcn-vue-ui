@@ -28,7 +28,7 @@
 # 未来 workflow.yaml 结构
 libraries:
   - url: 'https://libraries.excalidraw.com/libraries/...'
-    filter: ['aws', 'cloud']
+    filter: [aws, cloud]
   - path: '{project-root}/_data/custom-library.excalidrawlib'
 ```
 

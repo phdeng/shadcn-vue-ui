@@ -1,20 +1,4 @@
 <script setup lang="ts">
-/**
- * @description 全局命令面板（⌘K）— 快速搜索和跳转
- * @author Timon
- */
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
-import {
-  LayoutDashboard,
-  Box,
-  Bot,
-  BookOpen,
-  Store,
-  Settings,
-  Database,
-  Search,
-} from 'lucide-vue-next'
 import {
   CommandDialog,
   CommandEmpty,
@@ -24,6 +8,22 @@ import {
   CommandList,
   CommandSeparator,
 } from '@ui/components/ui/command'
+import {
+  BookOpen,
+  Bot,
+  Box,
+  Database,
+  LayoutDashboard,
+  Search,
+  Settings,
+  Store,
+} from 'lucide-vue-next'
+/**
+ * @description 全局命令面板（⌘K）— 快速搜索和跳转
+ * @author Timon
+ */
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const open = ref(false)
 const router = useRouter()

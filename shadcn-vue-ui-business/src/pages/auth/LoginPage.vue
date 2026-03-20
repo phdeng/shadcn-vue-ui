@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import { Button } from '@ui/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/components/ui/card'
+import { Input } from '@ui/components/ui/input'
+import { Label } from '@ui/components/ui/label'
+import { Switch } from '@ui/components/ui/switch'
+import { BarChart3, Loader2, Shield, Sparkles, Users } from 'lucide-vue-next'
 /**
  * @description 登录页 — 业务管理后台风格，全屏双栏布局
  * @author Timon
  */
 import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
-import { Loader2, Sparkles, Users, Shield, BarChart3 } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
-import { Button } from '@ui/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@ui/components/ui/card'
-import { Input } from '@ui/components/ui/input'
-import { Label } from '@ui/components/ui/label'
-import { Switch } from '@ui/components/ui/switch'
 
 const router = useRouter()
 const route = useRoute()
@@ -51,13 +51,16 @@ async function handleLogin() {
       // 跳转到之前访问的页面或首页
       const redirect = (route.query.redirect as string) || '/'
       router.push(redirect)
-    } else {
+    }
+    else {
       toast.error('登录失败', { description: '请检查邮箱和密码' })
       errorMessage.value = '登录失败，请检查邮箱和密码'
     }
-  } catch {
+  }
+  catch {
     errorMessage.value = '网络异常，请稍后重试'
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }
@@ -91,11 +94,11 @@ async function handleLogin() {
         <div class="space-y-3">
           <h1 class="text-3xl font-bold leading-tight tracking-tight xl:text-4xl">
             高效管理
-            <br />
+            <br>
             业务运营平台
           </h1>
           <p class="max-w-sm text-base leading-relaxed text-primary-foreground/80">
-            统一管理用户、订单与内容，<br />
+            统一管理用户、订单与内容，<br>
             数据驱动业务增长。
           </p>
         </div>
@@ -111,8 +114,12 @@ async function handleLogin() {
               <component :is="feature.icon" class="size-4.5" />
             </div>
             <div>
-              <p class="text-sm font-medium">{{ feature.title }}</p>
-              <p class="mt-0.5 text-xs text-primary-foreground/70">{{ feature.desc }}</p>
+              <p class="text-sm font-medium">
+                {{ feature.title }}
+              </p>
+              <p class="mt-0.5 text-xs text-primary-foreground/70">
+                {{ feature.desc }}
+              </p>
             </div>
           </div>
         </div>
@@ -120,7 +127,9 @@ async function handleLogin() {
 
       <!-- 底部版权 -->
       <div class="relative z-10">
-        <p class="text-xs text-primary-foreground/50">&copy; 2025 shadcn-vue-ui. All rights reserved.</p>
+        <p class="text-xs text-primary-foreground/50">
+          &copy; 2025 shadcn-vue-ui. All rights reserved.
+        </p>
       </div>
     </div>
 

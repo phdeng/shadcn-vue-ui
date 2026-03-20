@@ -25,9 +25,9 @@ sprintStatusTemplate: '{workflow_path}/templates/sprint-status-template.yaml'
 # 项目: {project_name}
 
 metadata:
-  generated: "{date}"
-  project: "{project_name}"
-  version: "1.0"
+  generated: '{date}'
+  project: '{project_name}'
+  version: '1.0'
 
 # 状态定义
 # Epic 状态: backlog → in-progress → done
@@ -40,27 +40,27 @@ tracks:
     story-1.2-api-auth: backlog
     story-1.3-api-user: backlog
     epic-1-retrospective: optional
-    
+
     epic-2: backlog
     story-2.1-entity-product: backlog
     # ...
-    
+
   frontend:
     epic-1: backlog
     story-1.1-page-login: backlog
     story-1.2-page-register: backlog
     story-1.3-page-profile: backlog
     epic-1-retrospective: optional
-    
+
     epic-2: backlog
     # ...
-    
+
   integration:
     epic-1: backlog
     story-1.1-flow-login: backlog
     story-1.2-flow-register: backlog
     epic-1-retrospective: optional
-    
+
     epic-2: backlog
     # ...
 ```

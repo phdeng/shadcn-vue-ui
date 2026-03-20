@@ -145,7 +145,7 @@
 ```typescript
 // stores/example.ts
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 
 export const useExampleStore = defineStore('example', () => {
   // 状态
@@ -160,7 +160,8 @@ export const useExampleStore = defineStore('example', () => {
     loading.value = true
     try {
       items.value = await api.getItems()
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
@@ -261,13 +262,13 @@ export const useExampleStore = defineStore('example', () => {
 ```vue
 <!-- ComponentName/ComponentName.vue -->
 <script setup lang="ts">
+import type { ComponentNameProps } from './types'
 /**
  * @description 组件描述
  * @author Timon
  */
 import { computed } from 'vue'
 import { cn } from '@/lib/utils'
-import type { ComponentNameProps } from './types'
 
 // Props
 const props = withDefaults(defineProps<ComponentNameProps>(), {
@@ -352,15 +353,15 @@ export type { ComponentNameProps } from './types'
 ```vue
 <!-- pages/model/ModelList.vue -->
 <script setup lang="ts">
+import { PageHeader } from '@shared/components/PageHeader'
+import { Button } from '@ui/components/ui/button'
 /**
  * @description 模型管理列表页
  * @author Timon
  */
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useModelStore } from '@/stores/model'
-import { PageHeader } from '@shared/components/PageHeader'
-import { Button } from '@ui/components/ui/button'
 
 // 路由 & Store
 const router = useRouter()
@@ -393,7 +394,9 @@ function handleSearch() {
       description="管理和监控所有已注册的大语言模型"
     >
       <template #actions>
-        <Button @click="handleCreate">新建模型</Button>
+        <Button @click="handleCreate">
+          新建模型
+        </Button>
       </template>
     </PageHeader>
 

@@ -1,36 +1,40 @@
 <script setup lang="ts">
+import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
+import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@ui/components/ui/card'
+import { cn } from '@ui/lib/utils'
+import { Activity, ArrowDownRight, ArrowUpRight, BookOpen, Bot, Box, Sparkles } from 'lucide-vue-next'
 /**
  * @description 控制台概览页 — 云平台产品风格
  * @author Timon
  */
 import { computed } from 'vue'
-import { Box, Bot, BookOpen, Activity, ArrowUpRight, ArrowDownRight, Sparkles } from 'lucide-vue-next'
-import { useAuthStore } from '@/stores/auth'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from '@ui/components/ui/card'
-import { Badge } from '@ui/components/ui/badge'
-import { Button } from '@ui/components/ui/button'
-import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
-import { cn } from '@ui/lib/utils'
-import LineChart from '@/components/charts/LineChart.vue'
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
+import LineChart from '@/components/charts/LineChart.vue'
 import ServiceStatus from '@/components/dashboard/ServiceStatus.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
 // 根据时段动态问候
 const greeting = computed(() => {
   const hour = new Date().getHours()
-  if (hour < 6) return '夜深了'
-  if (hour < 12) return '早上好'
-  if (hour < 14) return '中午好'
-  if (hour < 18) return '下午好'
+  if (hour < 6)
+    return '夜深了'
+  if (hour < 12)
+    return '早上好'
+  if (hour < 14)
+    return '中午好'
+  if (hour < 18)
+    return '下午好'
   return '晚上好'
 })
 
@@ -60,7 +64,7 @@ const lineChartData = {
     {
       label: 'GPT-4o',
       data: [1200, 1900, 1500, 2100, 2400, 1800, 2200],
-      borderColor: 'rgba(59, 130, 246, 0.9)',       // 蓝色
+      borderColor: 'rgba(59, 130, 246, 0.9)', // 蓝色
       backgroundColor: 'rgba(59, 130, 246, 0.08)',
       fill: true,
       tension: 0.4,
@@ -74,7 +78,7 @@ const lineChartData = {
     {
       label: 'Claude 3.5',
       data: [800, 1100, 950, 1400, 1600, 1200, 1500],
-      borderColor: 'rgba(245, 158, 11, 0.9)',       // 橙色
+      borderColor: 'rgba(245, 158, 11, 0.9)', // 橙色
       backgroundColor: 'rgba(245, 158, 11, 0.08)',
       fill: true,
       tension: 0.4,
@@ -137,10 +141,10 @@ const doughnutChartData = {
     {
       data: [42, 30, 18, 10],
       backgroundColor: [
-        'rgba(59, 130, 246, 0.8)',    // 蓝色 — GPT-4o
-        'rgba(245, 158, 11, 0.8)',    // 橙色 — Claude
-        'rgba(16, 185, 129, 0.8)',    // 绿色 — DeepSeek
-        'rgba(156, 163, 175, 0.5)',   // 灰色 — 其他
+        'rgba(59, 130, 246, 0.8)', // 蓝色 — GPT-4o
+        'rgba(245, 158, 11, 0.8)', // 橙色 — Claude
+        'rgba(16, 185, 129, 0.8)', // 绿色 — DeepSeek
+        'rgba(156, 163, 175, 0.5)', // 灰色 — 其他
       ],
       borderColor: [
         'rgba(59, 130, 246, 1)',
@@ -194,8 +198,12 @@ const quickActions = [
     <!-- 欢迎区 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">{{ greeting }}，{{ userName }}</h2>
-        <p class="mt-1 text-sm text-muted-foreground">以下是你的 AI 平台运行概况</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          {{ greeting }}，{{ userName }}
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          以下是你的 AI 平台运行概况
+        </p>
       </div>
     </div>
 
@@ -208,13 +216,17 @@ const quickActions = [
       >
         <div :class="cn('bg-gradient-to-br', item.color)">
           <CardHeader class="flex flex-row items-center justify-between pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground">{{ item.title }}</CardTitle>
+            <CardTitle class="text-sm font-medium text-muted-foreground">
+              {{ item.title }}
+            </CardTitle>
             <div :class="cn('rounded-lg bg-background/60 p-2 backdrop-blur-sm', item.iconColor)">
               <component :is="item.icon" class="size-4" />
             </div>
           </CardHeader>
           <CardContent>
-            <div class="text-3xl font-bold tracking-tight">{{ item.value }}</div>
+            <div class="text-3xl font-bold tracking-tight">
+              {{ item.value }}
+            </div>
             <div class="mt-2 flex items-center gap-1.5 text-xs">
               <Badge
                 :variant="item.trend === 'up' ? 'secondary' : 'destructive'"
@@ -238,7 +250,9 @@ const quickActions = [
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
-              <CardTitle class="text-base">调用趋势</CardTitle>
+              <CardTitle class="text-base">
+                调用趋势
+              </CardTitle>
               <CardDescription>近 7 日模型调用量变化</CardDescription>
             </div>
             <Button variant="ghost" size="sm" class="text-xs text-muted-foreground">
@@ -258,7 +272,9 @@ const quickActions = [
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
-              <CardTitle class="text-base">最近活动</CardTitle>
+              <CardTitle class="text-base">
+                最近活动
+              </CardTitle>
               <CardDescription>模型调用分布与平台动态</CardDescription>
             </div>
           </div>
@@ -280,11 +296,17 @@ const quickActions = [
               class="flex items-start gap-3 rounded-lg p-2 transition-colors hover:bg-muted/50"
             >
               <Avatar class="size-7 shrink-0">
-                <AvatarFallback class="text-[10px] font-medium">{{ activity.avatar }}</AvatarFallback>
+                <AvatarFallback class="text-[10px] font-medium">
+                  {{ activity.avatar }}
+                </AvatarFallback>
               </Avatar>
               <div class="flex-1 space-y-0.5">
-                <p class="text-sm leading-snug">{{ activity.action }}</p>
-                <p class="text-[11px] text-muted-foreground">{{ activity.user }} · {{ activity.time }}</p>
+                <p class="text-sm leading-snug">
+                  {{ activity.action }}
+                </p>
+                <p class="text-[11px] text-muted-foreground">
+                  {{ activity.user }} · {{ activity.time }}
+                </p>
               </div>
             </div>
           </div>
@@ -303,23 +325,29 @@ const quickActions = [
 
       <!-- 快速操作 -->
       <div>
-        <h3 class="mb-3 text-sm font-medium text-muted-foreground">快速开始</h3>
-      <div class="grid gap-3 sm:grid-cols-3">
-        <RouterLink
-          v-for="action in quickActions"
-          :key="action.label"
-          :to="action.path"
-          class="group flex items-center gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:border-primary/20 hover:shadow-md"
-        >
-          <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-            <Sparkles class="size-4" />
-          </div>
-          <div>
-            <p class="text-sm font-medium">{{ action.label }}</p>
-            <p class="text-[11px] text-muted-foreground">{{ action.desc }}</p>
-          </div>
-        </RouterLink>
-      </div>
+        <h3 class="mb-3 text-sm font-medium text-muted-foreground">
+          快速开始
+        </h3>
+        <div class="grid gap-3 sm:grid-cols-3">
+          <RouterLink
+            v-for="action in quickActions"
+            :key="action.label"
+            :to="action.path"
+            class="group flex items-center gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:border-primary/20 hover:shadow-md"
+          >
+            <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+              <Sparkles class="size-4" />
+            </div>
+            <div>
+              <p class="text-sm font-medium">
+                {{ action.label }}
+              </p>
+              <p class="text-[11px] text-muted-foreground">
+                {{ action.desc }}
+              </p>
+            </div>
+          </RouterLink>
+        </div>
       </div>
     </div>
   </div>

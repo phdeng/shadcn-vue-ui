@@ -1,15 +1,8 @@
 <script setup lang="ts">
-/**
- * @description 用户详情页 — 展示用户基本信息、操作记录等详细内容
- * @author Timon
- */
-import { computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { ArrowLeft, Pencil } from 'lucide-vue-next'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/components/ui/card'
-import { Button } from '@ui/components/ui/button'
-import { Badge } from '@ui/components/ui/badge'
 import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
+import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/components/ui/card'
 import {
   Table,
   TableBody,
@@ -18,6 +11,13 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
+import { ArrowLeft, Pencil } from 'lucide-vue-next'
+/**
+ * @description 用户详情页 — 展示用户基本信息、操作记录等详细内容
+ * @author Timon
+ */
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { getUserById } from '@/mocks/business'
 
 // ==================== 路由 ====================
@@ -32,10 +32,10 @@ const user = computed(() => {
 
 // ==================== 角色颜色映射 ====================
 const roleClass: Record<string, string> = {
-  '管理员': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800',
-  '编辑': 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/50 dark:text-violet-300 dark:border-violet-800',
-  '审核': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800',
-  '普通用户': 'bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-900/50 dark:text-gray-300 dark:border-gray-700',
+  管理员: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800',
+  编辑: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/50 dark:text-violet-300 dark:border-violet-800',
+  审核: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800',
+  普通用户: 'bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-900/50 dark:text-gray-300 dark:border-gray-700',
 }
 
 // ==================== 头像背景色映射 ====================
@@ -86,7 +86,9 @@ function handleBack() {
         </Button>
 
         <template v-if="user">
-          <h2 class="text-2xl font-semibold tracking-tight">{{ user.name }}</h2>
+          <h2 class="text-2xl font-semibold tracking-tight">
+            {{ user.name }}
+          </h2>
           <Avatar class="size-9">
             <AvatarFallback
               :class="avatarColors[(user.id - 1) % avatarColors.length]"
@@ -112,7 +114,9 @@ function handleBack() {
           </Badge>
         </template>
         <template v-else>
-          <h2 class="text-2xl font-semibold tracking-tight text-muted-foreground">用户不存在</h2>
+          <h2 class="text-2xl font-semibold tracking-tight text-muted-foreground">
+            用户不存在
+          </h2>
         </template>
       </div>
 
@@ -127,7 +131,9 @@ function handleBack() {
       <!-- 基本信息卡片 -->
       <Card class="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle class="text-base">基本信息</CardTitle>
+          <CardTitle class="text-base">
+            基本信息
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div class="grid grid-cols-2 gap-x-12 gap-y-5">
@@ -162,7 +168,9 @@ function handleBack() {
       <!-- 操作记录卡片 -->
       <Card class="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle class="text-base">操作记录</CardTitle>
+          <CardTitle class="text-base">
+            操作记录
+          </CardTitle>
         </CardHeader>
         <CardContent class="p-0">
           <Table>
@@ -176,9 +184,13 @@ function handleBack() {
             </TableHeader>
             <TableBody>
               <TableRow v-for="(record, index) in operationRecords" :key="index">
-                <TableCell class="text-muted-foreground">{{ record.time }}</TableCell>
+                <TableCell class="text-muted-foreground">
+                  {{ record.time }}
+                </TableCell>
                 <TableCell>{{ record.action }}</TableCell>
-                <TableCell class="font-mono text-sm text-muted-foreground">{{ record.ip }}</TableCell>
+                <TableCell class="font-mono text-sm text-muted-foreground">
+                  {{ record.ip }}
+                </TableCell>
                 <TableCell>
                   <Badge
                     variant="outline"

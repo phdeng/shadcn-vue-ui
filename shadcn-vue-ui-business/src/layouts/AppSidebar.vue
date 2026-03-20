@@ -1,24 +1,8 @@
 <script setup lang="ts">
-/**
- * @description 业务管理后台侧边栏 — 扁平导航结构
- * @author Timon
- */
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import {
-  LayoutDashboard,
-  Users,
-  Shield,
-  ShoppingCart,
-  FileText,
-  BarChart3,
-  Settings,
-  ChevronDown,
-} from 'lucide-vue-next'
-import { useAuthStore } from '@/stores/auth'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -26,9 +10,25 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter,
   SidebarRail,
 } from '@ui/components/ui/sidebar'
+import {
+  BarChart3,
+  ChevronDown,
+  FileText,
+  LayoutDashboard,
+  Settings,
+  Shield,
+  ShoppingCart,
+  Users,
+} from 'lucide-vue-next'
+/**
+ * @description 业务管理后台侧边栏 — 扁平导航结构
+ * @author Timon
+ */
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -54,7 +54,8 @@ const systemNavItems = [
 ]
 
 function isActive(path: string) {
-  if (path === '/') return route.path === '/'
+  if (path === '/')
+    return route.path === '/'
   return route.path.startsWith(path)
 }
 </script>

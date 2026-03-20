@@ -1,18 +1,13 @@
 <script setup lang="ts">
-/**
- * @description Agent 创建对话框 — Dify/cloud-console 风格的表单弹窗
- * @author Timon
- */
-import { reactive, computed, watch } from 'vue'
+import { Button } from '@ui/components/ui/button'
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@ui/components/ui/dialog'
-import { Button } from '@ui/components/ui/button'
 import { Input } from '@ui/components/ui/input'
 import { Label } from '@ui/components/ui/label'
 import {
@@ -22,6 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@ui/components/ui/select'
+/**
+ * @description Agent 创建对话框 — Dify/cloud-console 风格的表单弹窗
+ * @author Timon
+ */
+import { computed, reactive, watch } from 'vue'
 
 // ---- 类型定义 ----
 
@@ -61,7 +61,7 @@ const modelOptions = [
 
 // ---- 头像颜色预设 ----
 
-const avatarColors: { key: AvatarColor; bg: string; ring: string }[] = [
+const avatarColors: { key: AvatarColor, bg: string, ring: string }[] = [
   { key: 'blue', bg: 'bg-blue-500', ring: 'ring-blue-500/40' },
   { key: 'violet', bg: 'bg-violet-500', ring: 'ring-violet-500/40' },
   { key: 'emerald', bg: 'bg-emerald-500', ring: 'ring-emerald-500/40' },
@@ -72,14 +72,16 @@ const avatarColors: { key: AvatarColor; bg: string; ring: string }[] = [
 // ---- 表单状态 ----
 
 /** 初始表单值 */
-const initialForm = (): AgentFormData => ({
-  name: '',
-  description: '',
-  model: '',
-  systemPrompt: '',
-  tags: '',
-  avatarColor: 'blue',
-})
+function initialForm(): AgentFormData {
+  return {
+    name: '',
+    description: '',
+    model: '',
+    systemPrompt: '',
+    tags: '',
+    avatarColor: 'blue',
+  }
+}
 
 const form = reactive<AgentFormData>(initialForm())
 
@@ -107,7 +109,8 @@ function handleClose() {
 
 /** 提交表单 */
 function handleSubmit() {
-  if (!isValid.value) return
+  if (!isValid.value)
+    return
   emit('submit', { ...form })
   handleClose()
 }
@@ -206,8 +209,7 @@ function handleSubmit() {
               v-for="color in avatarColors"
               :key="color.key"
               type="button"
-              :class="[
-                'size-7 rounded-full transition-all',
+              class="size-7 rounded-full transition-all" :class="[
                 color.bg,
                 form.avatarColor === color.key
                   ? `ring-2 ${color.ring} scale-110`

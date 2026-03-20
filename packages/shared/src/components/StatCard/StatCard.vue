@@ -4,8 +4,8 @@
  * @author Timon
  */
 import type { Component } from 'vue'
-import { ArrowUpRight, ArrowDownRight } from 'lucide-vue-next'
 import { cn } from '@ui/lib/utils'
+import { ArrowDownRight, ArrowUpRight } from 'lucide-vue-next'
 
 defineProps<{
   title: string
@@ -23,7 +23,9 @@ defineProps<{
       <span class="text-sm font-medium text-muted-foreground">{{ title }}</span>
       <component :is="icon" v-if="icon" class="size-4 text-muted-foreground" />
     </div>
-    <div class="text-2xl font-semibold text-card-foreground">{{ value }}</div>
+    <div class="text-2xl font-semibold text-card-foreground">
+      {{ value }}
+    </div>
     <div v-if="change" class="mt-1 flex items-center gap-1 text-xs">
       <ArrowUpRight v-if="trend === 'up'" class="size-3 text-emerald-500" />
       <ArrowDownRight v-else-if="trend === 'down'" class="size-3 text-destructive" />

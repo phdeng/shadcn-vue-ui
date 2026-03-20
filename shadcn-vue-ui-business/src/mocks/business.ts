@@ -91,7 +91,7 @@ export const mockOrders: OrderItem[] = [
  * @returns 匹配的用户对象，未找到时返回 undefined
  */
 export function getUserById(id: number): UserItem | undefined {
-  return mockUsers.find((user) => user.id === id)
+  return mockUsers.find(user => user.id === id)
 }
 
 /**
@@ -101,5 +101,5 @@ export function getUserById(id: number): UserItem | undefined {
  * @returns 匹配的订单对象，未找到时返回 undefined
  */
 export function getOrderById(id: string): OrderItem | undefined {
-  return mockOrders.find((order) => order.id === id)
+  return mockOrders.find(order => order.id === id)
 }

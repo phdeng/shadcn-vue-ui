@@ -1,23 +1,6 @@
 <script setup lang="ts">
-/**
- * @description 模型详情页 — Dify / 云控制台产品风格
- * @author Timon
- */
-import { useRouter } from 'vue-router'
-import {
-  ArrowLeft,
-  Circle,
-  Settings,
-  Activity,
-  Clock,
-  Zap,
-  TrendingUp,
-  FileText,
-  LayoutGrid,
-  ScrollText,
-} from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
@@ -25,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import {
   Table,
   TableBody,
@@ -34,7 +16,25 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import { cn } from '@ui/lib/utils'
+import {
+  Activity,
+  ArrowLeft,
+  Circle,
+  Clock,
+  FileText,
+  LayoutGrid,
+  ScrollText,
+  Settings,
+  TrendingUp,
+  Zap,
+} from 'lucide-vue-next'
+/**
+ * @description 模型详情页 — Dify / 云控制台产品风格
+ * @author Timon
+ */
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 // 模拟数据 — 后续替换为 API
@@ -121,7 +121,9 @@ const recentCalls = [
             <h2 class="text-2xl font-semibold tracking-tight text-foreground">
               {{ model.name }}
             </h2>
-            <Badge variant="secondary">{{ model.type }}</Badge>
+            <Badge variant="secondary">
+              {{ model.type }}
+            </Badge>
             <div class="flex items-center gap-1.5">
               <Circle class="size-2 fill-emerald-500 text-emerald-500" />
               <span class="text-xs font-medium text-emerald-600 dark:text-emerald-400">运行中</span>
@@ -160,7 +162,9 @@ const recentCalls = [
             </div>
           </CardHeader>
           <CardContent>
-            <div class="text-3xl font-bold tracking-tight">{{ item.value }}</div>
+            <div class="text-3xl font-bold tracking-tight">
+              {{ item.value }}
+            </div>
           </CardContent>
         </div>
       </Card>
@@ -187,7 +191,9 @@ const recentCalls = [
       <TabsContent value="calls">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">最近调用</CardTitle>
+            <CardTitle class="text-base">
+              最近调用
+            </CardTitle>
             <CardDescription>最近 5 条推理调用记录</CardDescription>
           </CardHeader>
           <CardContent>
@@ -202,9 +208,15 @@ const recentCalls = [
               </TableHeader>
               <TableBody>
                 <TableRow v-for="(call, i) in recentCalls" :key="i">
-                  <TableCell class="font-mono text-sm">{{ call.time }}</TableCell>
-                  <TableCell class="tabular-nums">{{ call.tokens.toLocaleString() }}</TableCell>
-                  <TableCell class="tabular-nums">{{ call.latency }}</TableCell>
+                  <TableCell class="font-mono text-sm">
+                    {{ call.time }}
+                  </TableCell>
+                  <TableCell class="tabular-nums">
+                    {{ call.tokens.toLocaleString() }}
+                  </TableCell>
+                  <TableCell class="tabular-nums">
+                    {{ call.latency }}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       :variant="call.status === '成功' ? 'secondary' : 'destructive'"
@@ -223,7 +235,9 @@ const recentCalls = [
       <TabsContent value="config">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">配置详情</CardTitle>
+            <CardTitle class="text-base">
+              配置详情
+            </CardTitle>
             <CardDescription>当前模型的运行参数</CardDescription>
           </CardHeader>
           <CardContent>
@@ -233,7 +247,9 @@ const recentCalls = [
                 :key="item.label"
                 class="space-y-1 rounded-lg bg-muted/40 px-4 py-3"
               >
-                <p class="text-xs font-medium text-muted-foreground">{{ item.label }}</p>
+                <p class="text-xs font-medium text-muted-foreground">
+                  {{ item.label }}
+                </p>
                 <p class="break-all font-mono text-sm font-medium text-foreground">
                   {{ item.value }}
                 </p>
@@ -250,7 +266,9 @@ const recentCalls = [
             <div class="flex size-12 items-center justify-center rounded-full bg-muted">
               <ScrollText class="size-5 text-muted-foreground" />
             </div>
-            <h3 class="mt-4 text-sm font-medium text-foreground">暂无运行日志</h3>
+            <h3 class="mt-4 text-sm font-medium text-foreground">
+              暂无运行日志
+            </h3>
             <p class="mt-1.5 text-center text-xs text-muted-foreground">
               模型运行后，日志将在此处展示
             </p>

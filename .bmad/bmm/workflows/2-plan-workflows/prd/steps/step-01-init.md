@@ -156,11 +156,11 @@ projectDocsCount = 0
 stepsCompleted: []
 inputDocuments: []
 documentCounts:
-  briefs: { { briefCount } }
-  research: { { researchCount } }
-  brainstorming: { { brainstormingCount } }
-  projectDocs: { { projectDocsCount } }
-workflowType: 'prd'
+  briefs: {{briefCount}}
+  research: {{researchCount}}
+  brainstorming: {{brainstormingCount}}
+  projectDocs: {{projectDocsCount}}
+workflowType: prd
 lastStep: 0
 project_name: '{{project_name}}'
 user_name: '{{user_name}}'

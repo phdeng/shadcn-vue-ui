@@ -1,15 +1,6 @@
 <script setup lang="ts">
-/**
- * @description 业务管理后台顶栏 — 产品后台风格
- * @author Timon
- */
-import { computed } from 'vue'
-import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { Sun, Moon, Bell, Settings, HelpCircle, LogOut } from 'lucide-vue-next'
-import { SidebarTrigger } from '@ui/components/ui/sidebar'
-import { Separator } from '@ui/components/ui/separator'
-import { Button } from '@ui/components/ui/button'
 import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
+import { Button } from '@ui/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,11 +10,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@ui/components/ui/dropdown-menu'
+import { Separator } from '@ui/components/ui/separator'
+import { SidebarTrigger } from '@ui/components/ui/sidebar'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@ui/components/ui/tooltip'
+import { Bell, HelpCircle, LogOut, Moon, Settings, Sun } from 'lucide-vue-next'
+/**
+ * @description 业务管理后台顶栏 — 产品后台风格
+ * @author Timon
+ */
+import { computed } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useTheme } from '@/composables/useTheme'
 import { useAuthStore } from '@/stores/auth'
 
@@ -105,15 +105,21 @@ function handleLogout() {
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
           <Avatar class="size-7 cursor-pointer">
-            <AvatarFallback class="bg-primary/10 text-primary text-xs font-medium">T</AvatarFallback>
+            <AvatarFallback class="bg-primary/10 text-primary text-xs font-medium">
+              T
+            </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-56" align="end">
           <!-- 用户信息 -->
           <DropdownMenuLabel class="font-normal">
             <div class="flex flex-col gap-1">
-              <p class="text-sm font-medium leading-none">{{ authStore.user?.name || '用户' }}</p>
-              <p class="text-xs leading-none text-muted-foreground">{{ authStore.user?.email || '' }}</p>
+              <p class="text-sm font-medium leading-none">
+                {{ authStore.user?.name || '用户' }}
+              </p>
+              <p class="text-xs leading-none text-muted-foreground">
+                {{ authStore.user?.email || '' }}
+              </p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

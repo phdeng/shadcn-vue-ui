@@ -4,15 +4,15 @@
  */
 import type { Component } from 'vue'
 import {
-  LayoutDashboard,
+  BookOpen,
+  Bot,
   Box,
   Database,
   GraduationCap,
-  BookOpen,
-  Bot,
-  Store,
+  LayoutDashboard,
   MessageCircle,
   Settings,
+  Store,
 } from 'lucide-vue-next'
 
 export interface NavItem {

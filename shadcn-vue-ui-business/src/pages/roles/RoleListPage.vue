@@ -1,21 +1,6 @@
 <script setup lang="ts">
-/**
- * @description 角色管理页 — 卡片式布局，配置角色权限与访问控制
- * @author Timon
- */
-import { ref } from 'vue'
-import {
-  Plus,
-  MoreHorizontal,
-  Shield,
-  Users,
-  Clock,
-  Pencil,
-  Copy,
-  Trash2,
-} from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
@@ -23,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
-import { Separator } from '@ui/components/ui/separator'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +15,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@ui/components/ui/dropdown-menu'
+import { Separator } from '@ui/components/ui/separator'
+import {
+  Clock,
+  Copy,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Shield,
+  Trash2,
+  Users,
+} from 'lucide-vue-next'
+/**
+ * @description 角色管理页 — 卡片式布局，配置角色权限与访问控制
+ * @author Timon
+ */
+import { ref } from 'vue'
 
 // ==================== 类型定义 ====================
 
@@ -100,7 +100,7 @@ const roles = ref<Role[]>([
 
 // ==================== 角色类型配置 ====================
 
-const typeConfig: Record<RoleType, { label: string; class: string }> = {
+const typeConfig: Record<RoleType, { label: string, class: string }> = {
   system: {
     label: '系统角色',
     class: 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300',
@@ -124,8 +124,12 @@ function handleMenuAction(action: string, role: Role) {
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">角色管理</h2>
-        <p class="mt-1 text-sm text-muted-foreground">配置角色权限与访问控制</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          角色管理
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          配置角色权限与访问控制
+        </p>
       </div>
       <Button size="sm">
         <Plus class="size-4" />

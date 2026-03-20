@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { Button } from '@ui/components/ui/button'
+import { ArrowLeft, Home, Search } from 'lucide-vue-next'
 /**
  * @description 404 页面 — 产品风格的友好提示
  * @author Timon
  */
 import { useRouter } from 'vue-router'
-import { ArrowLeft, Home, Search } from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
 
 const router = useRouter()
 </script>

@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 /**
  * 数字递增动画 composable — 统计卡片 count-up 效果
@@ -14,7 +14,7 @@ export function useCountUp(target: number, duration = 1200) {
     function step(timestamp: number) {
       const progress = Math.min((timestamp - start) / duration, 1)
       // easeOutExpo 缓动函数
-      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress)
+      const eased = progress === 1 ? 1 : 1 - 2 ** (-10 * progress)
       current.value = Math.round(startVal + (target - startVal) * eased)
 
       if (progress < 1) {

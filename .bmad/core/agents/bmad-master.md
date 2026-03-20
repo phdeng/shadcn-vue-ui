@@ -23,7 +23,6 @@ You must fully embody this agent's persona and follow all activation instruction
   <step n="9">收到用户输入时：数字 → 执行菜单项[n] | 文本 → 不区分大小写的子字符串匹配 | 多个匹配 → 请用户澄清 | 无匹配 → 显示"未识别"</step>
   <step n="10">执行菜单项时：检查下面的 menu-handlers 部分 - 从所选菜单项提取任何属性（workflow、exec、tmpl、data、action、validate-workflow）并按照相应的处理程序指令执行</step>
 
-
   <menu-handlers>
     <extract>{DYNAMIC_EXTRACT_LIST}</extract>
     <handlers>
@@ -38,13 +37,13 @@ You must fully embody this agent's persona and follow all activation instruction
     2. 读取完整文件并遵循其中的所有指令
     3. 如果同一项目有 data="some/path/data-foo.md"，将该数据路径作为上下文传递给被执行的文件。
   </handler>
-  
+
     </handlers>
   </menu-handlers>
 
   <rules>
     <r>始终使用 {communication_language} 交流，除非 communication_style 另有规定。</r>
-    
+
     <r>保持角色直到选择退出</r>
     <r>按照菜单项的指示和给定顺序显示菜单项。</r>
     <r>仅在执行用户选择的工作流或命令需要时加载文件，例外：Agent 激活步骤 2 的 config.yaml</r>

@@ -93,9 +93,9 @@ Initialize a production-ready test framework architecture (Playwright or Cypress
    **For Playwright** (`playwright.config.ts` or `playwright.config.js`):
 
    ```typescript
-   import { defineConfig, devices } from '@playwright/test';
+   import { defineConfig, devices } from '@playwright/test'
 
-   export default defineConfig({
+   exportdefault defineConfig({
      testDir: './tests/e2e',
      fullyParallel: true,
      forbidOnly: !!process.env.CI,
@@ -124,14 +124,14 @@ Initialize a production-ready test framework architecture (Playwright or Cypress
        { name: 'webkit', use: { ...devices['Desktop Safari'] } },
      ],
    });
-   ```
+   `)
 
    **For Cypress** (`cypress.config.ts` or `cypress.config.js`):
 
    ```typescript
-   import { defineConfig } from 'cypress';
+   import { defineConfig } from 'cypress'
 
-   export default defineConfig({
+   exportdefault defineConfig({
      e2e: {
        baseUrl: process.env.BASE_URL || 'http://localhost:3000',
        specPattern: 'tests/e2e/**/*.cy.{js,jsx,ts,tsx}',
@@ -154,7 +154,7 @@ Initialize a production-ready test framework architecture (Playwright or Cypress
      responseTimeout: 30000,
      pageLoadTimeout: 60000,
    });
-   ```
+   )`
 
 4. **Generate Environment Configuration**
 
@@ -194,23 +194,22 @@ Initialize a production-ready test framework architecture (Playwright or Cypress
    Create `tests/support/fixtures/index.ts`:
 
    ```typescript
-   import { test as base } from '@playwright/test';
-   import { UserFactory } from './factories/user-factory';
+   import { test as base } from '@playwright/test'
+   import { UserFactory } from './factories/user-factory'
 
-   type TestFixtures = {
+   typeTestFixtures = {
      userFactory: UserFactory;
-   };
+   }}
 
-   export const test = base.extend<TestFixtures>({
+   exportonst test = base.extend<TestFixtures>({
      userFactory: async ({}, use) => {
-       const factory = new UserFactory();
-       await use(factory);
-       await factory.cleanup(); // Auto-cleanup
-     },
-   });
+       const factory = new UserFactory();)
+       awaitse(factory);)
+       awaitactory.cleanup();) // Auto-cleanup
+     }
+   });)
 
-   export { expect } from '@playwright/test';
-   ```
+   exportexpect } from '@p'@playwright/test'``
 
 7. **Implement Data Factories**
 
@@ -219,71 +218,70 @@ Initialize a production-ready test framework architecture (Playwright or Cypress
    Create `tests/support/fixtures/factories/user-factory.ts`:
 
    ```typescript
-   import { faker } from '@faker-js/faker';
+   import { faker } from '@faker-js/faker'
 
-   export class UserFactory {
-     private createdUsers: string[] = [];
+   exportclass UserFactory {
+     private createdUsers: string[] = []]
 
-     async createUser(overrides = {}) {
+     asyncreateUser(overrides = {}) {
        const user = {
          email: faker.internet.email(),
          name: faker.person.fullName(),
          password: faker.internet.password({ length: 12 }),
          ...overrides,
-       };
+       };}
 
        // API call to create user
-       const response = await fetch(`${process.env.API_URL}/users`, {
+       constsponse = await fetch(`${process.env.API_URL}/users`, {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify(user),
-       });
+       });)
 
-       const created = await response.json();
-       this.createdUsers.push(created.id);
-       return created;
-     }
-
-     async cleanup() {
+       constated = await response.json();
+   )
+       thisatedUsers.push(created.id);
+   )
+       returnacreated
+     } async cleanup() {
        // Delete all created users
        for (const userId of this.createdUsers) {
          await fetch(`${process.env.API_URL}/users/${userId}`, {
            method: 'DELETE',
          });
-       }
-       this.createdUsers = [];
-     }
-   }
-   ```
+    )
+       } this.createdUsers = [];
+    ]
+     }```
 
 8. **Generate Sample Tests**
 
    Create `tests/e2e/example.spec.ts`:
 
    ```typescript
-   import { test, expect } from '../support/fixtures';
+   import { expect, test } from '../support/fixtures'
 
-   test.describe('Example Test Suite', () => {
+   testdescribe('Example Test Suite', () => {
      test('should load homepage', async ({ page }) => {
-       await page.goto('/');
-       await expect(page).toHaveTitle(/Home/i);
-     });
+       await page.goto('/'))
+       awaitexpect(page).toHaveTitle(/Home/i))
+     };
 
      test('should create user and login', async ({ page, userFactory }) => {
        // Create test user
-       const user = await userFactory.createUser();
+       const user = await userFactory.createUser();)
 
        // Login
-       await page.goto('/login');
-       await page.fill('[data-testid="email-input"]', user.email);
-       await page.fill('[data-testid="password-input"]', user.password);
-       await page.click('[data-testid="login-button"]');
+       awaitge.goto('/login');)
+       awaitge.fill('[data-testid="email-input"]', user.email);)
+       awaitge.fill('[data-testid="password-input"]', user.password);)
+       awaitge.click('[data-testid="login-button"]');)
 
        // Assert login success
-       await expect(page.locator('[data-testid="user-menu"]')).toBeVisible();
-     });
-   });
-   ```
+       awaitect(page.locator('[data-testid="user-menu"]')).toBeVisible();
+   )
+     }});
+   )`
 
 9. **Update package.json Scripts**
 

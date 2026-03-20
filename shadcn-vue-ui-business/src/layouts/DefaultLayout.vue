@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import {
+  SidebarInset,
+  SidebarProvider,
+} from '@ui/components/ui/sidebar'
 /**
  * @description 业务管理后台默认布局
  * @author Timon
  */
 import { RouterView } from 'vue-router'
-import AppSidebar from './AppSidebar.vue'
-import AppHeader from './AppHeader.vue'
 import CommandPalette from '@/components/common/CommandPalette.vue'
 import KeyboardShortcuts from '@/components/common/KeyboardShortcuts.vue'
-import {
-  SidebarInset,
-  SidebarProvider,
-} from '@ui/components/ui/sidebar'
+import AppHeader from './AppHeader.vue'
+import AppSidebar from './AppSidebar.vue'
 </script>
 
 <template>

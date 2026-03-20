@@ -93,9 +93,9 @@ ComponentName/
 ### 组件模板
 ```vue
 <script setup lang="ts">
+import type { ComponentNameProps } from './types'
 // 1. 导入
 import { computed } from 'vue'
-import type { ComponentNameProps } from './types'
 
 // 2. Props 定义
 const props = withDefaults(defineProps<ComponentNameProps>(), {
@@ -131,9 +131,13 @@ const emit = defineEmits<{
 <template>
   <div class="page-container">
     <!-- 页面头部 -->
-    <header class="page-header">...</header>
+    <header class="page-header">
+      ...
+    </header>
     <!-- 页面内容 -->
-    <main class="page-content">...</main>
+    <main class="page-content">
+      ...
+    </main>
   </div>
 </template>
 ```

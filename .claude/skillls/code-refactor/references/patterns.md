@@ -8,14 +8,14 @@ def process_user_data(user):
     # 验证邮箱
     if not user.email or '@' not in user.email:
         raise ValueError("Invalid email")
-    
+
     # ... 其他处理
-    
+
 def process_admin_data(admin):
     # 验证邮箱（重复）
     if not admin.email or '@' not in admin.email:
         raise ValueError("Invalid email")
-    
+
     # ... 其他处理
 ```
 
@@ -29,7 +29,7 @@ def validate_email(email: str) -> None:
 def process_user_data(user):
     validate_email(user.email)
     # ... 其他处理
-    
+
 def process_admin_data(admin):
     validate_email(admin.email)
     # ... 其他处理
@@ -64,31 +64,31 @@ from abc import ABC, abstractmethod
 
 class BaseExporter(ABC):
     """导出器基类，定义导出流程模板"""
-    
+
     def export(self, data):
         formatted = self._format_header(data)
         formatted += self._format_body(data)
         formatted += self._format_footer(data)
         self._write_output(formatted)
         self._send_notification(f"{self.format_name} exported")
-    
+
     @property
     @abstractmethod
     def format_name(self) -> str:
         pass
-    
+
     @abstractmethod
     def _write_output(self, content: str) -> None:
         pass
 
 class PDFExporter(BaseExporter):
     format_name = "PDF"
-    def _write_output(self, content): 
+    def _write_output(self, content):
         self._write_pdf(content)
 
 class ExcelExporter(BaseExporter):
     format_name = "Excel"
-    def _write_output(self, content): 
+    def _write_output(self, content):
         self._write_excel(content)
 ```
 
@@ -145,33 +145,33 @@ price = calculate_price(product, PercentageDiscount(0.15))
 ### Before
 ```jsx
 function UserProfile() {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    
-    useEffect(() => {
-        fetch('/api/user')
-            .then(res => res.json())
-            .then(setData)
-            .catch(setError)
-            .finally(() => setLoading(false));
-    }, []);
-    // ...
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetch('/api/user')
+      .then(res => res.json())
+      .then(setData)
+      .catch(setError)
+      .finally(() => setLoading(false))
+  }, [])
+  // ...
 }
 
 function ProductList() {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);  // 重复
-    const [error, setError] = useState(null);
-    
-    useEffect(() => {
-        fetch('/api/products')  // 只有 URL 不同
-            .then(res => res.json())
-            .then(setData)
-            .catch(setError)
-            .finally(() => setLoading(false));
-    }, []);
-    // ...
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true) // 重复
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetch('/api/products') // 只有 URL 不同
+      .then(res => res.json())
+      .then(setData)
+      .catch(setError)
+      .finally(() => setLoading(false))
+  }, [])
+  // ...
 }
 ```
 
@@ -179,30 +179,30 @@ function ProductList() {
 ```jsx
 // hooks/useFetch.js
 function useFetch(url) {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    
-    useEffect(() => {
-        fetch(url)
-            .then(res => res.json())
-            .then(setData)
-            .catch(setError)
-            .finally(() => setLoading(false));
-    }, [url]);
-    
-    return { data, loading, error };
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetch(url)
+      .then(res => res.json())
+      .then(setData)
+      .catch(setError)
+      .finally(() => setLoading(false))
+  }, [url])
+
+  return { data, loading, error }
 }
 
 // 使用
 function UserProfile() {
-    const { data, loading, error } = useFetch('/api/user');
-    // ...
+  const { data, loading, error } = useFetch('/api/user')
+  // ...
 }
 
 function ProductList() {
-    const { data, loading, error } = useFetch('/api/products');
-    // ...
+  const { data, loading, error } = useFetch('/api/products')
+  // ...
 }
 ```
 
@@ -291,11 +291,11 @@ class Config:
     TIMEOUT: int = 30
     TOKEN_EXPIRY: int = 3600
     MAX_FILE_SIZE: int = 10 * 1024 * 1024
-    
+
     @property
     def auth_url(self) -> str:
         return f"{self.BASE_URL}/auth"
-    
+
     @property
     def storage_url(self) -> str:
         return f"{self.BASE_URL}/storage"
@@ -314,19 +314,21 @@ response = requests.get(config.auth_url, timeout=config.TIMEOUT)
 ### Before
 ```typescript
 async function getUser(id: string) {
-    const res = await fetch(`/api/users/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error('Failed');
-    return res.json();
+  const res = await fetch(`/api/users/${id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  if (!res.ok)
+    throw new Error('Failed')
+  return res.json()
 }
 
 async function getProducts() {
-    const res = await fetch('/api/products', {
-        headers: { 'Authorization': `Bearer ${token}` }  // 重复
-    });
-    if (!res.ok) throw new Error('Failed');  // 重复
-    return res.json();
+  const res = await fetch('/api/products', {
+    headers: { Authorization: `Bearer ${token}` } // 重复
+  })
+  if (!res.ok)
+    throw new Error('Failed') // 重复
+  return res.json()
 }
 ```
 
@@ -334,33 +336,33 @@ async function getProducts() {
 ```typescript
 // api/client.ts
 class ApiClient {
-    constructor(private baseUrl: string, private token: string) {}
-    
-    private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-        const res = await fetch(`${this.baseUrl}${endpoint}`, {
-            ...options,
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-                ...options?.headers,
-            },
-        });
-        if (!res.ok) {
-            throw new ApiError(res.status, await res.text());
-        }
-        return res.json();
+  constructor(private baseUrl: string, private token: string) {}
+
+  private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    const res = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        ...options?.headers,
+      },
+    })
+    if (!res.ok) {
+      throw new ApiError(res.status, await res.text())
     }
-    
-    get<T>(endpoint: string) { return this.request<T>(endpoint); }
-    post<T>(endpoint: string, data: unknown) {
-        return this.request<T>(endpoint, {
-            method: 'POST',
-            body: JSON.stringify(data),
-        });
-    }
+    return res.json()
+  }
+
+  get<T>(endpoint: string) { return this.request<T>(endpoint) }
+  post<T>(endpoint: string, data: unknown) {
+    return this.request<T>(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
 }
 
 // 使用
-const api = new ApiClient('/api', token);
-const user = await api.get<User>(`/users/${id}`);
-const products = await api.get<Product[]>('/products');
+const api = new ApiClient('/api', token)
+const user = await api.get<User>(`/users/${id}`)
+const products = await api.get<Product[]>('/products')
 ```

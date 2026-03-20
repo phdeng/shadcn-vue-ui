@@ -619,7 +619,7 @@ font-variation-settings: 'opsz' 16;
 ```vue
 <script setup lang="ts">
 // 逐个导入需要的图标（tree-shakable）
-import { Search, Plus, Settings, ChevronRight, Loader2 } from 'lucide-vue-next'
+import { ChevronRight, Loader2, Plus, Search, Settings } from 'lucide-vue-next'
 </script>
 
 <template>
@@ -729,7 +729,7 @@ import { Search, Plus, Settings, ChevronRight, Loader2 } from 'lucide-vue-next'
 ```vue
 <script setup lang="ts">
 import { useColorMode } from '@vueuse/core'
-import { Sun, Moon, Monitor } from 'lucide-vue-next'
+import { Monitor, Moon, Sun } from 'lucide-vue-next'
 
 const mode = useColorMode({
   // 将 dark 类添加到 html 元素
@@ -738,7 +738,7 @@ const mode = useColorMode({
   modes: {
     light: 'light',
     dark: 'dark',
-    auto: 'auto',  // 跟随系统
+    auto: 'auto', // 跟随系统
   },
   // 持久化到 localStorage
   storageKey: 'shadcn-vue-ui-color-mode',
@@ -753,7 +753,7 @@ function toggleMode() {
 </script>
 
 <template>
-  <button @click="toggleMode" class="p-2 rounded-md hover:bg-accent transition-colors duration-150">
+  <button class="p-2 rounded-md hover:bg-accent transition-colors duration-150" @click="toggleMode">
     <Sun v-if="mode === 'light'" :size="20" />
     <Moon v-if="mode === 'dark'" :size="20" />
     <Monitor v-if="mode === 'auto'" :size="20" />

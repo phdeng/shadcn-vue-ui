@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { Button } from '@ui/components/ui/button'
+import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 /**
  * @description 简易分页组件 — 上一页/下一页 + 页码
  * @author Timon
  */
 import { computed } from 'vue'
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
 
 const props = withDefaults(defineProps<{
   total: number

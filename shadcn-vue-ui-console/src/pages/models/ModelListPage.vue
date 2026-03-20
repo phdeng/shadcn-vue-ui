@@ -1,4 +1,39 @@
 <script setup lang="ts">
+import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@ui/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
+import { Input } from '@ui/components/ui/input'
+import { Separator } from '@ui/components/ui/separator'
+import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/components/ui/tooltip'
+import { cn } from '@ui/lib/utils'
+import {
+  Clock,
+  Copy,
+  Eye,
+  MoreHorizontal,
+  PauseCircle,
+  PlayCircle,
+  Plus,
+  Search,
+  Settings,
+  Trash2,
+  Zap,
+} from 'lucide-vue-next'
 /**
  * @description 模型管理列表页 — Dify/云平台风格
  * @author Timon
@@ -10,44 +45,9 @@
  * - 状态指示器使用彩色圆点 + 文字
  * - 整体风格简洁、克制、通透
  */
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
-import {
-  Plus,
-  Search,
-  MoreHorizontal,
-  Zap,
-  Clock,
-  Eye,
-  Settings,
-  Trash2,
-  PauseCircle,
-  PlayCircle,
-  Copy,
-} from 'lucide-vue-next'
-import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
-import { Badge } from '@ui/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from '@ui/components/ui/card'
-import { Separator } from '@ui/components/ui/separator'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@ui/components/ui/dropdown-menu'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/components/ui/tooltip'
-import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
-import { cn } from '@ui/lib/utils'
 import ModelRegisterDialog from '@/components/models/ModelRegisterDialog.vue'
 
 // 路由实例
@@ -130,7 +130,7 @@ const models = ref<ModelItem[]>([
 /** 状态配置映射 */
 const statusConfig: Record<
   ModelStatus,
-  { label: string; dotClass: string; badgeClass: string }
+  { label: string, dotClass: string, badgeClass: string }
 > = {
   running: {
     label: '运行中',
@@ -157,18 +157,19 @@ const filteredModels = computed(() => {
 
   // 按状态标签筛选
   if (activeTab.value === 'running') {
-    result = result.filter((m) => m.status === 'running')
-  } else if (activeTab.value === 'stopped') {
-    result = result.filter((m) => m.status === 'stopped')
+    result = result.filter(m => m.status === 'running')
+  }
+  else if (activeTab.value === 'stopped') {
+    result = result.filter(m => m.status === 'stopped')
   }
 
   // 按关键词搜索（模型名称、提供商）
   const query = searchQuery.value.trim().toLowerCase()
   if (query) {
     result = result.filter(
-      (m) =>
-        m.name.toLowerCase().includes(query) ||
-        m.provider.toLowerCase().includes(query),
+      m =>
+        m.name.toLowerCase().includes(query)
+        || m.provider.toLowerCase().includes(query),
     )
   }
 
@@ -178,8 +179,8 @@ const filteredModels = computed(() => {
 /** 各状态的模型数量 */
 const modelCounts = computed(() => ({
   all: models.value.length,
-  running: models.value.filter((m) => m.status === 'running').length,
-  stopped: models.value.filter((m) => m.status === 'stopped').length,
+  running: models.value.filter(m => m.status === 'running').length,
+  stopped: models.value.filter(m => m.status === 'stopped').length,
 }))
 
 /**
@@ -203,7 +204,9 @@ function handleModelSubmit(data: { name: string }) {
     <!-- 页面头部：标题 + 操作按钮 -->
     <div class="flex items-start justify-between">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold tracking-tight">模型管理</h1>
+        <h1 class="text-2xl font-semibold tracking-tight">
+          模型管理
+        </h1>
         <p class="text-sm text-muted-foreground leading-relaxed">
           管理已注册的大语言模型及推理服务，监控运行状态与调用指标
         </p>
@@ -415,7 +418,9 @@ function handleModelSubmit(data: { name: string }) {
     >
       <Search class="size-10 text-muted-foreground/40" />
       <div class="text-center">
-        <p class="text-sm font-medium text-muted-foreground">未找到匹配的模型</p>
+        <p class="text-sm font-medium text-muted-foreground">
+          未找到匹配的模型
+        </p>
         <p class="mt-1 text-xs text-muted-foreground/60">
           尝试调整搜索关键词或筛选条件
         </p>

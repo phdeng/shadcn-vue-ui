@@ -1,18 +1,17 @@
 <script setup lang="ts">
-/**
- * @description 用户管理页 — 管理系统用户、角色权限与组织架构
- * @author Timon
- */
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { Search, Plus, MoreHorizontal, Pencil, KeyRound, Ban, Trash2 } from 'lucide-vue-next'
-import { Card, CardContent } from '@ui/components/ui/card'
-import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
-import { Badge } from '@ui/components/ui/badge'
 import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
+import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
+import { Card, CardContent } from '@ui/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
+import { Input } from '@ui/components/ui/input'
 import { Separator } from '@ui/components/ui/separator'
-import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import {
   Table,
   TableBody,
@@ -21,13 +20,14 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@ui/components/ui/dropdown-menu'
+import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Ban, KeyRound, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-vue-next'
+/**
+ * @description 用户管理页 — 管理系统用户、角色权限与组织架构
+ * @author Timon
+ */
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 // ==================== 用户模拟数据 ====================
 interface User {
@@ -65,7 +65,8 @@ const filteredUsers = computed(() => {
   // 按状态筛选
   if (activeTab.value === 'active') {
     result = result.filter(u => u.status === 'active')
-  } else if (activeTab.value === 'disabled') {
+  }
+  else if (activeTab.value === 'disabled') {
     result = result.filter(u => u.status === 'disabled')
   }
 
@@ -74,9 +75,9 @@ const filteredUsers = computed(() => {
     const q = searchQuery.value.trim().toLowerCase()
     result = result.filter(
       u =>
-        u.name.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.department.toLowerCase().includes(q),
+        u.name.toLowerCase().includes(q)
+        || u.email.toLowerCase().includes(q)
+        || u.department.toLowerCase().includes(q),
     )
   }
 
@@ -85,10 +86,10 @@ const filteredUsers = computed(() => {
 
 // ==================== 角色颜色映射 ====================
 const roleClass: Record<string, string> = {
-  '管理员': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800',
-  '编辑': 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/50 dark:text-violet-300 dark:border-violet-800',
-  '审核': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800',
-  '普通用户': 'bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-900/50 dark:text-gray-300 dark:border-gray-700',
+  管理员: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800',
+  编辑: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/50 dark:text-violet-300 dark:border-violet-800',
+  审核: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800',
+  普通用户: 'bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-900/50 dark:text-gray-300 dark:border-gray-700',
 }
 
 // ==================== 头像背景色映射 ====================
@@ -109,8 +110,12 @@ const avatarColors = [
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">用户管理</h2>
-        <p class="mt-1 text-sm text-muted-foreground">管理系统用户、角色权限与组织架构</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          用户管理
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          管理系统用户、角色权限与组织架构
+        </p>
       </div>
       <Button size="sm">
         <Plus class="size-4" />
@@ -132,9 +137,15 @@ const avatarColors = [
       <div class="flex items-center gap-3">
         <Tabs v-model="activeTab">
           <TabsList>
-            <TabsTrigger value="all">全部</TabsTrigger>
-            <TabsTrigger value="active">活跃</TabsTrigger>
-            <TabsTrigger value="disabled">禁用</TabsTrigger>
+            <TabsTrigger value="all">
+              全部
+            </TabsTrigger>
+            <TabsTrigger value="active">
+              活跃
+            </TabsTrigger>
+            <TabsTrigger value="disabled">
+              禁用
+            </TabsTrigger>
           </TabsList>
         </Tabs>
         <Separator orientation="vertical" class="h-5" />
@@ -148,13 +159,17 @@ const avatarColors = [
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead class="w-[200px]">用户名</TableHead>
+              <TableHead class="w-[200px]">
+                用户名
+              </TableHead>
               <TableHead>邮箱</TableHead>
               <TableHead>角色</TableHead>
               <TableHead>部门</TableHead>
               <TableHead>状态</TableHead>
               <TableHead>注册时间</TableHead>
-              <TableHead class="w-[60px] text-right">操作</TableHead>
+              <TableHead class="w-[60px] text-right">
+                操作
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -172,7 +187,9 @@ const avatarColors = [
               </TableCell>
 
               <!-- 邮箱 -->
-              <TableCell class="text-muted-foreground">{{ user.email }}</TableCell>
+              <TableCell class="text-muted-foreground">
+                {{ user.email }}
+              </TableCell>
 
               <!-- 角色 -->
               <TableCell>
@@ -201,7 +218,9 @@ const avatarColors = [
               </TableCell>
 
               <!-- 注册时间 -->
-              <TableCell class="text-muted-foreground">{{ user.createdAt }}</TableCell>
+              <TableCell class="text-muted-foreground">
+                {{ user.createdAt }}
+              </TableCell>
 
               <!-- 操作下拉菜单 -->
               <TableCell class="text-right">

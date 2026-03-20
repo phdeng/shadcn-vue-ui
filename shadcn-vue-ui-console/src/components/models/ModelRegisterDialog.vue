@@ -1,18 +1,13 @@
 <script setup lang="ts">
-/**
- * @description 模型注册对话框 — Dify 风格的模型配置表单弹窗
- * @author Timon
- */
-import { reactive, watch } from 'vue'
+import { Button } from '@ui/components/ui/button'
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@ui/components/ui/dialog'
-import { Button } from '@ui/components/ui/button'
 import { Input } from '@ui/components/ui/input'
 import { Label } from '@ui/components/ui/label'
 import {
@@ -22,6 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@ui/components/ui/select'
+/**
+ * @description 模型注册对话框 — Dify 风格的模型配置表单弹窗
+ * @author Timon
+ */
+import { reactive, watch } from 'vue'
 
 /** 模型注册表单数据接口 */
 interface ModelFormData {

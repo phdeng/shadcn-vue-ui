@@ -202,9 +202,9 @@ export const mockModelCalls: ModelCallRecord[] = [
 /** 仪表盘汇总统计数据 */
 export const mockDashboardStats: DashboardStats = {
   totalModels: mockModels.length,
-  runningModels: mockModels.filter((m) => m.status === 'running').length,
-  stoppedModels: mockModels.filter((m) => m.status === 'stopped').length,
-  errorModels: mockModels.filter((m) => m.status === 'error').length,
+  runningModels: mockModels.filter(m => m.status === 'running').length,
+  stoppedModels: mockModels.filter(m => m.status === 'stopped').length,
+  errorModels: mockModels.filter(m => m.status === 'error').length,
   todayCalls: mockModelCalls.length,
   todayTokens: mockModelCalls.reduce((sum, record) => sum + record.tokens, 0),
 }
@@ -218,7 +218,7 @@ export const mockDashboardStats: DashboardStats = {
  * @returns 匹配的模型对象，未找到时返回 undefined
  */
 export function getModelById(id: string): ModelItem | undefined {
-  return mockModels.find((model) => model.id === id)
+  return mockModels.find(model => model.id === id)
 }
 
 /**
@@ -228,5 +228,5 @@ export function getModelById(id: string): ModelItem | undefined {
  * @returns 符合状态条件的模型数组
  */
 export function getModelsByStatus(status: ModelStatus): ModelItem[] {
-  return mockModels.filter((model) => model.status === status)
+  return mockModels.filter(model => model.status === status)
 }

@@ -1,17 +1,16 @@
 <script setup lang="ts">
-/**
- * @description 订单管理页 — 查看和处理业务订单
- * @author Timon
- */
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { Search, Download, MoreHorizontal, Eye, Settings2, XCircle } from 'lucide-vue-next'
-import { Card, CardContent } from '@ui/components/ui/card'
-import { Button } from '@ui/components/ui/button'
-import { Input } from '@ui/components/ui/input'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
+import { Card, CardContent } from '@ui/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
+import { Input } from '@ui/components/ui/input'
 import { Separator } from '@ui/components/ui/separator'
-import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import {
   Table,
   TableBody,
@@ -20,13 +19,14 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@ui/components/ui/dropdown-menu'
+import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Download, Eye, MoreHorizontal, Search, Settings2, XCircle } from 'lucide-vue-next'
+/**
+ * @description 订单管理页 — 查看和处理业务订单
+ * @author Timon
+ */
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 // ==================== 订单模拟数据 ====================
 type OrderStatus = 'pending' | 'processing' | 'completed' | 'cancelled'
@@ -76,9 +76,9 @@ const filteredOrders = computed(() => {
     const q = searchQuery.value.trim().toLowerCase()
     result = result.filter(
       o =>
-        o.id.toLowerCase().includes(q) ||
-        o.customer.toLowerCase().includes(q) ||
-        o.product.toLowerCase().includes(q),
+        o.id.toLowerCase().includes(q)
+        || o.customer.toLowerCase().includes(q)
+        || o.product.toLowerCase().includes(q),
     )
   }
 
@@ -86,7 +86,7 @@ const filteredOrders = computed(() => {
 })
 
 // ==================== 状态配置 ====================
-const statusConfig: Record<OrderStatus, { label: string; class: string; dotClass: string }> = {
+const statusConfig: Record<OrderStatus, { label: string, class: string, dotClass: string }> = {
   pending: {
     label: '待处理',
     class: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300',
@@ -125,8 +125,12 @@ function handleRowClick(orderId: string) {
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">订单管理</h2>
-        <p class="mt-1 text-sm text-muted-foreground">查看和处理业务订单</p>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          订单管理
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          查看和处理业务订单
+        </p>
       </div>
       <Button variant="outline" size="sm">
         <Download class="size-4" />
@@ -148,10 +152,18 @@ function handleRowClick(orderId: string) {
       <div class="flex items-center gap-3">
         <Tabs v-model="activeTab">
           <TabsList>
-            <TabsTrigger value="all">全部</TabsTrigger>
-            <TabsTrigger value="pending">待处理</TabsTrigger>
-            <TabsTrigger value="completed">已完成</TabsTrigger>
-            <TabsTrigger value="cancelled">已取消</TabsTrigger>
+            <TabsTrigger value="all">
+              全部
+            </TabsTrigger>
+            <TabsTrigger value="pending">
+              待处理
+            </TabsTrigger>
+            <TabsTrigger value="completed">
+              已完成
+            </TabsTrigger>
+            <TabsTrigger value="cancelled">
+              已取消
+            </TabsTrigger>
           </TabsList>
         </Tabs>
         <Separator orientation="vertical" class="h-5" />
@@ -165,13 +177,19 @@ function handleRowClick(orderId: string) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead class="w-[160px]">订单号</TableHead>
+              <TableHead class="w-[160px]">
+                订单号
+              </TableHead>
               <TableHead>客户名称</TableHead>
               <TableHead>商品</TableHead>
-              <TableHead class="text-right">金额</TableHead>
+              <TableHead class="text-right">
+                金额
+              </TableHead>
               <TableHead>状态</TableHead>
               <TableHead>下单时间</TableHead>
-              <TableHead class="w-[60px] text-right">操作</TableHead>
+              <TableHead class="w-[60px] text-right">
+                操作
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -182,13 +200,19 @@ function handleRowClick(orderId: string) {
               @click="handleRowClick(order.id)"
             >
               <!-- 订单号 -->
-              <TableCell class="font-mono text-sm">{{ order.id }}</TableCell>
+              <TableCell class="font-mono text-sm">
+                {{ order.id }}
+              </TableCell>
 
               <!-- 客户名称 -->
-              <TableCell class="font-medium">{{ order.customer }}</TableCell>
+              <TableCell class="font-medium">
+                {{ order.customer }}
+              </TableCell>
 
               <!-- 商品 -->
-              <TableCell class="text-muted-foreground">{{ order.product }}</TableCell>
+              <TableCell class="text-muted-foreground">
+                {{ order.product }}
+              </TableCell>
 
               <!-- 金额 -->
               <TableCell class="text-right font-mono tabular-nums">
@@ -207,7 +231,9 @@ function handleRowClick(orderId: string) {
               </TableCell>
 
               <!-- 下单时间 -->
-              <TableCell class="text-muted-foreground">{{ order.createdAt }}</TableCell>
+              <TableCell class="text-muted-foreground">
+                {{ order.createdAt }}
+              </TableCell>
 
               <!-- 操作下拉菜单 -->
               <TableCell class="text-right">

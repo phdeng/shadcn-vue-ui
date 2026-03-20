@@ -8,7 +8,7 @@
 
 支持 Multi-Track 架构：
 - **Backend**: 后端开发 Track
-- **Frontend**: 前端开发 Track  
+- **Frontend**: 前端开发 Track
 - **Integration**: 前后端联调 Track
 
 ## 文档发现策略
@@ -86,9 +86,9 @@
 **文件结构**:
 ```yaml
 metadata:
-  generated: "{date}"
-  project: "{project_name}"
-  version: "1.0"
+  generated: '{date}'
+  project: '{project_name}'
+  version: '1.0'
 
 tracks:
   backend:
@@ -96,12 +96,12 @@ tracks:
     story-1.1-entity-user: {status}
     story-1.2-api-auth: {status}
     epic-1-retrospective: optional
-    
+
   frontend:
     epic-1: {status}
     story-1.1-page-login: {status}
     epic-1-retrospective: optional
-    
+
   integration:
     epic-1: {status}
     story-1.1-flow-login: {status}

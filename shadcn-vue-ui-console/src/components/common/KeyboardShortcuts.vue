@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@ui/components/ui/dialog'
+import { Separator } from '@ui/components/ui/separator'
 /**
  * @description 快捷键提示面板 — 按 ? 显示（GitHub/Linear 风格）
  * @author Timon
  */
-import { ref, onMounted, onUnmounted } from 'vue'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@ui/components/ui/dialog'
-import { Separator } from '@ui/components/ui/separator'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 const open = ref(false)
 
@@ -44,7 +44,8 @@ const shortcuts = [
 function handleKeydown(e: KeyboardEvent) {
   if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
     const tag = (e.target as HTMLElement)?.tagName
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT')
+      return
     e.preventDefault()
     open.value = !open.value
   }

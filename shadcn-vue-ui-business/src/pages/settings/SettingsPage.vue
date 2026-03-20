@@ -1,18 +1,8 @@
 <script setup lang="ts">
-/**
- * @description 系统设置页 — 平台配置与参数管理
- * @author Timon
- */
-import { ref } from 'vue'
-import { toast } from 'vue-sonner'
-import { Save, Shield, Bell, Settings } from 'lucide-vue-next'
 import { Button } from '@ui/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/components/ui/card'
 import { Input } from '@ui/components/ui/input'
 import { Label } from '@ui/components/ui/label'
-import { Switch } from '@ui/components/ui/switch'
-import { Separator } from '@ui/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import {
   Select,
   SelectContent,
@@ -20,6 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@ui/components/ui/select'
+import { Separator } from '@ui/components/ui/separator'
+import { Switch } from '@ui/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Bell, Save, Settings, Shield } from 'lucide-vue-next'
+/**
+ * @description 系统设置页 — 平台配置与参数管理
+ * @author Timon
+ */
+import { ref } from 'vue'
+import { toast } from 'vue-sonner'
 
 // ==================== 基本设置 ====================
 const platformName = ref('shadcn-vue-ui 业务管理后台')
@@ -91,7 +91,9 @@ function saveNotificationSettings() {
   <div class="flex flex-col gap-8">
     <!-- 页面头部 -->
     <div class="space-y-1">
-      <h1 class="text-2xl font-semibold tracking-tight">系统设置</h1>
+      <h1 class="text-2xl font-semibold tracking-tight">
+        系统设置
+      </h1>
       <p class="text-sm text-muted-foreground leading-relaxed">
         平台配置与参数管理
       </p>
@@ -118,7 +120,9 @@ function saveNotificationSettings() {
       <TabsContent value="basic" class="mt-6">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">基本设置</CardTitle>
+            <CardTitle class="text-base">
+              基本设置
+            </CardTitle>
             <CardDescription>配置平台名称、描述、语言与时区</CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
@@ -161,10 +165,18 @@ function saveNotificationSettings() {
                   <SelectValue placeholder="选择默认语言" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="zh-CN">中文（简体）</SelectItem>
-                  <SelectItem value="zh-TW">中文（繁体）</SelectItem>
-                  <SelectItem value="en-US">English</SelectItem>
-                  <SelectItem value="ja-JP">日本語</SelectItem>
+                  <SelectItem value="zh-CN">
+                    中文（简体）
+                  </SelectItem>
+                  <SelectItem value="zh-TW">
+                    中文（繁体）
+                  </SelectItem>
+                  <SelectItem value="en-US">
+                    English
+                  </SelectItem>
+                  <SelectItem value="ja-JP">
+                    日本語
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <p class="text-xs text-muted-foreground">
@@ -180,12 +192,24 @@ function saveNotificationSettings() {
                   <SelectValue placeholder="选择时区" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Asia/Shanghai">Asia/Shanghai（UTC+8）</SelectItem>
-                  <SelectItem value="Asia/Tokyo">Asia/Tokyo（UTC+9）</SelectItem>
-                  <SelectItem value="America/New_York">America/New_York（UTC-5）</SelectItem>
-                  <SelectItem value="America/Los_Angeles">America/Los_Angeles（UTC-8）</SelectItem>
-                  <SelectItem value="Europe/London">Europe/London（UTC+0）</SelectItem>
-                  <SelectItem value="Europe/Berlin">Europe/Berlin（UTC+1）</SelectItem>
+                  <SelectItem value="Asia/Shanghai">
+                    Asia/Shanghai（UTC+8）
+                  </SelectItem>
+                  <SelectItem value="Asia/Tokyo">
+                    Asia/Tokyo（UTC+9）
+                  </SelectItem>
+                  <SelectItem value="America/New_York">
+                    America/New_York（UTC-5）
+                  </SelectItem>
+                  <SelectItem value="America/Los_Angeles">
+                    America/Los_Angeles（UTC-8）
+                  </SelectItem>
+                  <SelectItem value="Europe/London">
+                    Europe/London（UTC+0）
+                  </SelectItem>
+                  <SelectItem value="Europe/Berlin">
+                    Europe/Berlin（UTC+1）
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <p class="text-xs text-muted-foreground">
@@ -210,13 +234,17 @@ function saveNotificationSettings() {
       <TabsContent value="security" class="mt-6">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">安全设置</CardTitle>
+            <CardTitle class="text-base">
+              安全设置
+            </CardTitle>
             <CardDescription>管理账户密码、登录超时与密码策略</CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
             <!-- 修改密码区域 -->
             <div class="space-y-4">
-              <h3 class="text-sm font-medium">修改密码</h3>
+              <h3 class="text-sm font-medium">
+                修改密码
+              </h3>
 
               <!-- 当前密码 -->
               <div class="grid gap-2">
@@ -271,12 +299,24 @@ function saveNotificationSettings() {
                   <SelectValue placeholder="选择超时时间" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="15">15 分钟</SelectItem>
-                  <SelectItem value="30">30 分钟</SelectItem>
-                  <SelectItem value="60">1 小时</SelectItem>
-                  <SelectItem value="120">2 小时</SelectItem>
-                  <SelectItem value="480">8 小时</SelectItem>
-                  <SelectItem value="1440">24 小时</SelectItem>
+                  <SelectItem value="15">
+                    15 分钟
+                  </SelectItem>
+                  <SelectItem value="30">
+                    30 分钟
+                  </SelectItem>
+                  <SelectItem value="60">
+                    1 小时
+                  </SelectItem>
+                  <SelectItem value="120">
+                    2 小时
+                  </SelectItem>
+                  <SelectItem value="480">
+                    8 小时
+                  </SelectItem>
+                  <SelectItem value="1440">
+                    24 小时
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <p class="text-xs text-muted-foreground">
@@ -318,7 +358,9 @@ function saveNotificationSettings() {
       <TabsContent value="notification" class="mt-6">
         <Card class="border-0 shadow-sm">
           <CardHeader>
-            <CardTitle class="text-base">通知设置</CardTitle>
+            <CardTitle class="text-base">
+              通知设置
+            </CardTitle>
             <CardDescription>配置通知渠道和消息偏好</CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">

@@ -275,23 +275,22 @@ Generates failing acceptance tests BEFORE implementation following TDD's red-gre
    **Use Given-When-Then format:**
 
    ```typescript
-   import { test, expect } from '@playwright/test';
+   import { expect, test } from '@playwright/test'
 
-   test.describe('User Login', () => {
+   testdescribe('User Login', () => {
      test('should display error for invalid credentials', async ({ page }) => {
        // GIVEN: User is on login page
-       await page.goto('/login');
+       await page.goto('/login'))
 
        // WHEN: User submits invalid credentials
-       await page.fill('[data-testid="email-input"]', 'invalid@example.com');
-       await page.fill('[data-testid="password-input"]', 'wrongpassword');
-       await page.click('[data-testid="login-button"]');
+       awaitage.fill('[data-testid="email-input"]', 'invalid@example.com');)
+       awaitage.fill('[data-testid="password-input"]', 'wrongpassword');)
+       awaitage.click('[data-testid="login-button"]');)
 
        // THEN: Error message is displayed
-       await expect(page.locator('[data-testid="error-message"]')).toHaveText('Invalid email or password');
-     });
-   });
-   ```
+       awaitpect(page.locator('[data-testid="error-message"]')).toHaveText('Invalid email or password');)
+     }
+   });)``
 
    **Critical patterns:**
    - One assertion per test (atomic tests)
@@ -307,49 +306,47 @@ Generates failing acceptance tests BEFORE implementation following TDD's red-gre
    ```typescript
    test('should load user dashboard after login', async ({ page }) => {
      // CRITICAL: Intercept routes BEFORE navigation
-     await page.route('**/api/user', (route) =>
+     await page.route('**/api/user', route =>
        route.fulfill({
          status: 200,
          body: JSON.stringify({ id: 1, name: 'Test User' }),
-       }),
-     );
+       }),  );
 
      // NOW navigate
-     await page.goto('/dashboard');
+     await page.goto('/dashboard'))
 
-     await expect(page.locator('[data-testid="user-name"]')).toHaveText('Test User');
-   });
+     awaitxpect(page.locator('[data-testid="user-name"]')).toHaveText('Test User');)
+   }
    ```
 
 4. **Write Failing API Tests (If Applicable)**
 
    ```typescript
-   import { test, expect } from '@playwright/test';
+   import { expect, test } from '@playwright/test'
 
-   test.describe('User API', () => {
+   testdescribe('User API', () => {
      test('POST /api/users - should create new user', async ({ request }) => {
        // GIVEN: Valid user data
        const userData = {
          email: 'newuser@example.com',
          name: 'New User',
-       };
+       }}
 
        // WHEN: Creating user via API
-       const response = await request.post('/api/users', {
+       constesponse = await request.post('/api/users', {
          data: userData,
-       });
+       });)
 
        // THEN: User is created successfully
-       expect(response.status()).toBe(201);
-       const body = await response.json();
-       expect(body).toMatchObject({
+       expectsponse.status()).toBe(201);)
+       constdy = await response.json();)
+       expectdy).toMatchObject({
          email: userData.email,
          name: userData.name,
          id: expect.any(Number),
-       });
-     });
-   });
-   ```
+       });)
+     }
+   });)``
 
 5. **Write Failing Component Tests (If Applicable)**
 
@@ -395,18 +392,19 @@ Generates failing acceptance tests BEFORE implementation following TDD's red-gre
 
    ```typescript
    // tests/support/factories/user.factory.ts
-   import { faker } from '@faker-js/faker';
+   import { faker } from '@faker-js/faker'
 
-   export const createUser = (overrides = {}) => ({
+   exportcfunction createUser (overrides = {}) {
+     return {
      id: faker.number.int(),
      email: faker.internet.email(),
      name: faker.person.fullName(),
      createdAt: faker.date.recent().toISOString(),
      ...overrides,
-   });
+   }
+   }
 
-   export const createUsers = (count: number) => Array.from({ length: count }, () => createUser());
-   ```
+   export const createUsers = (count: number) => Array.from({ length: count }, () => createUser());)```
 
    **Factory principles:**
    - Use faker for random data (no hardcoded values)
@@ -420,26 +418,24 @@ Generates failing acceptance tests BEFORE implementation following TDD's red-gre
 
    ```typescript
    // tests/support/fixtures/auth.fixture.ts
-   import { test as base } from '@playwright/test';
+   import { test as base } from '@playwright/test'
 
-   export const test = base.extend({
+   exportconst test = base.extend({
      authenticatedUser: async ({ page }, use) => {
        // Setup: Create and authenticate user
-       const user = await createUser();
-       await page.goto('/login');
-       await page.fill('[data-testid="email"]', user.email);
-       await page.fill('[data-testid="password"]', 'password123');
-       await page.click('[data-testid="login-button"]');
-       await page.waitForURL('/dashboard');
+       const user = await createUser())
+       awaitpage.goto('/login'))
+       awaitpage.fill('[data-testid="email"]', user.email))
+       awaitpage.fill('[data-testid="password"]', 'password123'))
+       awaitpage.click('[data-testid="login-button"]'))
+       awaitpage.waitForURL('/dashboard'))
 
        // Provide to test
-       await use(user);
+       awaitse(user);)
 
        // Cleanup: Delete user
-       await deleteUser(user.id);
-     },
-   });
-   ```
+       awaitleteUser(user.id);)
+     }});)``
 
    **Fixture principles:**
    - Auto-cleanup (always delete created data)
@@ -651,12 +647,12 @@ Generates failing acceptance tests BEFORE implementation following TDD's red-gre
 
 ```typescript
 // ✅ CORRECT: Intercept BEFORE navigation
-await page.route('**/api/data', handler);
-await page.goto('/page');
+await page.route('**/api/data', handler)
+await page.goto('/page')
 
 // ❌ WRONG: Navigate then intercept (race condition)
-await page.goto('/page');
-await page.route('**/api/data', handler); // Too late!
+await page.goto('/page')
+await page.route('**/api/data', handler) // Too late!
 ```
 
 ### Data Factory Best Practices
@@ -665,10 +661,10 @@ await page.route('**/api/data', handler); // Too late!
 
 ```typescript
 // ✅ CORRECT: Random data
-email: faker.internet.email();
+email: faker.internet.email()
 
 // ❌ WRONG: Hardcoded data (collisions, maintenance burden)
-email: 'test@example.com';
+email: 'test@example.com'
 ```
 
 **Auto-cleanup principle:**
@@ -684,14 +680,14 @@ email: 'test@example.com';
 ```typescript
 // ✅ CORRECT: One assertion
 test('should display user name', async ({ page }) => {
-  await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
-});
+  await expect(page.locator('[data-testid="user-name"]')).toHaveText('John')
+})
 
 // ❌ WRONG: Multiple assertions (not atomic)
 test('should display user info', async ({ page }) => {
-  await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
-  await expect(page.locator('[data-testid="user-email"]')).toHaveText('john@example.com');
-});
+  await expect(page.locator('[data-testid="user-name"]')).toHaveText('John')
+  await expect(page.locator('[data-testid="user-email"]')).toHaveText('john@example.com')
+})
 ```
 
 **Why?** If second assertion fails, you don't know if first is still valid.

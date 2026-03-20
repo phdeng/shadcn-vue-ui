@@ -1,13 +1,7 @@
 <script setup lang="ts">
-/**
- * @description 订单详情页 — Dify 风格订单详情，含订单信息、流程时间线、操作记录
- * @author Timon
- */
-import { useRouter, useRoute } from 'vue-router'
-import { ArrowLeft, Check, Circle } from 'lucide-vue-next'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/components/ui/card'
-import { Button } from '@ui/components/ui/button'
 import { Badge } from '@ui/components/ui/badge'
+import { Button } from '@ui/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/components/ui/card'
 import {
   Table,
   TableBody,
@@ -16,6 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
+import { ArrowLeft, Check, Circle } from 'lucide-vue-next'
+/**
+ * @description 订单详情页 — Dify 风格订单详情，含订单信息、流程时间线、操作记录
+ * @author Timon
+ */
+import { useRoute, useRouter } from 'vue-router'
 
 // ==================== 路由 ====================
 const router = useRouter()
@@ -49,7 +49,7 @@ const orderData: OrderDetail = {
 }
 
 // ==================== 状态配置 ====================
-const statusConfig: Record<OrderStatus, { label: string; class: string; dotClass: string }> = {
+const statusConfig: Record<OrderStatus, { label: string, class: string, dotClass: string }> = {
   pending: {
     label: '待处理',
     class: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300',
@@ -140,13 +140,17 @@ function handleBack() {
           {{ statusConfig[orderData.status].label }}
         </Badge>
       </div>
-      <Button size="sm">处理订单</Button>
+      <Button size="sm">
+        处理订单
+      </Button>
     </div>
 
     <!-- 订单信息卡片 -->
     <Card class="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle class="text-base">订单信息</CardTitle>
+        <CardTitle class="text-base">
+          订单信息
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div class="grid grid-cols-2 gap-x-12 gap-y-5">
@@ -195,7 +199,9 @@ function handleBack() {
     <!-- 订单流程时间线卡片 -->
     <Card class="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle class="text-base">订单流程</CardTitle>
+        <CardTitle class="text-base">
+          订单流程
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div class="relative flex items-start justify-between px-4">
@@ -250,7 +256,9 @@ function handleBack() {
     <!-- 操作记录卡片 -->
     <Card class="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle class="text-base">操作记录</CardTitle>
+        <CardTitle class="text-base">
+          操作记录
+        </CardTitle>
       </CardHeader>
       <CardContent class="p-0">
         <Table>
@@ -264,10 +272,16 @@ function handleBack() {
           </TableHeader>
           <TableBody>
             <TableRow v-for="(record, index) in operationRecords" :key="index">
-              <TableCell class="text-muted-foreground">{{ record.time }}</TableCell>
-              <TableCell class="font-medium">{{ record.operator }}</TableCell>
+              <TableCell class="text-muted-foreground">
+                {{ record.time }}
+              </TableCell>
+              <TableCell class="font-medium">
+                {{ record.operator }}
+              </TableCell>
               <TableCell>{{ record.action }}</TableCell>
-              <TableCell class="text-muted-foreground">{{ record.remark }}</TableCell>
+              <TableCell class="text-muted-foreground">
+                {{ record.remark }}
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>

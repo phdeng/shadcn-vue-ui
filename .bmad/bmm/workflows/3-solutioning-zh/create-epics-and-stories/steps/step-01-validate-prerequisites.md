@@ -22,7 +22,7 @@ workflowFile: '{workflow_path}/workflow.md'
 - [ ] **PRD 文档** - 产品需求文档已审查和批准
   - 位置：`{output_folder}/prd.md` 或类似
   - 包含：功能需求（FR）、非功能需求（NFR）
-  
+
 - [ ] **架构文档** - 技术架构已确定
   - 位置：`{output_folder}/architecture.md` 或类似
   - 包含：技术栈、系统边界、集成点
@@ -31,7 +31,7 @@ workflowFile: '{workflow_path}/workflow.md'
 
 - [ ] **UX 设计** - 用户界面设计（如有）
   - 位置：`{output_folder}/ux-design.md` 或 Figma 链接
-  
+
 - [ ] **API 规范** - API 设计文档（如有）
   - 位置：`{output_folder}/api-spec.md` 或 OpenAPI 文件
 

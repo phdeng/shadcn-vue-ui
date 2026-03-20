@@ -3,16 +3,16 @@
  * @author Timon
  */
 export {
-  mockModels,
-  mockModelCalls,
-  mockDashboardStats,
   getModelById,
   getModelsByStatus,
+  mockDashboardStats,
+  mockModelCalls,
+  mockModels,
 } from './models'
 
 export type {
+  DashboardStats,
+  ModelCallRecord,
   ModelItem,
   ModelStatus,
-  ModelCallRecord,
-  DashboardStats,
 } from './models'

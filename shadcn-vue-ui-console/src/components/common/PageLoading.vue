@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { Card, CardContent, CardHeader } from '@ui/components/ui/card'
 /**
  * @description 页面加载骨架屏 — 卡片列表布局的 Skeleton
  * @author Timon
  */
 import { Skeleton } from '@ui/components/ui/skeleton'
-import { Card, CardHeader, CardContent } from '@ui/components/ui/card'
 
 defineProps<{
   /** 骨架卡片数量 */
@@ -32,10 +32,11 @@ defineProps<{
     </div>
 
     <!-- 卡片骨架 -->
-    <div :class="[
-      'grid gap-4',
-      cols === 4 ? 'sm:grid-cols-2 xl:grid-cols-4' : 'sm:grid-cols-2 xl:grid-cols-3',
-    ]">
+    <div
+      class="grid gap-4" :class="[
+        cols === 4 ? 'sm:grid-cols-2 xl:grid-cols-4' : 'sm:grid-cols-2 xl:grid-cols-3',
+      ]"
+    >
       <Card v-for="i in (count || 6)" :key="i" class="border-0 shadow-sm">
         <CardHeader class="pb-3">
           <div class="flex items-center gap-3">

@@ -70,7 +70,7 @@ pnpm dlx shadcn@latest add @v0/dashboard
 After adding, import from local path:
 
 ```tsx
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 ```
 
 ## components.json
@@ -192,7 +192,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/card'
 
 export function MyCard() {
   return (
