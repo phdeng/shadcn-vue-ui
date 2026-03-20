@@ -23,6 +23,7 @@ import {
  */
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import SystemStatus from '@/components/dashboard/SystemStatus.vue'
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -298,10 +299,13 @@ const quickActions = [
       </Card>
     </div>
 
-    <!-- 快速操作 -->
-    <div>
-      <h3 class="mb-3 text-sm font-medium text-muted-foreground">
-        快速开始
+    <!-- 系统状态 + 快速操作 -->
+    <div class="grid gap-4 lg:grid-cols-2">
+      <SystemStatus />
+
+      <div>
+        <h3 class="mb-3 text-sm font-medium text-muted-foreground">
+          快速开始
       </h3>
       <div class="grid gap-3 sm:grid-cols-3">
         <RouterLink
@@ -322,6 +326,7 @@ const quickActions = [
             </p>
           </div>
         </RouterLink>
+      </div>
       </div>
     </div>
   </div>
