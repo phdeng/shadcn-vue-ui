@@ -7,6 +7,7 @@ import { RouterView } from 'vue-router'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
 import CommandPalette from '@/components/common/CommandPalette.vue'
+import KeyboardShortcuts from '@/components/common/KeyboardShortcuts.vue'
 import {
   SidebarInset,
   SidebarProvider,
@@ -31,6 +32,7 @@ import {
 
     <!-- 全局命令面板 ⌘K -->
     <CommandPalette />
+    <KeyboardShortcuts />
   </SidebarProvider>
 </template>
 

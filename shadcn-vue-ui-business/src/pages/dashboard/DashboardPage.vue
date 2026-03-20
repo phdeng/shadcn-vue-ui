@@ -18,11 +18,14 @@ import { useAuthStore } from '@/stores/auth'
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
 import { Badge } from '@ui/components/ui/badge'
 import { cn } from '@ui/lib/utils'
+import LineChart from '@/components/charts/LineChart.vue'
+import DoughnutChart from '@/components/charts/DoughnutChart.vue'
 
 const authStore = useAuthStore()
 
@@ -82,6 +85,120 @@ const stats = [
   },
 ]
 
+// ==================== 用户增长趋势折线图数据 ====================
+const userGrowthChartData = {
+  labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+  datasets: [
+    {
+      label: '新增用户',
+      data: [45, 62, 58, 89, 112, 95, 128],
+      borderColor: 'rgba(59, 130, 246, 0.9)',       // 蓝色
+      backgroundColor: 'rgba(59, 130, 246, 0.08)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 1.5,
+      borderWidth: 2,
+    },
+  ],
+}
+
+/** 折线图配置 — 简洁网格、无标题、Inter 字体 */
+const userGrowthChartOptions = {
+  plugins: {
+    title: { display: false },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.75)',
+      titleFont: { family: 'Inter, sans-serif', size: 12 },
+      bodyFont: { family: 'Inter, sans-serif', size: 11 },
+      padding: 10,
+      cornerRadius: 8,
+      displayColors: true,
+      boxPadding: 4,
+    },
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: {
+        font: { family: 'Inter, sans-serif', size: 11 },
+        color: 'rgba(156, 163, 175, 0.9)',
+      },
+      border: { display: false },
+    },
+    y: {
+      grid: {
+        color: 'rgba(156, 163, 175, 0.15)',
+        borderDash: [4, 4],
+      },
+      ticks: {
+        font: { family: 'Inter, sans-serif', size: 11 },
+        color: 'rgba(156, 163, 175, 0.9)',
+        maxTicksLimit: 5,
+      },
+      border: { display: false },
+    },
+  },
+  interaction: {
+    intersect: false,
+    mode: 'index' as const,
+  },
+}
+
+// ==================== 订单状态分布环形图数据 ====================
+const orderStatusChartData = {
+  labels: ['待处理', '处理中', '已完成', '已取消'],
+  datasets: [
+    {
+      data: [30, 25, 35, 10],
+      backgroundColor: [
+        'rgba(245, 158, 11, 0.8)',    // 琥珀色 — 待处理
+        'rgba(59, 130, 246, 0.8)',    // 蓝色 — 处理中
+        'rgba(16, 185, 129, 0.8)',    // 翡翠色 — 已完成
+        'rgba(156, 163, 175, 0.5)',   // 灰色 — 已取消
+      ],
+      borderColor: [
+        'rgba(245, 158, 11, 1)',
+        'rgba(59, 130, 246, 1)',
+        'rgba(16, 185, 129, 1)',
+        'rgba(156, 163, 175, 0.7)',
+      ],
+      borderWidth: 1,
+      hoverOffset: 6,
+    },
+  ],
+}
+
+/** 环形图配置 — 紧凑布局、右侧图例 */
+const orderStatusChartOptions = {
+  cutout: '65%',
+  plugins: {
+    legend: {
+      position: 'right' as const,
+      labels: {
+        font: { family: 'Inter, sans-serif', size: 11 },
+        color: 'rgba(156, 163, 175, 0.9)',
+        padding: 12,
+        usePointStyle: true,
+        pointStyleWidth: 8,
+      },
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.75)',
+      titleFont: { family: 'Inter, sans-serif', size: 12 },
+      bodyFont: { family: 'Inter, sans-serif', size: 11 },
+      padding: 10,
+      cornerRadius: 8,
+      callbacks: {
+        label: (ctx: any) => ` ${ctx.label}: ${ctx.parsed}%`,
+      },
+    },
+  },
+}
+
 // ==================== 快速操作数据 ====================
 const quickActions = [
   { label: '新增用户', desc: '创建并分配用户角色', path: '/users' },
@@ -129,6 +246,39 @@ const quickActions = [
             </div>
           </CardContent>
         </div>
+      </Card>
+    </div>
+
+    <!-- 中间区 — 用户增长趋势 + 订单状态分布 -->
+    <div class="grid gap-4 lg:grid-cols-7">
+      <!-- 用户增长趋势折线图 -->
+      <Card class="lg:col-span-4 shadow-sm border-0">
+        <CardHeader>
+          <div class="flex items-center justify-between">
+            <div>
+              <CardTitle class="text-base">用户增长趋势</CardTitle>
+              <CardDescription>近 7 日新增用户变化</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div class="h-[240px]">
+            <LineChart :data="userGrowthChartData" :options="userGrowthChartOptions" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <!-- 订单状态分布环形图 -->
+      <Card class="lg:col-span-3 shadow-sm border-0">
+        <CardHeader>
+          <CardTitle class="text-base">订单状态分布</CardTitle>
+          <CardDescription>当前订单状态占比</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div class="h-[240px]">
+            <DoughnutChart :data="orderStatusChartData" :options="orderStatusChartOptions" />
+          </div>
+        </CardContent>
       </Card>
     </div>
 

@@ -10,7 +10,6 @@ import {
   CreditCard,
   ArrowUpRight,
   ArrowDownRight,
-  BarChart3,
 } from 'lucide-vue-next'
 import {
   Card,
@@ -29,6 +28,7 @@ import {
   TableRow,
 } from '@ui/components/ui/table'
 import { cn } from '@ui/lib/utils'
+import LineChart from '@/components/charts/LineChart.vue'
 
 // ==================== 统计卡片数据 ====================
 const stats = [
@@ -73,6 +73,83 @@ const stats = [
     iconColor: 'text-amber-600 dark:text-amber-400',
   },
 ]
+
+// ==================== 营收趋势折线图数据 ====================
+const revenueChartData = {
+  labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+  datasets: [
+    {
+      label: '营收（万元）',
+      data: [8.2, 9.1, 7.8, 10.5, 12.3, 11.8, 13.2, 14.1, 12.8, 15.3, 14.7, 16.2],
+      borderColor: 'rgba(59, 130, 246, 0.9)',       // 蓝色
+      backgroundColor: 'rgba(59, 130, 246, 0.08)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 1.5,
+      borderWidth: 2,
+    },
+    {
+      label: '成本（万元）',
+      data: [5.1, 5.8, 5.2, 6.3, 7.1, 6.8, 7.5, 8.2, 7.4, 8.8, 8.3, 9.1],
+      borderColor: 'rgba(245, 158, 11, 0.9)',       // 橙色
+      backgroundColor: 'rgba(245, 158, 11, 0.08)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      pointBackgroundColor: 'rgba(245, 158, 11, 1)',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 1.5,
+      borderWidth: 2,
+    },
+  ],
+}
+
+/** 营收趋势折线图配置 — 简洁网格、Inter 字体 */
+const revenueChartOptions = {
+  plugins: {
+    title: { display: false },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.75)',
+      titleFont: { family: 'Inter, sans-serif', size: 12 },
+      bodyFont: { family: 'Inter, sans-serif', size: 11 },
+      padding: 10,
+      cornerRadius: 8,
+      displayColors: true,
+      boxPadding: 4,
+    },
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: {
+        font: { family: 'Inter, sans-serif', size: 11 },
+        color: 'rgba(156, 163, 175, 0.9)',
+      },
+      border: { display: false },
+    },
+    y: {
+      grid: {
+        color: 'rgba(156, 163, 175, 0.15)',
+        borderDash: [4, 4],
+      },
+      ticks: {
+        font: { family: 'Inter, sans-serif', size: 11 },
+        color: 'rgba(156, 163, 175, 0.9)',
+        maxTicksLimit: 5,
+      },
+      border: { display: false },
+    },
+  },
+  interaction: {
+    intersect: false,
+    mode: 'index' as const,
+  },
+}
 
 // ==================== 热门商品 TOP 5 ====================
 interface TopProduct {
@@ -166,16 +243,13 @@ function formatAmount(amount: number): string {
           <div class="flex items-center justify-between">
             <div>
               <CardTitle class="text-base">营收趋势</CardTitle>
-              <CardDescription>近 7 日营收变化</CardDescription>
+              <CardDescription>年度营收与成本对比</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div class="flex h-[240px] items-center justify-center rounded-lg border border-dashed border-border/60 bg-muted/20">
-            <div class="flex flex-col items-center gap-2 text-muted-foreground">
-              <BarChart3 class="size-8 opacity-40" />
-              <p class="text-sm">图表区域 — 待接入数据可视化</p>
-            </div>
+          <div class="h-[240px]">
+            <LineChart :data="revenueChartData" :options="revenueChartOptions" />
           </div>
         </CardContent>
       </Card>
