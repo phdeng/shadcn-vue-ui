@@ -1,11 +1,12 @@
 <script setup lang="ts">
 /**
- * @description 业务管理后台默认布局 — 简洁管理后台风格
+ * @description 业务管理后台默认布局
  * @author Timon
  */
 import { RouterView } from 'vue-router'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
+import CommandPalette from '@/components/common/CommandPalette.vue'
 import {
   SidebarInset,
   SidebarProvider,
@@ -27,11 +28,12 @@ import {
         </div>
       </main>
     </SidebarInset>
+
+    <CommandPalette />
   </SidebarProvider>
 </template>
 
 <style>
-/* 路由过渡动效 — 克制的 fade + 微位移 */
 .page-enter-active {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
