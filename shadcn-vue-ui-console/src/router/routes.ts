@@ -59,6 +59,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/knowledge/KnowledgeListPage.vue'),
         meta: { title: '知识库' },
       },
+      {
+        path: 'knowledge/:id',
+        name: 'KnowledgeDetail',
+        component: () => import('@/pages/knowledge/KnowledgeDetailPage.vue'),
+        meta: { title: '知识库详情' },
+      },
 
       // Agent 管理
       {

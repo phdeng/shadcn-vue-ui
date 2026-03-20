@@ -5,6 +5,17 @@
 @source "../../../packages/ui/src";
 @source "../../../packages/shared/src";
 
+/* NProgress 进度条 — 使用主色 */
+@import 'nprogress/nprogress.css';
+
+#nprogress .bar {
+  background: var(--primary) !important;
+  height: 2px !important;
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px var(--primary), 0 0 5px var(--primary) !important;
+}
+
 /* 本地 Inter 字体 */
 @font-face {
   font-family: 'Inter';

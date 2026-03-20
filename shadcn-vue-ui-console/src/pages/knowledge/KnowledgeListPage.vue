@@ -4,6 +4,7 @@
  * @author Timon
  */
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   Plus,
   Search,
@@ -33,6 +34,7 @@ import {
 } from '@ui/components/ui/dropdown-menu'
 import { cn } from '@ui/lib/utils'
 
+const router = useRouter()
 const searchQuery = ref('')
 
 const knowledgeBases = ref([
@@ -83,6 +85,7 @@ const statusConfig = {
         v-for="kb in knowledgeBases"
         :key="kb.id"
         class="group cursor-pointer border-0 shadow-sm transition-all hover:shadow-md"
+        @click="router.push(`/knowledge/${kb.id}`)"
       >
         <CardHeader class="pb-2">
           <div class="flex items-start justify-between">

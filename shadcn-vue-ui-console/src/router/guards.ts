@@ -1,30 +1,35 @@
 import type { Router } from 'vue-router'
+import NProgress from 'nprogress'
 import { useAuthStore } from '@/stores/auth'
 
+// NProgress 配置 — 细线进度条，无旋转图标
+NProgress.configure({ showSpinner: false, speed: 300, minimum: 0.2 })
+
 /**
- * 路由守卫 — 认证拦截 & 页面标题更新
+ * 路由守卫 — 进度条 + 认证拦截 + 页面标题更新
  * @author Timon
  */
 export function setupRouteGuards(router: Router) {
   /**
-   * 前置守卫：
-   * - 需要认证的路由，未登录则跳转到登录页
-   * - 已登录用户访问 guest 页面（如登录页），则重定向到首页
+   * 前置守卫：启动进度条 + 认证校验
    */
   router.beforeEach((to, _from) => {
+    NProgress.start()
     const authStore = useAuthStore()
 
-    // 需要认证但未登录 → 跳转登录（检查路由链上任一层是否要求认证）
+    // 需要认证但未登录 → 跳转登录
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
     if (requiresAuth && !authStore.isAuthenticated) {
+      NProgress.done()
       return {
         path: '/login',
         query: { redirect: to.fullPath },
       }
     }
 
-    // 已登录访问 guest 页面（如登录页） → 重定向首页
+    // 已登录访问 guest 页面 → 重定向首页
     if (to.meta.guest && authStore.isAuthenticated) {
+      NProgress.done()
       return { path: '/' }
     }
 
@@ -32,9 +37,10 @@ export function setupRouteGuards(router: Router) {
   })
 
   /**
-   * 后置守卫：更新页面标题
+   * 后置守卫：结束进度条 + 更新页面标题
    */
   router.afterEach((to) => {
+    NProgress.done()
     const baseTitle = 'shadcn-vue-ui Console'
     const pageTitle = to.meta.title as string | undefined
     document.title = pageTitle ? `${pageTitle} - ${baseTitle}` : baseTitle
