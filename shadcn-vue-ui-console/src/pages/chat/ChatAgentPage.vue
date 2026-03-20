@@ -3,8 +3,9 @@
  * @description ChatAgent 对话页 — 类 Dify 对话界面
  * @author Timon
  */
-import { ref, nextTick } from 'vue'
+import { ref } from 'vue'
 import { Send, Bot, User, Sparkles, RotateCcw, Settings2 } from 'lucide-vue-next'
+import { renderMarkdown } from '@/composables/useMarkdown'
 import { Button } from '@ui/components/ui/button'
 import { Input } from '@ui/components/ui/input'
 import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
@@ -139,7 +140,9 @@ function sendMessage() {
                     : 'rounded-tr-sm bg-primary text-primary-foreground',
                 )"
               >
-                {{ msg.content }}
+                <span v-if="msg.role === 'user'">{{ msg.content }}</span>
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <div v-else class="prose prose-sm dark:prose-invert max-w-none" v-html="renderMarkdown(msg.content)" />
               </div>
               <p class="text-[10px] text-muted-foreground/60 px-1">{{ msg.time }}</p>
             </div>

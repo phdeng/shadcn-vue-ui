@@ -3,8 +3,7 @@
  * @description 模型详情页 — Dify / 云控制台产品风格
  * @author Timon
  */
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import {
   ArrowLeft,
   Circle,
@@ -37,10 +36,7 @@ import {
 } from '@ui/components/ui/table'
 import { cn } from '@ui/lib/utils'
 
-const route = useRoute()
 const router = useRouter()
-const modelId = computed(() => route.params.id as string)
-
 // 模拟数据 — 后续替换为 API
 const model = {
   id: '1',
