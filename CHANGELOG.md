@@ -6,6 +6,29 @@
 
 ## 2026-03-21
 
+### Round 13 — Business 角色管理 + 内容管理
+- 角色管理页：卡片布局 + 权限数/用户数 + 系统/自定义角色
+- 内容管理页：表格布局 + 分类标签 + 发布状态筛选
+
+### Round 12 — Business 用户管理 + 订单管理
+- 用户管理页：8 用户表格 + Avatar + 角色/部门 Badge
+- 订单管理页：8 订单表格 + 金额 + 4 状态
+
+### Round 11 — 里程碑：Business 子项目初始化
+- shadcn-vue-ui-business 完整骨架搭建
+- 共享 packages/ui + packages/shared
+- 布局/鉴权/路由/NProgress + 9 个页面模块
+
+### Round 10 — 开源闭环
+- MIT LICENSE 文件
+- UI 包导出补全（command/sonner/textarea）
+- Dashboard 快速操作增加"开始对话"
+
+### Round 9 — Agent 详情页 + 服务状态面板
+- Agent 详情页：对话测试 + 配置信息 + 调用日志 3 Tab
+- Dashboard 服务状态面板（10 服务健康检查）
+- shadcn-vue Textarea 组件
+
 ### Round 8 — 代码质量与细节打磨
 - 侧边栏用户信息从 authStore 动态读取
 - 模型卡片 hover 上浮效果（translateY）
