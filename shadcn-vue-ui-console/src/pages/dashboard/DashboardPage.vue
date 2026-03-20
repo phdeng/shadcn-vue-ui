@@ -185,7 +185,7 @@ const doughnutChartOptions = {
 const quickActions = [
   { label: '注册模型', desc: '接入新的大语言模型', path: '/models' },
   { label: '创建 Agent', desc: '配置智能体工作流', path: '/agents' },
-  { label: '上传知识库', desc: '导入文档与数据集', path: '/knowledge' },
+  { label: '开始对话', desc: '与 Agent 进行对话测试', path: '/chat' },
 ]
 </script>
 
