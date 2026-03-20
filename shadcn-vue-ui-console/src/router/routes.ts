@@ -99,4 +99,12 @@ export const routes: RouteRecordRaw[] = [
       },
     ],
   },
+
+  // 404 — catch-all
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('@/pages/NotFoundPage.vue'),
+    meta: { title: '页面未找到' },
+  },
 ]
