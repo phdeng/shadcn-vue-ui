@@ -73,6 +73,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/agents/AgentListPage.vue'),
         meta: { title: 'Agent 管理' },
       },
+      {
+        path: 'agents/:id',
+        name: 'AgentDetail',
+        component: () => import('@/pages/agents/AgentDetailPage.vue'),
+        meta: { title: 'Agent 详情' },
+      },
 
       // 插件市场
       {

@@ -20,6 +20,7 @@ import { Avatar, AvatarFallback } from '@ui/components/ui/avatar'
 import { cn } from '@ui/lib/utils'
 import LineChart from '@/components/charts/LineChart.vue'
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
+import ServiceStatus from '@/components/dashboard/ServiceStatus.vue'
 
 const authStore = useAuthStore()
 
@@ -296,9 +297,13 @@ const quickActions = [
       </Card>
     </div>
 
-    <!-- 快速操作 -->
-    <div>
-      <h3 class="mb-3 text-sm font-medium text-muted-foreground">快速开始</h3>
+    <!-- 服务状态 + 快速操作 -->
+    <div class="grid gap-4 lg:grid-cols-2">
+      <ServiceStatus />
+
+      <!-- 快速操作 -->
+      <div>
+        <h3 class="mb-3 text-sm font-medium text-muted-foreground">快速开始</h3>
       <div class="grid gap-3 sm:grid-cols-3">
         <RouterLink
           v-for="action in quickActions"
@@ -314,6 +319,7 @@ const quickActions = [
             <p class="text-[11px] text-muted-foreground">{{ action.desc }}</p>
           </div>
         </RouterLink>
+      </div>
       </div>
     </div>
   </div>

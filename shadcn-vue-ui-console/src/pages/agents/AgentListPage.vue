@@ -4,6 +4,7 @@
  * @author Timon
  */
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import { Plus, Search, MoreHorizontal, Clock } from 'lucide-vue-next'
 import { Button } from '@ui/components/ui/button'
@@ -27,6 +28,8 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import { cn } from '@ui/lib/utils'
 import AgentCreateDialog from '@/components/agents/AgentCreateDialog.vue'
+
+const router = useRouter()
 
 // ========== 类型定义 ==========
 
@@ -152,9 +155,9 @@ const filteredAgents = computed(() => {
 
 // ========== 事件处理 ==========
 
-/** 点击卡片 — 导航至 Agent 详情（暂仅打印日志） */
+/** 点击卡片 — 导航至 Agent 详情 */
 function handleCardClick(agent: Agent) {
-  console.log('[AgentListPage] 点击卡片，导航至详情:', agent.id, agent.name)
+  router.push(`/agents/${agent.id}`)
 }
 
 /** 创建 Agent 按钮点击 */
