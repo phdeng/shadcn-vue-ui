@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * @description 控制台默认布局 — Sidebar + Header + Content
+ * @description 控制台默认布局 — 产品控制台风格
  * @author Timon
  */
 import { RouterView } from 'vue-router'
@@ -15,10 +15,12 @@ import {
 <template>
   <SidebarProvider>
     <AppSidebar />
-    <SidebarInset>
+    <SidebarInset class="bg-background">
       <AppHeader />
-      <main class="flex-1 overflow-auto p-6">
-        <RouterView />
+      <main class="flex-1 overflow-auto">
+        <div class="mx-auto max-w-[1440px] px-6 py-5">
+          <RouterView />
+        </div>
       </main>
     </SidebarInset>
   </SidebarProvider>

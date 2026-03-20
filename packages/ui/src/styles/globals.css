@@ -5,127 +5,113 @@
 
 /*
  * shadcn-vue-ui 设计 Token
- * 色彩体系：oklch 色彩空间
- * 设计关键词：简洁、克制、现代、留白、通透、精致、高级
- * 色调：冷灰蓝底 + 靛蓝主色 + 青绿点缀
+ * 风格方向：Dify / 阿里云 / Google Cloud 产品控制台
+ * 特征：通透留白、精致卡片、清晰层级、现代产品感
  */
 
 :root {
-  /* 全局圆角基准 */
-  --radius: 0.5rem;
+  --radius: 0.625rem;
 
-  /* 页面底色 / 文字色 */
-  --background: oklch(0.995 0.003 250);
-  --foreground: oklch(0.18 0.015 260);
+  /* 页面 — 极浅灰底，略带暖调 */
+  --background: oklch(0.98 0.002 260);
+  --foreground: oklch(0.15 0.015 260);
 
-  /* 卡片 */
+  /* 卡片 — 纯白，轻微阴影承载 */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.015 260);
+  --card-foreground: oklch(0.15 0.015 260);
 
   /* 弹出层 */
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.015 260);
+  --popover-foreground: oklch(0.15 0.015 260);
 
-  /* 主色 — 克制靛蓝 */
-  --primary: oklch(0.55 0.18 260);
-  --primary-foreground: oklch(0.98 0.005 260);
+  /* 主色 — 饱和靛蓝，产品感 */
+  --primary: oklch(0.58 0.22 264);
+  --primary-foreground: oklch(0.99 0 0);
 
-  /* 辅色 — 浅灰蓝 */
-  --secondary: oklch(0.96 0.008 250);
-  --secondary-foreground: oklch(0.22 0.015 260);
+  /* 辅色 */
+  --secondary: oklch(0.965 0.005 260);
+  --secondary-foreground: oklch(0.25 0.015 260);
 
   /* 弱化色 */
-  --muted: oklch(0.96 0.005 250);
-  --muted-foreground: oklch(0.55 0.015 250);
+  --muted: oklch(0.965 0.003 260);
+  --muted-foreground: oklch(0.50 0.01 260);
 
-  /* 强调色 — 通透青绿 */
-  --accent: oklch(0.96 0.008 250);
-  --accent-foreground: oklch(0.22 0.015 260);
+  /* 强调色 */
+  --accent: oklch(0.955 0.005 260);
+  --accent-foreground: oklch(0.25 0.015 260);
 
-  /* 危险色 — 暖红 */
-  --destructive: oklch(0.58 0.22 25);
-  --destructive-foreground: oklch(0.58 0.22 25);
+  /* 危险色 */
+  --destructive: oklch(0.60 0.24 25);
+  --destructive-foreground: oklch(0.60 0.24 25);
 
-  /* 边框 / 输入 / 聚焦环 */
-  --border: oklch(0.92 0.005 250);
-  --input: oklch(0.92 0.005 250);
-  --ring: oklch(0.55 0.18 260);
+  /* 边框 — 极细微 */
+  --border: oklch(0.93 0.003 260);
+  --input: oklch(0.93 0.003 260);
+  --ring: oklch(0.58 0.22 264);
 
-  /* 图表色板 */
-  --chart-1: oklch(0.55 0.18 260);
-  --chart-2: oklch(0.60 0.15 180);
-  --chart-3: oklch(0.65 0.12 140);
-  --chart-4: oklch(0.70 0.16 80);
-  --chart-5: oklch(0.58 0.20 320);
+  /* 图表色板 — 饱和丰富 */
+  --chart-1: oklch(0.58 0.22 264);
+  --chart-2: oklch(0.65 0.19 165);
+  --chart-3: oklch(0.72 0.17 55);
+  --chart-4: oklch(0.62 0.24 310);
+  --chart-5: oklch(0.68 0.22 30);
 
-  /* 侧边栏 */
-  --sidebar: oklch(0.985 0.005 250);
-  --sidebar-foreground: oklch(0.18 0.015 260);
-  --sidebar-primary: oklch(0.55 0.18 260);
-  --sidebar-primary-foreground: oklch(0.98 0.005 260);
-  --sidebar-accent: oklch(0.96 0.008 250);
-  --sidebar-accent-foreground: oklch(0.22 0.015 260);
-  --sidebar-border: oklch(0.92 0.005 250);
-  --sidebar-ring: oklch(0.55 0.18 260);
+  /* 侧边栏 — 微灰底，与内容区有层次区分 */
+  --sidebar: oklch(0.985 0.002 260);
+  --sidebar-foreground: oklch(0.35 0.01 260);
+  --sidebar-primary: oklch(0.58 0.22 264);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.955 0.008 264);
+  --sidebar-accent-foreground: oklch(0.20 0.015 260);
+  --sidebar-border: oklch(0.935 0.003 260);
+  --sidebar-ring: oklch(0.58 0.22 264);
 }
 
 .dark {
-  /* 页面底色 / 文字色 */
-  --background: oklch(0.14 0.012 260);
-  --foreground: oklch(0.93 0.005 250);
+  --background: oklch(0.13 0.01 260);
+  --foreground: oklch(0.93 0.005 260);
 
-  /* 卡片 */
-  --card: oklch(0.17 0.012 260);
-  --card-foreground: oklch(0.93 0.005 250);
+  --card: oklch(0.165 0.01 260);
+  --card-foreground: oklch(0.93 0.005 260);
 
-  /* 弹出层 */
-  --popover: oklch(0.17 0.012 260);
-  --popover-foreground: oklch(0.93 0.005 250);
+  --popover: oklch(0.165 0.01 260);
+  --popover-foreground: oklch(0.93 0.005 260);
 
-  /* 主色 */
-  --primary: oklch(0.65 0.20 260);
-  --primary-foreground: oklch(0.14 0.012 260);
+  --primary: oklch(0.68 0.20 264);
+  --primary-foreground: oklch(0.13 0.01 260);
 
-  /* 辅色 */
-  --secondary: oklch(0.22 0.015 260);
-  --secondary-foreground: oklch(0.93 0.005 250);
+  --secondary: oklch(0.20 0.012 260);
+  --secondary-foreground: oklch(0.93 0.005 260);
 
-  /* 弱化色 */
-  --muted: oklch(0.22 0.015 260);
-  --muted-foreground: oklch(0.65 0.012 250);
+  --muted: oklch(0.20 0.012 260);
+  --muted-foreground: oklch(0.60 0.01 260);
 
-  /* 强调色 */
-  --accent: oklch(0.22 0.015 260);
-  --accent-foreground: oklch(0.93 0.005 250);
+  --accent: oklch(0.20 0.012 260);
+  --accent-foreground: oklch(0.93 0.005 260);
 
-  /* 危险色 */
-  --destructive: oklch(0.42 0.15 25);
-  --destructive-foreground: oklch(0.65 0.22 25);
+  --destructive: oklch(0.45 0.18 25);
+  --destructive-foreground: oklch(0.70 0.22 25);
 
-  /* 边框 / 输入 / 聚焦环 */
-  --border: oklch(0.26 0.012 260);
-  --input: oklch(0.26 0.012 260);
-  --ring: oklch(0.65 0.20 260);
+  --border: oklch(0.23 0.01 260);
+  --input: oklch(0.23 0.01 260);
+  --ring: oklch(0.68 0.20 264);
 
-  /* 图表色板 */
-  --chart-1: oklch(0.65 0.20 260);
-  --chart-2: oklch(0.60 0.15 180);
-  --chart-3: oklch(0.70 0.16 80);
-  --chart-4: oklch(0.65 0.22 320);
-  --chart-5: oklch(0.58 0.20 40);
+  --chart-1: oklch(0.68 0.20 264);
+  --chart-2: oklch(0.65 0.19 165);
+  --chart-3: oklch(0.72 0.17 55);
+  --chart-4: oklch(0.62 0.24 310);
+  --chart-5: oklch(0.68 0.22 30);
 
-  /* 侧边栏 */
-  --sidebar: oklch(0.17 0.012 260);
-  --sidebar-foreground: oklch(0.93 0.005 250);
-  --sidebar-primary: oklch(0.65 0.20 260);
-  --sidebar-primary-foreground: oklch(0.93 0.005 250);
-  --sidebar-accent: oklch(0.22 0.015 260);
-  --sidebar-accent-foreground: oklch(0.93 0.005 250);
-  --sidebar-border: oklch(0.26 0.012 260);
-  --sidebar-ring: oklch(0.65 0.20 260);
+  --sidebar: oklch(0.145 0.01 260);
+  --sidebar-foreground: oklch(0.75 0.008 260);
+  --sidebar-primary: oklch(0.68 0.20 264);
+  --sidebar-primary-foreground: oklch(0.93 0.005 260);
+  --sidebar-accent: oklch(0.20 0.012 260);
+  --sidebar-accent-foreground: oklch(0.93 0.005 260);
+  --sidebar-border: oklch(0.23 0.01 260);
+  --sidebar-ring: oklch(0.68 0.20 264);
 }
 
-/* 将 CSS 变量注册到 Tailwind 主题 */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -176,25 +162,25 @@
     font-variation-settings: 'opsz' 16;
   }
 
-  /* 滚动条美化 */
+  /* 精致滚动条 */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.8 0.005 250);
-    border-radius: 3px;
+    background: oklch(0.82 0.003 260);
+    border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.7 0.005 250);
+    background: oklch(0.72 0.005 260);
   }
   .dark ::-webkit-scrollbar-thumb {
-    background: oklch(0.3 0.01 260);
+    background: oklch(0.28 0.008 260);
   }
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.4 0.01 260);
+    background: oklch(0.38 0.008 260);
   }
 }
