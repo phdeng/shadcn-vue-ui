@@ -6,6 +6,21 @@
 
 ## 2026-03-21
 
+### Round 16 — 全项目收官打磨
+- HTML meta 中文化（lang/title/description）
+- Business ⌘K 命令面板集成
+- Business Chart.js 图表组件复制
+- 最终构建报告：Console 303KB gzip / Business 183KB gzip
+
+### Round 15 — Business 功能对齐
+- Business ⌘K 命令面板（导航项适配）
+- Chart.js + vue-chartjs 安装
+- index.html meta 优化
+
+### Round 14 — Business 零占位页达成
+- 数据报表页（统计卡片 + TOP5 + 订单统计表）
+- 系统设置页（3 Tab + Toast 保存）
+
 ### Round 13 — Business 角色管理 + 内容管理
 - 角色管理页：卡片布局 + 权限数/用户数 + 系统/自定义角色
 - 内容管理页：表格布局 + 分类标签 + 发布状态筛选
