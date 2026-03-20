@@ -4,6 +4,7 @@
  * @author Timon
  */
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { Search, Plus, MoreHorizontal, Pencil, KeyRound, Ban, Trash2 } from 'lucide-vue-next'
 import { Card, CardContent } from '@ui/components/ui/card'
 import { Button } from '@ui/components/ui/button'
@@ -50,6 +51,9 @@ const users: User[] = [
   { id: 7, name: '周美玲', avatar: '周', email: 'zhouml@example.com', role: '审核', department: '运营部', status: 'disabled', createdAt: '2025-10-27' },
   { id: 8, name: '吴俊杰', avatar: '吴', email: 'wujj@example.com', role: '普通用户', department: '市场部', status: 'active', createdAt: '2026-01-05' },
 ]
+
+// ==================== 路由 ====================
+const router = useRouter()
 
 // ==================== 搜索与筛选 ====================
 const searchQuery = ref('')
@@ -154,7 +158,7 @@ const avatarColors = [
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow v-for="user in filteredUsers" :key="user.id">
+            <TableRow v-for="user in filteredUsers" :key="user.id" class="cursor-pointer" @click="router.push(`/users/${user.id}`)">
               <!-- 用户名 + 头像 -->
               <TableCell>
                 <div class="flex items-center gap-3">

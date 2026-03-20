@@ -29,6 +29,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/users/UserListPage.vue'),
         meta: { title: '用户管理' },
       },
+      {
+        path: 'users/:id',
+        name: 'UserDetail',
+        component: () => import('@/pages/users/UserDetailPage.vue'),
+        meta: { title: '用户详情' },
+      },
 
       // 角色管理
       {
