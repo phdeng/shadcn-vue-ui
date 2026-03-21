@@ -44,6 +44,7 @@ import {
   FileText,
   Layers,
   MoreHorizontal,
+  Pencil,
   RefreshCw,
   Search,
   Send,
@@ -58,7 +59,6 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import KnowledgeUploadDialog from '@/components/knowledge/KnowledgeUploadDialog.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -111,7 +111,6 @@ const stats = [
 // ==================== 文档管理 ====================
 
 const docSearch = ref('')
-const showUploadDialog = ref(false)
 const showDeleteDialog = ref(false)
 const deleteTarget = ref<typeof documents.value[0] | null>(null)
 
@@ -185,11 +184,6 @@ function handleRecallTest() {
 }
 
 // ==================== 事件处理 ====================
-
-function handleUploadSubmit(data: { files: File[], urls: string[] }) {
-  const total = data.files.length + data.urls.length
-  toast.success(`已提交 ${total} 项导入任务`, { description: '文档将在后台进行解析和索引' })
-}
 
 function handleViewDoc(doc: typeof documents.value[0]) {
   router.push(`/knowledge/${knowledgeBase.id}/documents/${doc.id}`)
@@ -277,7 +271,11 @@ function handleRebuildAll() {
           <RefreshCw class="mr-2 size-4" />
           重建索引
         </Button>
-        <Button size="sm" @click="showUploadDialog = true">
+        <Button variant="outline" size="sm" @click="router.push(`/knowledge/${knowledgeBase.id}/edit`)">
+          <Pencil class="mr-2 size-4" />
+          编辑
+        </Button>
+        <Button size="sm" @click="router.push(`/knowledge/${knowledgeBase.id}/upload`)">
           <Upload class="mr-2 size-4" />
           上传文档
         </Button>
@@ -766,12 +764,6 @@ function handleRebuildAll() {
         </Card>
       </TabsContent>
     </Tabs>
-
-    <!-- 上传文档对话框 -->
-    <KnowledgeUploadDialog
-      v-model:open="showUploadDialog"
-      @submit="handleUploadSubmit"
-    />
 
     <!-- 删除确认对话框 -->
     <ConfirmDialog

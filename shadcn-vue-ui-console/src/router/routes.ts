@@ -60,10 +60,28 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: '知识库' },
       },
       {
+        path: 'knowledge/create',
+        name: 'KnowledgeCreate',
+        component: () => import('@/pages/knowledge/KnowledgeCreatePage.vue'),
+        meta: { title: '创建知识库' },
+      },
+      {
         path: 'knowledge/:id',
         name: 'KnowledgeDetail',
         component: () => import('@/pages/knowledge/KnowledgeDetailPage.vue'),
         meta: { title: '知识库详情' },
+      },
+      {
+        path: 'knowledge/:id/edit',
+        name: 'KnowledgeEdit',
+        component: () => import('@/pages/knowledge/KnowledgeEditPage.vue'),
+        meta: { title: '编辑知识库' },
+      },
+      {
+        path: 'knowledge/:id/upload',
+        name: 'KnowledgeUpload',
+        component: () => import('@/pages/knowledge/KnowledgeUploadPage.vue'),
+        meta: { title: '上传文档' },
       },
       {
         path: 'knowledge/:id/documents/:docId',

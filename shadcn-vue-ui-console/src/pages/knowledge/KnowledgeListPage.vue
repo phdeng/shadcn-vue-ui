@@ -38,7 +38,6 @@ import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import PageLoading from '@/components/common/PageLoading.vue'
-import KnowledgeCreateDialog from '@/components/knowledge/KnowledgeCreateDialog.vue'
 
 const router = useRouter()
 const searchQuery = ref('')
@@ -46,7 +45,6 @@ const loading = ref(true)
 
 // 模拟初始加载
 setTimeout(() => { loading.value = false }, 600)
-const showCreateDialog = ref(false)
 const showDeleteDialog = ref(false)
 
 // ==================== 类型与状态配置 ====================
@@ -92,11 +90,6 @@ const deleteTarget = ref<typeof knowledgeBases.value[0] | null>(null)
 
 // ==================== 事件处理 ====================
 
-/** 创建知识库提交 */
-function handleCreateSubmit(data: { name: string }) {
-  toast.success('知识库已创建', { description: data.name })
-}
-
 /** 批量导入 */
 function handleBulkImport() {
   toast.info('批量导入功能', { description: '请选择要导入的文件夹' })
@@ -109,7 +102,7 @@ function handleViewDocs(kb: typeof knowledgeBases.value[0]) {
 
 /** 上传文档 */
 function handleUploadDocs(kb: typeof knowledgeBases.value[0]) {
-  toast.info(`上传文档至「${kb.name}」`, { description: '请选择要上传的文件' })
+  router.push(`/knowledge/${kb.id}/upload`)
 }
 
 /** 重建索引 */
@@ -154,7 +147,7 @@ function handleDelete() {
           <Upload class="mr-2 size-4" />
           批量导入
         </Button>
-        <Button size="sm" @click="showCreateDialog = true">
+        <Button size="sm" @click="router.push('/knowledge/create')">
           <Plus class="mr-2 size-4" />
           创建知识库
         </Button>
@@ -276,12 +269,6 @@ function handleDelete() {
         </p>
       </div>
     </div>
-
-    <!-- 创建知识库对话框 -->
-    <KnowledgeCreateDialog
-      v-model:open="showCreateDialog"
-      @submit="handleCreateSubmit"
-    />
 
     <!-- 删除确认对话框 -->
     <ConfirmDialog
