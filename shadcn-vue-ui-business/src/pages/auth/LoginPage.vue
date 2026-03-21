@@ -19,8 +19,8 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 // 表单状态
-const email = ref('')
-const password = ref('')
+const email = ref('timon@example.com')
+const password = ref('123456')
 const rememberMe = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
