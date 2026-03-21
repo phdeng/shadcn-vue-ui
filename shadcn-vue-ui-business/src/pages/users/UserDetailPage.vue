@@ -18,6 +18,7 @@ import { ArrowLeft, Pencil } from 'lucide-vue-next'
  */
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
 import { getUserById } from '@/mocks/business'
 
 // ==================== 路由 ====================
@@ -120,7 +121,7 @@ function handleBack() {
         </template>
       </div>
 
-      <Button v-if="user" size="sm">
+      <Button v-if="user" size="sm" @click="toast.info('编辑用户', { description: '用户编辑功能即将上线' })">
         <Pencil class="size-4" />
         编辑
       </Button>

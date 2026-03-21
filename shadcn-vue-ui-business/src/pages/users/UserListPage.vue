@@ -28,6 +28,8 @@ import { Ban, KeyRound, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'luc
  */
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 
 // ==================== 用户模拟数据 ====================
 interface User {
@@ -41,7 +43,7 @@ interface User {
   createdAt: string
 }
 
-const users: User[] = [
+const usersData = ref<User[]>([
   { id: 1, name: '张明远', avatar: '张', email: 'zhangmy@example.com', role: '管理员', department: '技术部', status: 'active', createdAt: '2025-03-12' },
   { id: 2, name: '李思琪', avatar: '李', email: 'lisq@example.com', role: '编辑', department: '产品部', status: 'active', createdAt: '2025-05-08' },
   { id: 3, name: '王浩然', avatar: '王', email: 'wanghr@example.com', role: '审核', department: '运营部', status: 'active', createdAt: '2025-06-21' },
@@ -50,7 +52,7 @@ const users: User[] = [
   { id: 6, name: '刘晓峰', avatar: '刘', email: 'liuxf@example.com', role: '管理员', department: '产品部', status: 'active', createdAt: '2025-09-19' },
   { id: 7, name: '周美玲', avatar: '周', email: 'zhouml@example.com', role: '审核', department: '运营部', status: 'disabled', createdAt: '2025-10-27' },
   { id: 8, name: '吴俊杰', avatar: '吴', email: 'wujj@example.com', role: '普通用户', department: '市场部', status: 'active', createdAt: '2026-01-05' },
-]
+])
 
 // ==================== 路由 ====================
 const router = useRouter()
@@ -59,8 +61,51 @@ const router = useRouter()
 const searchQuery = ref('')
 const activeTab = ref('all')
 
+// ==================== 对话框状态 ====================
+const showDeleteDialog = ref(false)
+const deleteTarget = ref<User | null>(null)
+
+// ==================== 事件处理 ====================
+
+/** 新增用户 */
+function handleCreateUser() {
+  toast.info('新增用户', { description: '用户创建功能即将上线' })
+}
+
+/** 编辑用户 */
+function handleEdit(user: User) {
+  router.push(`/users/${user.id}`)
+}
+
+/** 重置密码 */
+function handleResetPassword(user: User) {
+  toast.success('密码重置链接已发送', { description: user.email })
+}
+
+/** 切换禁用/启用 */
+function handleToggleStatus(user: User) {
+  user.status = user.status === 'active' ? 'disabled' : 'active'
+  toast.info(user.status === 'active' ? '已启用' : '已禁用', { description: user.name })
+}
+
+/** 打开删除确认 */
+function handleDeleteConfirm(user: User) {
+  deleteTarget.value = user
+  showDeleteDialog.value = true
+}
+
+/** 执行删除 */
+function handleDelete() {
+  if (!deleteTarget.value) return
+  const name = deleteTarget.value.name
+  usersData.value = usersData.value.filter(u => u.id !== deleteTarget.value!.id)
+  showDeleteDialog.value = false
+  deleteTarget.value = null
+  toast.success('已删除', { description: name })
+}
+
 const filteredUsers = computed(() => {
-  let result = users
+  let result = usersData.value
 
   // 按状态筛选
   if (activeTab.value === 'active') {
@@ -117,7 +162,7 @@ const avatarColors = [
           管理系统用户、角色权限与组织架构
         </p>
       </div>
-      <Button size="sm">
+      <Button size="sm" @click="handleCreateUser">
         <Plus class="size-4" />
         新增用户
       </Button>
@@ -231,20 +276,20 @@ const avatarColors = [
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" class="w-36">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click.stop="handleEdit(user)">
                       <Pencil class="size-4" />
                       编辑
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click.stop="handleResetPassword(user)">
                       <KeyRound class="size-4" />
                       重置密码
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click.stop="handleToggleStatus(user)">
                       <Ban class="size-4" />
-                      禁用
+                      {{ user.status === 'active' ? '禁用' : '启用' }}
                     </DropdownMenuItem>
-                    <DropdownMenuItem class="text-destructive focus:text-destructive">
+                    <DropdownMenuItem class="text-destructive focus:text-destructive" @click.stop="handleDeleteConfirm(user)">
                       <Trash2 class="size-4" />
                       删除
                     </DropdownMenuItem>
@@ -256,5 +301,14 @@ const avatarColors = [
         </Table>
       </CardContent>
     </Card>
+
+    <!-- 删除确认对话框 -->
+    <ConfirmDialog
+      v-model:open="showDeleteDialog"
+      title="删除用户"
+      :description="`确定要删除用户「${deleteTarget?.name}」吗？该用户的所有数据将被永久删除。`"
+      confirm-text="删除"
+      @confirm="handleDelete"
+    />
   </div>
 </template>

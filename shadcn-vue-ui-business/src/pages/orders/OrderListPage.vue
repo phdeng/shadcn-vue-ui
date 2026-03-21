@@ -27,6 +27,8 @@ import { Download, Eye, MoreHorizontal, Search, Settings2, XCircle } from 'lucid
  */
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 
 // ==================== 订单模拟数据 ====================
 type OrderStatus = 'pending' | 'processing' | 'completed' | 'cancelled'
@@ -40,7 +42,7 @@ interface Order {
   createdAt: string
 }
 
-const orders: Order[] = [
+const orders = ref<Order[]>([
   { id: 'ORD-2026-0001', customer: '上海星辰科技有限公司', product: '企业版年度订阅', amount: 128000, status: 'completed', createdAt: '2026-03-18 14:23' },
   { id: 'ORD-2026-0002', customer: '北京云端数据咨询', product: 'API 调用额度包 - 100万次', amount: 45000, status: 'pending', createdAt: '2026-03-19 09:15' },
   { id: 'ORD-2026-0003', customer: '深圳智远信息技术', product: '专业版季度订阅', amount: 32000, status: 'processing', createdAt: '2026-03-19 11:42' },
@@ -49,7 +51,11 @@ const orders: Order[] = [
   { id: 'ORD-2026-0006', customer: '成都天府软件园', product: 'API 调用额度包 - 50万次', amount: 24000, status: 'pending', createdAt: '2026-03-20 15:38' },
   { id: 'ORD-2026-0007', customer: '南京紫金大数据', product: '企业版年度订阅', amount: 128000, status: 'processing', createdAt: '2026-03-21 09:12' },
   { id: 'ORD-2026-0008', customer: '武汉光谷创新科技', product: '专业版年度订阅', amount: 96000, status: 'pending', createdAt: '2026-03-21 10:45' },
-]
+])
+
+// ==================== 对话框状态 ====================
+const showCancelDialog = ref(false)
+const cancelTarget = ref<Order | null>(null)
 
 // ==================== 路由 ====================
 const router = useRouter()
@@ -59,7 +65,7 @@ const searchQuery = ref('')
 const activeTab = ref('all')
 
 const filteredOrders = computed(() => {
-  let result = orders
+  let result = orders.value
 
   // 按状态筛选
   if (activeTab.value !== 'all') {
@@ -117,6 +123,33 @@ function formatAmount(amount: number): string {
 /** 跳转到订单详情页 */
 function handleRowClick(orderId: string) {
   router.push(`/orders/${orderId}`)
+}
+
+/** 查看详情 */
+function handleView(order: Order) {
+  router.push(`/orders/${order.id}`)
+}
+
+/** 处理订单 */
+function handleProcess(order: Order) {
+  toast.info('处理订单', { description: `订单 ${order.id} 处理功能即将上线` })
+}
+
+/** 打开取消确认 */
+function handleCancelConfirm(order: Order) {
+  cancelTarget.value = order
+  showCancelDialog.value = true
+}
+
+/** 执行取消 */
+function handleCancel() {
+  if (!cancelTarget.value) return
+  const id = cancelTarget.value.id
+  const target = orders.value.find(o => o.id === id)
+  if (target) target.status = 'cancelled'
+  showCancelDialog.value = false
+  cancelTarget.value = null
+  toast.success('已取消', { description: id })
 }
 </script>
 
@@ -244,16 +277,16 @@ function handleRowClick(orderId: string) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" class="w-36">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click.stop="handleView(order)">
                       <Eye class="size-4" />
                       查看详情
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click.stop="handleProcess(order)">
                       <Settings2 class="size-4" />
                       处理订单
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem class="text-destructive focus:text-destructive">
+                    <DropdownMenuItem class="text-destructive focus:text-destructive" @click.stop="handleCancelConfirm(order)">
                       <XCircle class="size-4" />
                       取消订单
                     </DropdownMenuItem>
@@ -265,5 +298,14 @@ function handleRowClick(orderId: string) {
         </Table>
       </CardContent>
     </Card>
+
+    <!-- 取消确认对话框 -->
+    <ConfirmDialog
+      v-model:open="showCancelDialog"
+      title="取消订单"
+      :description="`确定要取消订单「${cancelTarget?.id}」吗？取消后将无法恢复。`"
+      confirm-text="取消订单"
+      @confirm="handleCancel"
+    />
   </div>
 </template>

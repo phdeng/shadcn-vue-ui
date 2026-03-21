@@ -16,6 +16,7 @@ import { ArrowLeft, Check, Circle } from 'lucide-vue-next'
  * @author Timon
  */
 import { useRoute, useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
 
 // ==================== 路由 ====================
 const router = useRouter()
@@ -140,7 +141,7 @@ function handleBack() {
           {{ statusConfig[orderData.status].label }}
         </Badge>
       </div>
-      <Button size="sm">
+      <Button size="sm" @click="toast.info('处理订单', { description: `订单 ${orderData.id} 处理功能即将上线` })">
         处理订单
       </Button>
     </div>

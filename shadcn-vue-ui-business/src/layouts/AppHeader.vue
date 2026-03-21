@@ -24,6 +24,7 @@ import { Bell, HelpCircle, LogOut, Moon, Settings, Sun } from 'lucide-vue-next'
  */
 import { computed } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
 import { useTheme } from '@/composables/useTheme'
 import { useAuthStore } from '@/stores/auth'
 
@@ -80,7 +81,7 @@ function handleLogout() {
     <div class="ml-auto flex items-center gap-2">
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button variant="ghost" size="icon" class="size-8">
+          <Button variant="ghost" size="icon" class="size-8" aria-label="通知" @click="toast.info('通知', { description: '暂无新通知' })">
             <Bell class="size-4" />
           </Button>
         </TooltipTrigger>
@@ -89,7 +90,7 @@ function handleLogout() {
 
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button variant="ghost" size="icon" class="size-8" @click="toggleTheme">
+          <Button variant="ghost" size="icon" class="size-8" aria-label="切换主题" @click="toggleTheme">
             <Sun v-if="mode === 'dark'" class="size-4" />
             <Moon v-else class="size-4" />
           </Button>
@@ -126,11 +127,11 @@ function handleLogout() {
 
           <!-- 功能菜单 -->
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem @click="router.push('/settings')">
               <Settings class="mr-2 size-4" />
               <span>个人设置</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem @click="toast.info('帮助文档', { description: '帮助文档功能即将上线' })">
               <HelpCircle class="mr-2 size-4" />
               <span>帮助文档</span>
             </DropdownMenuItem>

@@ -18,7 +18,6 @@ import {
 import { Separator } from '@ui/components/ui/separator'
 import {
   Clock,
-  Copy,
   MoreHorizontal,
   Pencil,
   Plus,
@@ -31,6 +30,8 @@ import {
  * @author Timon
  */
 import { ref } from 'vue'
+import { toast } from 'vue-sonner'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 
 // ==================== 类型定义 ====================
 
@@ -111,11 +112,41 @@ const typeConfig: Record<RoleType, { label: string, class: string }> = {
   },
 }
 
+// ==================== 对话框状态 ====================
+const showDeleteDialog = ref(false)
+const deleteTarget = ref<Role | null>(null)
+
 // ==================== 事件处理 ====================
 
-/** 下拉菜单操作 */
-function handleMenuAction(action: string, role: Role) {
-  console.log(`[RoleListPage] ${action}:`, role.id, role.name)
+/** 新增角色 */
+function handleCreateRole() {
+  toast.info('新增角色', { description: '角色创建功能即将上线' })
+}
+
+/** 编辑角色 */
+function handleEdit(role: Role) {
+  toast.info('编辑角色', { description: `正在编辑角色「${role.name}」` })
+}
+
+/** 管理权限 */
+function handleManagePermissions(role: Role) {
+  toast.info('管理权限', { description: `角色「${role.name}」权限配置功能即将上线` })
+}
+
+/** 打开删除确认 */
+function handleDeleteConfirm(role: Role) {
+  deleteTarget.value = role
+  showDeleteDialog.value = true
+}
+
+/** 执行删除 */
+function handleDelete() {
+  if (!deleteTarget.value) return
+  const name = deleteTarget.value.name
+  roles.value = roles.value.filter(r => r.id !== deleteTarget.value!.id)
+  showDeleteDialog.value = false
+  deleteTarget.value = null
+  toast.success('已删除', { description: name })
 }
 </script>
 
@@ -131,7 +162,7 @@ function handleMenuAction(action: string, role: Role) {
           配置角色权限与访问控制
         </p>
       </div>
-      <Button size="sm">
+      <Button size="sm" @click="handleCreateRole">
         <Plus class="size-4" />
         新增角色
       </Button>
@@ -168,18 +199,18 @@ function handleMenuAction(action: string, role: Role) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" class="w-36">
-                <DropdownMenuItem @click="handleMenuAction('编辑', role)">
+                <DropdownMenuItem @click="handleEdit(role)">
                   <Pencil class="size-4" />
                   编辑
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="handleMenuAction('复制', role)">
-                  <Copy class="size-4" />
-                  复制
+                <DropdownMenuItem @click="handleManagePermissions(role)">
+                  <Shield class="size-4" />
+                  管理权限
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   class="text-destructive focus:text-destructive"
-                  @click="handleMenuAction('删除', role)"
+                  @click="handleDeleteConfirm(role)"
                 >
                   <Trash2 class="size-4" />
                   删除
@@ -223,5 +254,14 @@ function handleMenuAction(action: string, role: Role) {
         </CardFooter>
       </Card>
     </div>
+
+    <!-- 删除确认对话框 -->
+    <ConfirmDialog
+      v-model:open="showDeleteDialog"
+      title="删除角色"
+      :description="`确定要删除角色「${deleteTarget?.name}」吗？该角色下的用户将失去对应权限。`"
+      confirm-text="删除"
+      @confirm="handleDelete"
+    />
   </div>
 </template>

@@ -34,6 +34,8 @@ import {
  * @author Timon
  */
 import { computed, ref } from 'vue'
+import { toast } from 'vue-sonner'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 
 // ==================== 类型定义 ====================
 
@@ -56,7 +58,7 @@ interface Content {
 
 // ==================== 模拟数据 ====================
 
-const contents: Content[] = [
+const contents = ref<Content[]>([
   {
     id: 1,
     title: '2026 年春季产品更新公告',
@@ -111,7 +113,11 @@ const contents: Content[] = [
     views: 0,
     publishedAt: '-',
   },
-]
+])
+
+// ==================== 对话框状态 ====================
+const showDeleteDialog = ref(false)
+const deleteTarget = ref<Content | null>(null)
 
 // ==================== 搜索与筛选 ====================
 
@@ -119,7 +125,7 @@ const searchQuery = ref('')
 const activeTab = ref('all')
 
 const filteredContents = computed(() => {
-  let result = contents
+  let result = contents.value
 
   // 按状态筛选
   if (activeTab.value !== 'all') {
@@ -179,6 +185,46 @@ const categoryClass: Record<ContentCategory, string> = {
 function formatViews(views: number): string {
   return views.toLocaleString('zh-CN')
 }
+
+// ==================== 事件处理 ====================
+
+/** 新建内容 */
+function handleCreate() {
+  toast.info('新建内容', { description: '内容创建功能即将上线' })
+}
+
+/** 编辑内容 */
+function handleEdit(content: Content) {
+  toast.info('编辑内容', { description: `正在编辑「${content.title}」` })
+}
+
+/** 预览内容 */
+function handlePreview(content: Content) {
+  toast.info('预览内容', { description: `正在预览「${content.title}」` })
+}
+
+/** 下线内容 */
+function handleOffline(content: Content) {
+  const target = contents.value.find(c => c.id === content.id)
+  if (target) target.status = 'offline'
+  toast.success('已下线', { description: content.title })
+}
+
+/** 打开删除确认 */
+function handleDeleteConfirm(content: Content) {
+  deleteTarget.value = content
+  showDeleteDialog.value = true
+}
+
+/** 执行删除 */
+function handleDelete() {
+  if (!deleteTarget.value) return
+  const title = deleteTarget.value.title
+  contents.value = contents.value.filter(c => c.id !== deleteTarget.value!.id)
+  showDeleteDialog.value = false
+  deleteTarget.value = null
+  toast.success('已删除', { description: title })
+}
 </script>
 
 <template>
@@ -193,7 +239,7 @@ function formatViews(views: number): string {
           编辑和发布运营内容
         </p>
       </div>
-      <Button size="sm">
+      <Button size="sm" @click="handleCreate">
         <Plus class="size-4" />
         新建内容
       </Button>
@@ -302,20 +348,20 @@ function formatViews(views: number): string {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" class="w-36">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click.stop="handleEdit(content)">
                       <Pencil class="size-4" />
                       编辑
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click.stop="handlePreview(content)">
                       <Eye class="size-4" />
                       预览
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click.stop="handleOffline(content)">
                       <ArrowDownCircle class="size-4" />
                       下线
                     </DropdownMenuItem>
-                    <DropdownMenuItem class="text-destructive focus:text-destructive">
+                    <DropdownMenuItem class="text-destructive focus:text-destructive" @click.stop="handleDeleteConfirm(content)">
                       <Trash2 class="size-4" />
                       删除
                     </DropdownMenuItem>
@@ -327,5 +373,14 @@ function formatViews(views: number): string {
         </Table>
       </CardContent>
     </Card>
+
+    <!-- 删除确认对话框 -->
+    <ConfirmDialog
+      v-model:open="showDeleteDialog"
+      title="删除内容"
+      :description="`确定要删除「${deleteTarget?.title}」吗？该内容将被永久删除。`"
+      confirm-text="删除"
+      @confirm="handleDelete"
+    />
   </div>
 </template>
