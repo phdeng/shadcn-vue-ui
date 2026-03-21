@@ -88,7 +88,7 @@ function saveNotificationSettings() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-6">
     <!-- 页面头部 -->
     <div class="space-y-1">
       <h1 class="text-2xl font-semibold tracking-tight">

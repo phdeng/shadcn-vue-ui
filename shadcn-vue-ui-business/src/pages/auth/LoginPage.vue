@@ -128,7 +128,7 @@ async function handleLogin() {
       <!-- 底部版权 -->
       <div class="relative z-10">
         <p class="text-xs text-primary-foreground/50">
-          &copy; 2025 shadcn-vue-ui. All rights reserved.
+          &copy; 2026 shadcn-vue-ui. All rights reserved.
         </p>
       </div>
     </div>

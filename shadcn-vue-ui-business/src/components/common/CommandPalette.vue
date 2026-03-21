@@ -65,7 +65,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown))
 
 <template>
   <CommandDialog v-model:open="open">
-    <CommandInput placeholder="搜索页面、模型、Agent..." />
+    <CommandInput placeholder="搜索页面、功能..." />
     <CommandList>
       <CommandEmpty>
         <div class="flex flex-col items-center gap-2 py-4">
@@ -77,20 +77,6 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown))
       <CommandGroup heading="页面导航">
         <CommandItem
           v-for="cmd in pageCommands.filter(c => c.group === '页面')"
-          :key="cmd.path"
-          :value="cmd.label"
-          @select="handleSelect(cmd.path)"
-        >
-          <component :is="cmd.icon" class="mr-2 size-4 text-muted-foreground" />
-          <span>{{ cmd.label }}</span>
-        </CommandItem>
-      </CommandGroup>
-
-      <CommandSeparator />
-
-      <CommandGroup heading="模型">
-        <CommandItem
-          v-for="cmd in pageCommands.filter(c => c.group === '模型')"
           :key="cmd.path"
           :value="cmd.label"
           @select="handleSelect(cmd.path)"
