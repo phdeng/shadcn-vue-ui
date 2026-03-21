@@ -8,3 +8,6 @@ export { StatCard } from './components/StatCard'
 // 共享组合式函数
 export { useRequest } from './composables/useRequest'
 export type { UseRequestOptions, UseRequestReturn } from './composables/useRequest'
+
+// API 请求封装
+export { api, request } from './utils/api'
