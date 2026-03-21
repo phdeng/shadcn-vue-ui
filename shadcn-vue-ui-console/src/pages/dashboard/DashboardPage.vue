@@ -17,11 +17,13 @@ import { Activity, ArrowDownRight, ArrowUpRight, BookOpen, Bot, Box, Sparkles } 
  * @description 控制台概览页 — 云平台产品风格
  * @author Timon
  */
-import { computed, ref } from 'vue'
+import { computed, defineAsyncComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import DoughnutChart from '@/components/charts/DoughnutChart.vue'
-import LineChart from '@/components/charts/LineChart.vue'
 import ServiceStatus from '@/components/dashboard/ServiceStatus.vue'
+
+// 图表组件懒加载 — 减少首屏 JS 体积（Chart.js ~130KB）
+const LineChart = defineAsyncComponent(() => import('@/components/charts/LineChart.vue'))
+const DoughnutChart = defineAsyncComponent(() => import('@/components/charts/DoughnutChart.vue'))
 import { useCountUp } from '@/composables/useCountUp'
 import { mockDashboardStats } from '@/mocks'
 import { useAuthStore } from '@/stores/auth'
