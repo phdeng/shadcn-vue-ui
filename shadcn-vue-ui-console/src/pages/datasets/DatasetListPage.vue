@@ -37,10 +37,10 @@ import {
  */
 import { Skeleton } from '@ui/components/ui/skeleton'
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import SimplePagination from '@/components/common/SimplePagination.vue'
-import DatasetUploadDialog from '@/components/datasets/DatasetUploadDialog.vue'
 
 // ==================== 类型定义 ====================
 
@@ -267,16 +267,12 @@ function formatNumber(num: number): string {
 
 // ==================== 对话框状态 ====================
 
-const showUploadDialog = ref(false)
+const router = useRouter()
+
 const showDeleteDialog = ref(false)
 const deleteTarget = ref<DatasetItem | null>(null)
 
 // ==================== 事件处理 ====================
-
-/** 上传数据集表单提交 */
-function handleUploadSubmit(data: { name: string }) {
-  toast.success('数据集上传成功', { description: data.name })
-}
 
 /** 查看详情 */
 function handleView(dataset: DatasetItem) {
@@ -340,7 +336,7 @@ function handleDelete() {
           管理训练数据集、数据标注与预处理
         </p>
       </div>
-      <Button class="shrink-0" @click="showUploadDialog = true">
+      <Button class="shrink-0" @click="router.push('/datasets/create')">
         <Plus class="mr-2 size-4" />
         上传数据集
       </Button>
@@ -563,12 +559,6 @@ function handleDelete() {
         </p>
       </div>
     </div>
-
-    <!-- 上传数据集对话框 -->
-    <DatasetUploadDialog
-      v-model:open="showUploadDialog"
-      @submit="handleUploadSubmit"
-    />
 
     <!-- 删除确认对话框 -->
     <ConfirmDialog

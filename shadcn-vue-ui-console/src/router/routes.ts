@@ -29,6 +29,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/datasets/DatasetListPage.vue'),
         meta: { title: '数据集' },
       },
+      {
+        path: 'datasets/create',
+        name: 'DatasetCreate',
+        component: () => import('@/pages/datasets/DatasetCreatePage.vue'),
+        meta: { title: '新增数据集' },
+      },
 
       // 模型 — 模型管理
       {
