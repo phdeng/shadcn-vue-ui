@@ -20,15 +20,22 @@ import {
   TableRow,
 } from '@ui/components/ui/table'
 import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import { Download, Eye, MoreHorizontal, Search, Settings2, XCircle } from 'lucide-vue-next'
 /**
  * @description 订单管理页 — 查看和处理业务订单
  * @author Timon
  */
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+
+// 骨架屏加载状态
+const loading = ref(true)
+onMounted(() => {
+  setTimeout(() => { loading.value = false }, 600)
+})
 
 // ==================== 订单模拟数据 ====================
 type OrderStatus = 'pending' | 'processing' | 'completed' | 'cancelled'
@@ -155,6 +162,37 @@ function handleCancel() {
 
 <template>
   <div class="flex flex-col gap-6">
+    <!-- 骨架屏 -->
+    <template v-if="loading">
+      <div class="flex items-end justify-between">
+        <div class="space-y-2">
+          <Skeleton class="h-8 w-32" />
+          <Skeleton class="h-4 w-44" />
+        </div>
+        <Skeleton class="h-9 w-20 rounded-md" />
+      </div>
+      <div class="flex items-center justify-between gap-4">
+        <Skeleton class="h-9 w-64 rounded-md" />
+        <div class="flex items-center gap-3">
+          <Skeleton class="h-9 w-56 rounded-md" />
+          <Skeleton class="h-4 w-20" />
+        </div>
+      </div>
+      <Card class="border-0 shadow-sm">
+        <CardContent class="p-4 space-y-4">
+          <div v-for="i in 6" :key="i" class="flex items-center gap-4">
+            <Skeleton class="h-4 w-32" />
+            <Skeleton class="h-4 w-40" />
+            <Skeleton class="h-4 w-36 ml-auto" />
+            <Skeleton class="h-4 w-20" />
+            <Skeleton class="h-4 w-16" />
+            <Skeleton class="h-4 w-28" />
+          </div>
+        </CardContent>
+      </Card>
+    </template>
+
+    <template v-else>
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
@@ -307,5 +345,6 @@ function handleCancel() {
       confirm-text="取消订单"
       @confirm="handleCancel"
     />
+    </template>
   </div>
 </template>

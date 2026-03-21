@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -14,12 +23,15 @@ import {
 } from '@ui/components/ui/sidebar'
 import {
   BarChart3,
+  BookOpen,
   ChevronDown,
   FileText,
   LayoutDashboard,
+  LogOut,
   Settings,
   Shield,
   ShoppingCart,
+  User,
   Users,
 } from 'lucide-vue-next'
 /**
@@ -27,16 +39,25 @@ import {
  * @author Timon
  */
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 
 // 用户信息 — 从 Auth Store 动态读取
 const userAvatar = computed(() => authStore.user?.avatar || authStore.user?.name?.charAt(0) || 'U')
 const userName = computed(() => authStore.user?.name || '用户')
+const userEmail = computed(() => authStore.user?.email || '')
 const userRole = computed(() => authStore.user?.role === 'admin' ? '管理员' : '成员')
+
+/** 退出登录 */
+function handleLogout() {
+  authStore.logout()
+  router.push('/login')
+}
 
 // 主导航项
 const mainNavItems = [
@@ -116,8 +137,8 @@ function isActive(path: string) {
 
     <!-- 底部：配额 + 用户 -->
     <SidebarFooter>
-      <!-- 配额用量指示 -->
-      <div class="px-3 pb-2">
+      <!-- 配额用量指示（侧边栏收起时隐藏） -->
+      <div class="px-3 pb-2 group-data-[collapsible=icon]:hidden">
         <div class="rounded-lg bg-muted/50 p-3 space-y-2">
           <div class="flex items-center justify-between text-[11px]">
             <span class="text-muted-foreground">订单处理量</span>
@@ -135,16 +156,48 @@ function isActive(path: string) {
 
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton size="lg">
-            <div class="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-medium">
-              {{ userAvatar }}
-            </div>
-            <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ userName }}</span>
-              <span class="truncate text-xs text-muted-foreground">{{ userRole }}</span>
-            </div>
-            <ChevronDown class="ml-auto size-4" />
-          </SidebarMenuButton>
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <SidebarMenuButton size="lg" class="cursor-pointer">
+                <div class="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-medium">
+                  {{ userAvatar }}
+                </div>
+                <div class="grid flex-1 text-left text-sm leading-tight">
+                  <span class="truncate font-medium">{{ userName }}</span>
+                  <span class="truncate text-xs text-muted-foreground">{{ userRole }}</span>
+                </div>
+                <ChevronDown class="ml-auto size-4" />
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="top"
+              align="start"
+              class="w-[--reka-dropdown-menu-trigger-width] min-w-56"
+            >
+              <DropdownMenuLabel class="font-normal">
+                <div class="flex flex-col gap-1 px-1 py-1.5">
+                  <p class="text-sm font-medium leading-none">{{ userName }}</p>
+                  <p class="text-xs text-muted-foreground leading-none">{{ userEmail }}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem @click="router.push('/settings')">
+                  <User class="size-4" />
+                  个人设置
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="toast.info('帮助文档', { description: '帮助文档功能即将上线' })">
+                  <BookOpen class="size-4" />
+                  帮助文档
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem @click="handleLogout">
+                <LogOut class="size-4" />
+                退出登录
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarFooter>

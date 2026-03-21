@@ -20,6 +20,7 @@ import {
   TableRow,
 } from '@ui/components/ui/table'
 import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import {
   ArrowDownCircle,
   Eye,
@@ -33,9 +34,15 @@ import {
  * @description 内容管理页 — 编辑和发布运营内容（表格布局）
  * @author Timon
  */
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+
+// 骨架屏加载状态
+const loading = ref(true)
+onMounted(() => {
+  setTimeout(() => { loading.value = false }, 600)
+})
 
 // ==================== 类型定义 ====================
 
@@ -229,6 +236,37 @@ function handleDelete() {
 
 <template>
   <div class="flex flex-col gap-6">
+    <!-- 骨架屏 -->
+    <template v-if="loading">
+      <div class="flex items-end justify-between">
+        <div class="space-y-2">
+          <Skeleton class="h-8 w-32" />
+          <Skeleton class="h-4 w-40" />
+        </div>
+        <Skeleton class="h-9 w-24 rounded-md" />
+      </div>
+      <div class="flex items-center justify-between gap-4">
+        <Skeleton class="h-9 w-64 rounded-md" />
+        <div class="flex items-center gap-3">
+          <Skeleton class="h-9 w-52 rounded-md" />
+          <Skeleton class="h-4 w-20" />
+        </div>
+      </div>
+      <Card class="border-0 shadow-sm">
+        <CardContent class="p-4 space-y-4">
+          <div v-for="i in 6" :key="i" class="flex items-center gap-4">
+            <Skeleton class="h-4 w-56" />
+            <Skeleton class="h-4 w-16" />
+            <Skeleton class="h-4 w-16" />
+            <Skeleton class="h-4 w-16" />
+            <Skeleton class="h-4 w-16 ml-auto" />
+            <Skeleton class="h-4 w-28" />
+          </div>
+        </CardContent>
+      </Card>
+    </template>
+
+    <template v-else>
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
@@ -382,5 +420,6 @@ function handleDelete() {
       confirm-text="删除"
       @confirm="handleDelete"
     />
+    </template>
   </div>
 </template>

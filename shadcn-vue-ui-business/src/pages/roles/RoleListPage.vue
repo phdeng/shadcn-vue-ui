@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@ui/components/ui/dropdown-menu'
 import { Separator } from '@ui/components/ui/separator'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import {
   Clock,
   MoreHorizontal,
@@ -29,9 +30,15 @@ import {
  * @description 角色管理页 — 卡片式布局，配置角色权限与访问控制
  * @author Timon
  */
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+
+// 骨架屏加载状态
+const loading = ref(true)
+onMounted(() => {
+  setTimeout(() => { loading.value = false }, 600)
+})
 
 // ==================== 类型定义 ====================
 
@@ -152,6 +159,36 @@ function handleDelete() {
 
 <template>
   <div class="flex flex-col gap-6">
+    <!-- 骨架屏 -->
+    <template v-if="loading">
+      <div class="flex items-end justify-between">
+        <div class="space-y-2">
+          <Skeleton class="h-8 w-32" />
+          <Skeleton class="h-4 w-48" />
+        </div>
+        <Skeleton class="h-9 w-24 rounded-md" />
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <Card v-for="i in 5" :key="i" class="border-0 shadow-sm">
+          <CardHeader class="pb-3">
+            <Skeleton class="h-5 w-24" />
+            <Skeleton class="h-4 w-full mt-2" />
+          </CardHeader>
+          <CardContent class="pb-3">
+            <div class="flex items-center gap-3">
+              <Skeleton class="h-5 w-20 rounded-full" />
+              <Skeleton class="h-5 w-20 rounded-full" />
+              <Skeleton class="h-5 w-20 rounded-full ml-auto" />
+            </div>
+          </CardContent>
+          <CardFooter class="pt-0">
+            <Skeleton class="h-4 w-40" />
+          </CardFooter>
+        </Card>
+      </div>
+    </template>
+
+    <template v-else>
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
@@ -263,5 +300,6 @@ function handleDelete() {
       confirm-text="删除"
       @confirm="handleDelete"
     />
+    </template>
   </div>
 </template>

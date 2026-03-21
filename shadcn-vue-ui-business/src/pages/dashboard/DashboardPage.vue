@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import { cn } from '@ui/lib/utils'
 import {
   ArrowDownRight,
@@ -21,12 +22,20 @@ import {
  * @description 业务管理后台概览页 — 运营数据看板
  * @author Timon
  */
-import { computed } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import SystemStatus from '@/components/dashboard/SystemStatus.vue'
-import DoughnutChart from '@/components/charts/DoughnutChart.vue'
-import LineChart from '@/components/charts/LineChart.vue'
 import { useAuthStore } from '@/stores/auth'
+
+// 图表组件懒加载 — 减少首屏体积
+const DoughnutChart = defineAsyncComponent(() => import('@/components/charts/DoughnutChart.vue'))
+const LineChart = defineAsyncComponent(() => import('@/components/charts/LineChart.vue'))
+
+// 骨架屏加载状态
+const loading = ref(true)
+onMounted(() => {
+  setTimeout(() => { loading.value = false }, 600)
+})
 
 const authStore = useAuthStore()
 
@@ -214,6 +223,58 @@ const quickActions = [
 
 <template>
   <div class="flex flex-col gap-6">
+    <!-- 骨架屏 -->
+    <template v-if="loading">
+      <!-- 欢迎区骨架 -->
+      <div class="flex items-end justify-between">
+        <div class="space-y-2">
+          <Skeleton class="h-8 w-56" />
+          <Skeleton class="h-4 w-40" />
+        </div>
+      </div>
+      <!-- 统计卡片骨架 -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Card v-for="i in 4" :key="i" class="border-0 shadow-sm overflow-hidden">
+          <CardHeader class="flex flex-row items-center justify-between pb-2">
+            <Skeleton class="h-4 w-16" />
+            <Skeleton class="size-8 rounded-lg" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton class="h-9 w-28 mb-2" />
+            <Skeleton class="h-4 w-20" />
+          </CardContent>
+        </Card>
+      </div>
+      <!-- 图表区骨架 -->
+      <div class="grid gap-4 lg:grid-cols-7">
+        <Card class="lg:col-span-4 border-0 shadow-sm">
+          <CardHeader>
+            <Skeleton class="h-5 w-32" />
+            <Skeleton class="h-4 w-24 mt-1" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton class="h-[240px] w-full rounded-lg" />
+          </CardContent>
+        </Card>
+        <Card class="lg:col-span-3 border-0 shadow-sm">
+          <CardHeader>
+            <Skeleton class="h-5 w-28" />
+            <Skeleton class="h-4 w-20 mt-1" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton class="h-[240px] w-full rounded-lg" />
+          </CardContent>
+        </Card>
+      </div>
+      <!-- 底部区骨架 -->
+      <div class="grid gap-4 lg:grid-cols-2">
+        <Skeleton class="h-48 w-full rounded-xl" />
+        <Skeleton class="h-48 w-full rounded-xl" />
+      </div>
+    </template>
+
+    <!-- 实际内容 -->
+    <template v-else>
     <!-- 欢迎区 -->
     <div class="flex items-end justify-between">
       <div>
@@ -329,5 +390,6 @@ const quickActions = [
       </div>
       </div>
     </div>
+    </template>
   </div>
 </template>

@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import { cn } from '@ui/lib/utils'
 /**
  * @description 数据报表页 — 业务数据分析与可视化
@@ -28,7 +29,16 @@ import {
   ShoppingCart,
   TrendingUp,
 } from 'lucide-vue-next'
-import LineChart from '@/components/charts/LineChart.vue'
+import { defineAsyncComponent, onMounted, ref } from 'vue'
+
+// 图表组件懒加载
+const LineChart = defineAsyncComponent(() => import('@/components/charts/LineChart.vue'))
+
+// 骨架屏加载状态
+const loading = ref(true)
+onMounted(() => {
+  setTimeout(() => { loading.value = false }, 600)
+})
 
 // ==================== 统计卡片数据 ====================
 const stats = [
@@ -195,6 +205,72 @@ function formatAmount(amount: number): string {
 
 <template>
   <div class="flex flex-col gap-6">
+    <!-- 骨架屏 -->
+    <template v-if="loading">
+      <div class="flex items-end justify-between">
+        <div class="space-y-2">
+          <Skeleton class="h-8 w-32" />
+          <Skeleton class="h-4 w-44" />
+        </div>
+      </div>
+      <!-- 统计卡片骨架 -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Card v-for="i in 4" :key="i" class="border-0 shadow-sm overflow-hidden">
+          <CardHeader class="flex flex-row items-center justify-between pb-2">
+            <Skeleton class="h-4 w-16" />
+            <Skeleton class="size-8 rounded-lg" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton class="h-9 w-28 mb-2" />
+            <Skeleton class="h-4 w-20" />
+          </CardContent>
+        </Card>
+      </div>
+      <!-- 图表区骨架 -->
+      <div class="grid gap-4 lg:grid-cols-7">
+        <Card class="lg:col-span-4 border-0 shadow-sm">
+          <CardHeader>
+            <Skeleton class="h-5 w-24" />
+            <Skeleton class="h-4 w-32 mt-1" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton class="h-[240px] w-full rounded-lg" />
+          </CardContent>
+        </Card>
+        <Card class="lg:col-span-3 border-0 shadow-sm">
+          <CardHeader>
+            <Skeleton class="h-5 w-32" />
+            <Skeleton class="h-4 w-28 mt-1" />
+          </CardHeader>
+          <CardContent class="space-y-4">
+            <div v-for="i in 5" :key="i" class="space-y-2">
+              <div class="flex items-center justify-between">
+                <Skeleton class="h-4 w-32" />
+                <Skeleton class="h-4 w-12" />
+              </div>
+              <Skeleton class="h-1.5 w-full rounded-full" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <!-- 表格骨架 -->
+      <Card class="border-0 shadow-sm">
+        <CardHeader>
+          <Skeleton class="h-5 w-28" />
+          <Skeleton class="h-4 w-36 mt-1" />
+        </CardHeader>
+        <CardContent class="p-4 space-y-4">
+          <div v-for="i in 5" :key="i" class="flex items-center gap-8">
+            <Skeleton class="h-4 w-24" />
+            <Skeleton class="h-4 w-12" />
+            <Skeleton class="h-4 w-20" />
+            <Skeleton class="h-4 w-16" />
+          </div>
+        </CardContent>
+      </Card>
+    </template>
+
+    <template v-else>
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
@@ -346,5 +422,6 @@ function formatAmount(amount: number): string {
         </Table>
       </CardContent>
     </Card>
+    </template>
   </div>
 </template>
