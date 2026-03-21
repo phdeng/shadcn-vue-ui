@@ -2,6 +2,7 @@
 
 **现代化 Vue 3 中后台模板体系 — 为 AI 平台与业务管理而生**
 
+![CI](https://github.com/phdeng/shadcn-vue-ui/actions/workflows/ci.yml/badge.svg)
 ![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vue.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite)
