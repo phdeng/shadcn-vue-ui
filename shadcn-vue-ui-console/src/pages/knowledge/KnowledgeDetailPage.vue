@@ -16,6 +16,15 @@ import {
   DropdownMenuTrigger,
 } from '@ui/components/ui/dropdown-menu'
 import { Input } from '@ui/components/ui/input'
+import { Label } from '@ui/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@ui/components/ui/select'
+import { Separator } from '@ui/components/ui/separator'
 import {
   Table,
   TableBody,
@@ -142,7 +151,20 @@ interface RecallResult {
 const recallQuery = ref('')
 const recallLoading = ref(false)
 const recallResults = ref<RecallResult[]>([])
-const recallTopK = ref(5)
+
+// 召回参数 — 参考百炼命中测试配置
+const recallRerankModel = ref('qwen3-rerank')
+const recallVectorTopK = ref(50)
+const recallKeywordTopK = ref(50)
+const recallSimilarityThreshold = ref(0.20)
+const recallMaxResults = ref(5)
+
+const rerankModels = [
+  { value: 'qwen3-rerank', label: 'qwen3-rerank' },
+  { value: 'gte-rerank-v2', label: 'gte-rerank-v2' },
+  { value: 'bge-reranker-v2-m3', label: 'bge-reranker-v2-m3' },
+  { value: 'none', label: '不使用 Rerank' },
+]
 
 /** 执行召回测试 */
 function handleRecallTest() {
@@ -416,106 +438,233 @@ function handleRebuildAll() {
         </Card>
       </TabsContent>
 
-      <!-- ==================== Tab 2: 召回测试 ==================== -->
+      <!-- ==================== Tab 2: 召回测试（左右分栏） ==================== -->
       <TabsContent value="recall">
-        <Card class="border-0 shadow-sm">
-          <CardHeader>
-            <CardTitle class="text-base">召回测试</CardTitle>
-            <CardDescription>输入查询语句，测试知识库的向量检索效果和召回质量</CardDescription>
-          </CardHeader>
-          <CardContent class="space-y-6">
-            <!-- 查询输入 -->
-            <div class="flex gap-3">
-              <div class="flex-1 space-y-2">
+        <div class="grid gap-4 lg:grid-cols-[360px_1fr]">
+          <!-- 左侧：配置面板 -->
+          <Card class="border-0 shadow-sm self-start">
+            <CardHeader class="pb-4">
+              <CardTitle class="text-base">配置调试</CardTitle>
+            </CardHeader>
+            <CardContent class="space-y-5">
+              <!-- Rerank 模型 -->
+              <div class="space-y-2">
+                <Label class="text-xs">选择排序模型</Label>
+                <Select v-model="recallRerankModel">
+                  <SelectTrigger class="h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem v-for="m in rerankModels" :key="m.value" :value="m.value">
+                      {{ m.label }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <!-- 向量检索 TopK -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <Label class="text-xs">初步向量检索 TopK</Label>
+                  <Input
+                    v-model.number="recallVectorTopK"
+                    type="number"
+                    :min="10"
+                    :max="100"
+                    class="h-6 w-14 text-xs text-center"
+                  />
+                </div>
+                <input
+                  v-model.number="recallVectorTopK"
+                  type="range"
+                  :min="10"
+                  :max="100"
+                  class="w-full accent-primary h-1.5"
+                >
+                <div class="flex justify-between text-[10px] text-muted-foreground">
+                  <span>10</span>
+                  <span>100</span>
+                </div>
+              </div>
+
+              <!-- 关键词检索 TopK -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <Label class="text-xs">初步关键词检索 TopK</Label>
+                  <Input
+                    v-model.number="recallKeywordTopK"
+                    type="number"
+                    :min="10"
+                    :max="100"
+                    class="h-6 w-14 text-xs text-center"
+                  />
+                </div>
+                <input
+                  v-model.number="recallKeywordTopK"
+                  type="range"
+                  :min="10"
+                  :max="100"
+                  class="w-full accent-primary h-1.5"
+                >
+                <div class="flex justify-between text-[10px] text-muted-foreground">
+                  <span>10</span>
+                  <span>100</span>
+                </div>
+              </div>
+
+              <!-- 相似度阈值 -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <Label class="text-xs">相似度阈值</Label>
+                  <Input
+                    v-model.number="recallSimilarityThreshold"
+                    type="number"
+                    :min="0.01"
+                    :max="1"
+                    :step="0.01"
+                    class="h-6 w-14 text-xs text-center"
+                  />
+                </div>
+                <input
+                  v-model.number="recallSimilarityThreshold"
+                  type="range"
+                  :min="0.01"
+                  :max="1"
+                  :step="0.01"
+                  class="w-full accent-primary h-1.5"
+                >
+                <div class="flex justify-between text-[10px] text-muted-foreground">
+                  <span>0.01</span>
+                  <span>1</span>
+                </div>
+              </div>
+
+              <!-- 最终召回数量 -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <Label class="text-xs">最终召回最大数量</Label>
+                  <Input
+                    v-model.number="recallMaxResults"
+                    type="number"
+                    :min="1"
+                    :max="20"
+                    class="h-6 w-14 text-xs text-center"
+                  />
+                </div>
+                <input
+                  v-model.number="recallMaxResults"
+                  type="range"
+                  :min="1"
+                  :max="20"
+                  class="w-full accent-primary h-1.5"
+                >
+                <div class="flex justify-between text-[10px] text-muted-foreground">
+                  <span>1</span>
+                  <span>20</span>
+                </div>
+              </div>
+
+              <Separator />
+
+              <!-- 查询输入 -->
+              <div class="space-y-2">
+                <Label class="text-xs">输入</Label>
                 <textarea
                   v-model="recallQuery"
-                  rows="3"
+                  rows="4"
                   placeholder="输入查询内容，例如：如何获取 API 密钥？"
                   class="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 w-full rounded-lg border bg-transparent px-3 py-2.5 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:ring-[3px]"
                   @keydown.meta.enter="handleRecallTest"
                 />
                 <div class="flex items-center justify-between">
-                  <p class="text-xs text-muted-foreground">⌘ + Enter 发送</p>
-                  <div class="flex items-center gap-2">
-                    <span class="text-xs text-muted-foreground">Top-K：</span>
-                    <Input
-                      v-model.number="recallTopK"
-                      type="number"
-                      :min="1"
-                      :max="20"
-                      class="h-7 w-16 text-xs"
-                    />
-                  </div>
+                  <p class="text-[10px] text-muted-foreground">⌘ + Enter 发送</p>
+                  <Button
+                    size="sm"
+                    :disabled="!recallQuery.trim() || recallLoading"
+                    @click="handleRecallTest"
+                  >
+                    <Send class="mr-1.5 size-3.5" />
+                    测试
+                  </Button>
                 </div>
               </div>
-              <Button
-                class="shrink-0 self-start"
-                :disabled="!recallQuery.trim() || recallLoading"
-                @click="handleRecallTest"
-              >
-                <Send class="mr-2 size-4" />
-                测试
-              </Button>
-            </div>
+            </CardContent>
+          </Card>
 
-            <!-- 召回结果 -->
-            <div v-if="recallLoading" class="space-y-3">
-              <Skeleton v-for="i in 3" :key="i" class="h-[120px] rounded-lg" />
-            </div>
-
-            <div v-else-if="recallResults.length > 0" class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-sm font-medium">
-                  召回结果（{{ recallResults.length }} 条）
-                </span>
+          <!-- 右侧：结果展示 -->
+          <Card class="border-0 shadow-sm">
+            <CardHeader class="pb-4">
+              <div class="flex items-center gap-2">
+                <div class="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 text-sm">
+                  {{ knowledgeBase.icon }}
+                </div>
+                <CardTitle class="text-base">{{ knowledgeBase.name }}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <!-- 加载态 -->
+              <div v-if="recallLoading" class="space-y-3">
+                <Skeleton v-for="i in 3" :key="i" class="h-[120px] rounded-lg" />
               </div>
 
+              <!-- 结果列表 -->
+              <div v-else-if="recallResults.length > 0" class="space-y-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium">
+                    召回结果（{{ recallResults.length }} 条）
+                  </span>
+                  <Badge variant="outline" class="text-[10px]">
+                    阈值 ≥ {{ recallSimilarityThreshold }}
+                  </Badge>
+                </div>
+
+                <div
+                  v-for="(result, index) in recallResults"
+                  :key="result.segmentId"
+                  class="rounded-lg border bg-card p-4 transition-all hover:shadow-sm"
+                >
+                  <div class="mb-2 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="flex size-5 items-center justify-center rounded bg-primary/10 text-xs font-semibold text-primary">
+                        {{ index + 1 }}
+                      </span>
+                      <span class="text-sm font-medium">{{ result.docName }}</span>
+                      <Badge variant="outline" class="text-[10px]">
+                        {{ result.segmentId }}
+                      </Badge>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-xs text-muted-foreground">相似度</span>
+                      <Badge
+                        :variant="result.score >= 0.9 ? 'default' : 'secondary'"
+                        class="font-mono text-[11px]"
+                      >
+                        {{ (result.score * 100).toFixed(1) }}%
+                      </Badge>
+                    </div>
+                  </div>
+                  <p class="text-sm leading-relaxed text-muted-foreground">
+                    {{ result.segment }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- 空状态 -->
               <div
-                v-for="(result, index) in recallResults"
-                :key="result.segmentId"
-                class="rounded-lg border bg-card p-4 transition-all hover:shadow-sm"
+                v-else
+                class="flex flex-col items-center justify-center gap-3 py-24"
               >
-                <div class="mb-2 flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <span class="flex size-5 items-center justify-center rounded bg-primary/10 text-xs font-semibold text-primary">
-                      {{ index + 1 }}
-                    </span>
-                    <span class="text-sm font-medium">{{ result.docName }}</span>
-                    <Badge variant="outline" class="text-[10px]">
-                      {{ result.segmentId }}
-                    </Badge>
-                  </div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-xs text-muted-foreground">相似度</span>
-                    <Badge
-                      :variant="result.score >= 0.9 ? 'default' : 'secondary'"
-                      class="font-mono text-[11px]"
-                    >
-                      {{ (result.score * 100).toFixed(1) }}%
-                    </Badge>
-                  </div>
+                <Search class="size-12 text-muted-foreground/30" />
+                <div class="text-center">
+                  <p class="text-sm font-medium text-muted-foreground">暂无数据</p>
+                  <p class="mt-1 text-xs text-muted-foreground/60">
+                    请在左侧输入内容，点击测试进行结果查看
+                  </p>
                 </div>
-                <p class="text-sm leading-relaxed text-muted-foreground line-clamp-3">
-                  {{ result.segment }}
-                </p>
               </div>
-            </div>
-
-            <!-- 空状态 -->
-            <div
-              v-else
-              class="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16"
-            >
-              <Search class="size-10 text-muted-foreground/40" />
-              <div class="text-center">
-                <p class="text-sm font-medium text-muted-foreground">输入查询内容开始测试</p>
-                <p class="mt-1 text-xs text-muted-foreground/60">
-                  测试知识库的向量检索效果，验证 Embedding 模型与分段策略
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </TabsContent>
 
       <!-- ==================== Tab 3: 配置信息 ==================== -->
