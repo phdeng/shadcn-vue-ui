@@ -22,4 +22,18 @@ export default defineConfig({
       allow: [monorepoRoot],
     },
   },
+  build: {
+    // 生产构建优化
+    target: 'es2020',
+    rollupOptions: {
+      output: {
+        // 将大型第三方库拆分为独立 chunk（rolldown 要求函数形式）
+        manualChunks(id: string) {
+          if (id.includes('node_modules/vue/') || id.includes('node_modules/@vue/') || id.includes('node_modules/vue-router/') || id.includes('node_modules/pinia/')) {
+            return 'vue-vendor'
+          }
+        },
+      },
+    },
+  },
 })
