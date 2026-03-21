@@ -23,4 +23,16 @@ export default defineConfig({
       allow: [monorepoRoot],
     },
   },
+  build: {
+    target: 'es2020',
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('node_modules/vue/') || id.includes('node_modules/@vue/') || id.includes('node_modules/vue-router/') || id.includes('node_modules/pinia/')) {
+            return 'vue-vendor'
+          }
+        },
+      },
+    },
+  },
 })
