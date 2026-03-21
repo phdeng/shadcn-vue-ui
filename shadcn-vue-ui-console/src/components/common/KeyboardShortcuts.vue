@@ -21,22 +21,13 @@ const shortcuts = [
     items: [
       { keys: ['⌘', 'K'], desc: '打开命令面板' },
       { keys: ['?'], desc: '显示快捷键' },
-    ],
-  },
-  {
-    group: '导航',
-    items: [
-      { keys: ['G', '然后', 'H'], desc: '回到首页' },
-      { keys: ['G', '然后', 'M'], desc: '模型管理' },
-      { keys: ['G', '然后', 'A'], desc: 'Agent 管理' },
-      { keys: ['G', '然后', 'S'], desc: '系统设置' },
-    ],
-  },
-  {
-    group: '操作',
-    items: [
-      { keys: ['N'], desc: '新建（当前页面上下文）' },
       { keys: ['Esc'], desc: '关闭弹窗 / 取消' },
+    ],
+  },
+  {
+    group: '提示',
+    items: [
+      { keys: ['⌘', 'K'], desc: '使用命令面板可快速跳转至任意页面' },
     ],
   },
 ]

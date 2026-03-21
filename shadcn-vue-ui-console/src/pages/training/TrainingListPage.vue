@@ -38,9 +38,15 @@ import {
  * @description 模型训练页 — 管理微调任务与训练日志
  * @author Timon
  */
-import { ref } from 'vue'
+import { Skeleton } from '@ui/components/ui/skeleton'
+import { computed, ref } from 'vue'
+import { toast } from 'vue-sonner'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import TrainingCreateDialog from '@/components/training/TrainingCreateDialog.vue'
 
 const searchQuery = ref('')
+const loading = ref(true)
+setTimeout(() => { loading.value = false }, 600)
 
 type TrainingStatus = 'running' | 'completed' | 'failed' | 'queued'
 
@@ -72,16 +78,103 @@ const statusConfig: Record<TrainingStatus, { label: string, icon: typeof Play, d
   queued: { label: '排队中', icon: Clock, dotClass: 'bg-gray-400', badgeClass: 'bg-gray-100 text-gray-600 dark:bg-gray-800/50 dark:text-gray-400' },
 }
 
-// 统计
-const stats = {
+// ==================== 搜索过滤 ====================
+
+/** 根据搜索关键词过滤训练任务 */
+const filteredJobs = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query)
+    return jobs.value
+  return jobs.value.filter(
+    j =>
+      j.name.toLowerCase().includes(query)
+      || j.baseModel.toLowerCase().includes(query)
+      || j.dataset.toLowerCase().includes(query),
+  )
+})
+
+// 统计（改为 computed 以响应数据变更）
+const stats = computed(() => ({
   total: jobs.value.length,
   running: jobs.value.filter(j => j.status === 'running').length,
   completed: jobs.value.filter(j => j.status === 'completed').length,
+}))
+
+// ==================== 对话框状态 ====================
+
+const showCreateDialog = ref(false)
+const showDeleteDialog = ref(false)
+const deleteTarget = ref<TrainingJob | null>(null)
+
+// ==================== 事件处理 ====================
+
+/** 创建训练任务提交 */
+function handleCreateSubmit(data: { name: string }) {
+  toast.success('训练任务已创建', { description: data.name })
+}
+
+/** 查看日志 */
+function handleViewLogs(job: TrainingJob) {
+  toast.info(`查看训练日志：${job.name}`, { description: `状态: ${statusConfig[job.status].label}` })
+}
+
+/** 导出模型 */
+function handleExport(job: TrainingJob) {
+  if (job.status !== 'completed') {
+    toast.warning('仅已完成的训练任务支持导出')
+    return
+  }
+  toast.success('开始导出模型', { description: job.name })
+}
+
+/** 暂停训练 */
+function handlePause(job: TrainingJob) {
+  job.status = 'queued'
+  toast.info('训练已暂停', { description: job.name })
+}
+
+/** 重新训练 */
+function handleRetrain(job: TrainingJob) {
+  job.status = 'queued'
+  job.progress = 0
+  toast.info('已提交重新训练', { description: job.name })
+}
+
+/** 打开删除确认 */
+function handleDeleteConfirm(job: TrainingJob) {
+  deleteTarget.value = job
+  showDeleteDialog.value = true
+}
+
+/** 执行删除 */
+function handleDelete() {
+  if (!deleteTarget.value) return
+  const name = deleteTarget.value.name
+  jobs.value = jobs.value.filter(j => j.id !== deleteTarget.value!.id)
+  showDeleteDialog.value = false
+  deleteTarget.value = null
+  toast.success('已删除', { description: name })
 }
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div>
+    <!-- 骨架屏 -->
+    <div v-if="loading" class="flex flex-col gap-6">
+    <div class="flex items-end justify-between">
+      <div class="space-y-2">
+        <Skeleton class="h-8 w-32" />
+        <Skeleton class="h-4 w-64" />
+      </div>
+      <Skeleton class="h-9 w-32" />
+    </div>
+    <div class="grid gap-4 sm:grid-cols-3">
+      <Skeleton v-for="i in 3" :key="i" class="h-[88px] rounded-xl" />
+    </div>
+    <Skeleton class="h-[360px] rounded-xl" />
+  </div>
+
+  <div v-else class="flex flex-col gap-6">
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
@@ -92,7 +185,7 @@ const stats = {
           管理微调任务、训练参数与训练日志
         </p>
       </div>
-      <Button size="sm">
+      <Button size="sm" @click="showCreateDialog = true">
         <Plus class="mr-2 size-4" />
         创建训练任务
       </Button>
@@ -176,7 +269,7 @@ const stats = {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow v-for="job in jobs" :key="job.id" class="group">
+            <TableRow v-for="job in filteredJobs" :key="job.id" class="group">
               <TableCell class="font-medium">
                 {{ job.name }}
               </TableCell>
@@ -223,16 +316,20 @@ const stats = {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>查看日志</DropdownMenuItem>
-                    <DropdownMenuItem>导出模型</DropdownMenuItem>
+                    <DropdownMenuItem @click="handleViewLogs(job)">
+                      查看日志
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="handleExport(job)">
+                      导出模型
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem v-if="job.status === 'running'" class="text-amber-600">
+                    <DropdownMenuItem v-if="job.status === 'running'" class="text-amber-600" @click="handlePause(job)">
                       暂停训练
                     </DropdownMenuItem>
-                    <DropdownMenuItem v-if="job.status === 'failed'" class="text-blue-600">
+                    <DropdownMenuItem v-if="job.status === 'failed'" class="text-blue-600" @click="handleRetrain(job)">
                       重新训练
                     </DropdownMenuItem>
-                    <DropdownMenuItem class="text-destructive">
+                    <DropdownMenuItem class="text-destructive" @click="handleDeleteConfirm(job)">
                       删除
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -243,5 +340,21 @@ const stats = {
         </Table>
       </CardContent>
     </Card>
+
+    <!-- 创建训练任务对话框 -->
+    <TrainingCreateDialog
+      v-model:open="showCreateDialog"
+      @submit="handleCreateSubmit"
+    />
+
+    <!-- 删除确认对话框 -->
+    <ConfirmDialog
+      v-model:open="showDeleteDialog"
+      title="删除训练任务"
+      :description="`确定要删除「${deleteTarget?.name}」吗？此操作不可撤销。`"
+      confirm-text="删除"
+      @confirm="handleDelete"
+    />
+  </div>
   </div>
 </template>

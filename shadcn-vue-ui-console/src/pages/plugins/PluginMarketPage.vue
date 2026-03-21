@@ -25,10 +25,14 @@ import {
  * @description 插件市场页 — Prompt / MCP / Skill
  * @author Timon
  */
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { toast } from 'vue-sonner'
+import PageLoading from '@/components/common/PageLoading.vue'
 
 const searchQuery = ref('')
 const activeTab = ref('all')
+const loading = ref(true)
+setTimeout(() => { loading.value = false }, 600)
 
 type PluginType = 'prompt' | 'mcp' | 'skill'
 
@@ -52,6 +56,43 @@ const plugins = ref<PluginItem[]>([
   { id: '6', name: '数据可视化 Skill', description: '根据数据自动生成图表配置，支持 ECharts 和 Chart.js', type: 'skill', author: 'Community', stars: 95, downloads: '1.2k', tags: ['图表', '可视化'] },
 ])
 
+// ==================== 搜索 + 类型筛选 ====================
+
+/** 根据搜索关键词和类型筛选插件列表 */
+const filteredPlugins = computed(() => {
+  let result = plugins.value
+
+  // 按类型筛选
+  if (activeTab.value !== 'all') {
+    result = result.filter(p => p.type === activeTab.value)
+  }
+
+  // 按关键词搜索
+  const query = searchQuery.value.trim().toLowerCase()
+  if (query) {
+    result = result.filter(
+      p =>
+        p.name.toLowerCase().includes(query)
+        || p.description.toLowerCase().includes(query)
+        || p.tags.some(t => t.toLowerCase().includes(query)),
+    )
+  }
+
+  return result
+})
+
+// ==================== 事件处理 ====================
+
+/** 插件卡片点击 — 安装/查看详情 */
+function handlePluginClick(plugin: PluginItem) {
+  toast.info(plugin.name, { description: plugin.description })
+}
+
+/** 发布插件 */
+function handlePublish() {
+  toast.info('发布插件', { description: '插件发布功能即将上线' })
+}
+
 const typeConfig: Record<PluginType, { label: string, icon: typeof MessageSquareText, color: string }> = {
   prompt: { label: 'Prompt', icon: MessageSquareText, color: 'from-blue-500/10 to-indigo-500/5' },
   mcp: { label: 'MCP', icon: Server, color: 'from-emerald-500/10 to-teal-500/5' },
@@ -60,7 +101,10 @@ const typeConfig: Record<PluginType, { label: string, icon: typeof MessageSquare
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div>
+    <PageLoading v-if="loading" :count="6" :cols="3" />
+
+  <div v-else class="flex flex-col gap-6">
     <div class="flex items-end justify-between">
       <div>
         <h2 class="text-2xl font-semibold tracking-tight">
@@ -70,7 +114,7 @@ const typeConfig: Record<PluginType, { label: string, icon: typeof MessageSquare
           浏览和安装 Prompt、MCP Server、Skill 插件
         </p>
       </div>
-      <Button variant="outline" size="sm">
+      <Button variant="outline" size="sm" @click="handlePublish">
         <ExternalLink class="mr-2 size-4" />
         发布插件
       </Button>
@@ -101,15 +145,16 @@ const typeConfig: Record<PluginType, { label: string, icon: typeof MessageSquare
           </TabsList>
         </Tabs>
       </div>
-      <span class="text-sm text-muted-foreground">共 {{ plugins.length }} 个插件</span>
+      <span class="text-sm text-muted-foreground">共 {{ filteredPlugins.length }} 个插件</span>
     </div>
 
     <!-- 插件卡片 -->
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       <Card
-        v-for="plugin in plugins"
+        v-for="plugin in filteredPlugins"
         :key="plugin.id"
         class="group cursor-pointer border-0 shadow-sm transition-all hover:shadow-md"
+        @click="handlePluginClick(plugin)"
       >
         <CardHeader class="pb-2">
           <div class="flex items-start gap-3">
@@ -158,5 +203,22 @@ const typeConfig: Record<PluginType, { label: string, icon: typeof MessageSquare
         </CardFooter>
       </Card>
     </div>
+
+    <!-- 空状态提示 -->
+    <div
+      v-if="filteredPlugins.length === 0"
+      class="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16"
+    >
+      <Search class="size-10 text-muted-foreground/40" />
+      <div class="text-center">
+        <p class="text-sm font-medium text-muted-foreground">
+          未找到匹配的插件
+        </p>
+        <p class="mt-1 text-xs text-muted-foreground/60">
+          尝试调整搜索关键词或筛选条件
+        </p>
+      </div>
+    </div>
+  </div>
   </div>
 </template>

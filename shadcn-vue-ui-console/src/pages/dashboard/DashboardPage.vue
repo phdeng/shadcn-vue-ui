@@ -10,18 +10,25 @@ import {
   CardHeader,
   CardTitle,
 } from '@ui/components/ui/card'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import { cn } from '@ui/lib/utils'
 import { Activity, ArrowDownRight, ArrowUpRight, BookOpen, Bot, Box, Sparkles } from 'lucide-vue-next'
 /**
  * @description 控制台概览页 — 云平台产品风格
  * @author Timon
  */
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 import ServiceStatus from '@/components/dashboard/ServiceStatus.vue'
+import { useCountUp } from '@/composables/useCountUp'
 import { mockDashboardStats } from '@/mocks'
 import { useAuthStore } from '@/stores/auth'
+
+const router = useRouter()
+const loading = ref(true)
+setTimeout(() => { loading.value = false }, 500)
 
 const authStore = useAuthStore()
 
@@ -42,11 +49,18 @@ const greeting = computed(() => {
 const userName = computed(() => authStore.user?.name || 'Timon')
 
 // ==================== 统计卡片数据（从 Mock 模块获取） ====================
+
+// count-up 动画数值
+const countModels = useCountUp(mockDashboardStats.totalModels, 800)
+const countRunning = useCountUp(mockDashboardStats.runningModels, 800)
+const countKnowledge = useCountUp(24, 800)
+const countCalls = useCountUp(mockDashboardStats.todayCalls, 1000)
+
 const stats = [
-  { title: '已注册模型', value: String(mockDashboardStats.totalModels), change: '+3', trend: 'up' as const, desc: '较上月', icon: Box, color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20', iconColor: 'text-blue-600 dark:text-blue-400' },
-  { title: '运行中模型', value: String(mockDashboardStats.runningModels), change: '+2', trend: 'up' as const, desc: '较上月', icon: Bot, color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20', iconColor: 'text-violet-600 dark:text-violet-400' },
-  { title: '知识库总量', value: '24', change: '+5', trend: 'up' as const, desc: '较上月', icon: BookOpen, color: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20', iconColor: 'text-emerald-600 dark:text-emerald-400' },
-  { title: '今日调用次数', value: String(mockDashboardStats.todayCalls), change: '-3%', trend: 'down' as const, desc: '较昨日', icon: Activity, color: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20', iconColor: 'text-amber-600 dark:text-amber-400' },
+  { title: '已注册模型', countRef: countModels, change: '+3', trend: 'up' as const, desc: '较上月', icon: Box, color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20', iconColor: 'text-blue-600 dark:text-blue-400' },
+  { title: '运行中模型', countRef: countRunning, change: '+2', trend: 'up' as const, desc: '较上月', icon: Bot, color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20', iconColor: 'text-violet-600 dark:text-violet-400' },
+  { title: '知识库总量', countRef: countKnowledge, change: '+5', trend: 'up' as const, desc: '较上月', icon: BookOpen, color: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20', iconColor: 'text-emerald-600 dark:text-emerald-400' },
+  { title: '今日调用次数', countRef: countCalls, change: '-3%', trend: 'down' as const, desc: '较昨日', icon: Activity, color: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20', iconColor: 'text-amber-600 dark:text-amber-400' },
 ]
 
 // ==================== 最近活动数据 ====================
@@ -195,7 +209,23 @@ const quickActions = [
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div>
+    <!-- Dashboard 骨架屏 -->
+    <div v-if="loading" class="flex flex-col gap-6">
+    <div class="space-y-2">
+      <Skeleton class="h-8 w-56" />
+      <Skeleton class="h-4 w-72" />
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <Skeleton v-for="i in 4" :key="i" class="h-[120px] rounded-xl" />
+    </div>
+    <div class="grid gap-4 lg:grid-cols-7">
+      <Skeleton class="lg:col-span-4 h-[340px] rounded-xl" />
+      <Skeleton class="lg:col-span-3 h-[340px] rounded-xl" />
+    </div>
+  </div>
+
+  <div v-else class="flex flex-col gap-6">
     <!-- 欢迎区 -->
     <div class="flex items-end justify-between">
       <div>
@@ -225,13 +255,16 @@ const quickActions = [
             </div>
           </CardHeader>
           <CardContent>
-            <div class="text-3xl font-bold tracking-tight">
-              {{ item.value }}
+            <div class="text-3xl font-bold tracking-tight tabular-nums">
+              {{ item.countRef.value.toLocaleString() }}
             </div>
             <div class="mt-2 flex items-center gap-1.5 text-xs">
               <Badge
-                :variant="item.trend === 'up' ? 'secondary' : 'destructive'"
-                class="gap-0.5 rounded-full px-1.5 py-0 text-[10px] font-medium"
+                variant="secondary"
+                :class="[
+                  'gap-0.5 rounded-full px-1.5 py-0 text-[10px] font-medium',
+                  item.trend === 'down' && 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-400',
+                ]"
               >
                 <ArrowUpRight v-if="item.trend === 'up'" class="size-3" />
                 <ArrowDownRight v-else class="size-3" />
@@ -256,7 +289,7 @@ const quickActions = [
               </CardTitle>
               <CardDescription>近 7 日模型调用量变化</CardDescription>
             </div>
-            <Button variant="ghost" size="sm" class="text-xs text-muted-foreground">
+            <Button variant="ghost" size="sm" class="text-xs text-muted-foreground" @click="router.push('/models')">
               查看全部
             </Button>
           </div>
@@ -313,7 +346,7 @@ const quickActions = [
           </div>
         </CardContent>
         <CardFooter class="pt-0">
-          <Button variant="ghost" size="sm" class="w-full text-xs text-muted-foreground">
+          <Button variant="ghost" size="sm" class="w-full text-xs text-muted-foreground" @click="router.push('/settings')">
             查看全部活动
           </Button>
         </CardFooter>
@@ -351,5 +384,6 @@ const quickActions = [
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>

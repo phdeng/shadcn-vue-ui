@@ -219,6 +219,7 @@ export const mockDashboardStats: DashboardStats = {
  */
 export function getModelById(id: string): ModelItem | undefined {
   return mockModels.find(model => model.id === id)
+    || mockModels.find(model => model.name.toLowerCase().replace(/[\s.]+/g, '-') === id)
 }
 
 /**

@@ -17,6 +17,7 @@ import {
   TableRow,
 } from '@ui/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import { cn } from '@ui/lib/utils'
 import {
   Activity,
@@ -34,35 +35,40 @@ import {
  * @description 模型详情页 — Dify / 云控制台产品风格
  * @author Timon
  */
-import { useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
+import { getModelById, mockModelCalls } from '@/mocks'
 
 const router = useRouter()
-// 模拟数据 — 后续替换为 API
-const model = {
-  id: '1',
-  name: 'GPT-4o',
-  provider: 'OpenAI',
-  type: '大语言模型',
-  status: 'running' as const,
-  endpoint: 'https://api.openai.com/v1/chat/completions',
-  maxTokens: 128000,
-  temperature: 0.7,
-  createdAt: '2026-01-15',
-  updatedAt: '2026-03-18',
-}
+const route = useRoute()
+const activeTab = ref('calls')
+const loading = ref(true)
+setTimeout(() => { loading.value = false }, 500)
 
-// 指标卡片 — 渐变背景风格，与 Dashboard 保持一致
-const metrics = [
+// 根据路由参数查找模型（支持 id 或 name 匹配）
+const modelId = route.params.id as string
+const mockModel = getModelById(modelId)
+
+const model = computed(() => {
+  if (!mockModel) {
+    return { id: modelId, name: modelId, provider: '未知', type: 'chat', status: 'stopped' as const, endpoint: '—', maxTokens: 0, temperature: 0, createdAt: '—', updatedAt: '—', calls: 0, latency: '—' }
+  }
+  return mockModel
+})
+
+// 指标卡片 — 渐变背景风格，根据模型真实数据动态生成
+const metrics = computed(() => [
   {
     label: '总调用次数',
-    value: '45,230',
+    value: model.value.calls.toLocaleString(),
     icon: Activity,
     color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20',
     iconColor: 'text-blue-600 dark:text-blue-400',
   },
   {
     label: '平均延迟',
-    value: '320ms',
+    value: model.value.latency,
     icon: Clock,
     color: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20',
     iconColor: 'text-amber-600 dark:text-amber-400',
@@ -76,35 +82,72 @@ const metrics = [
   },
   {
     label: '今日调用',
-    value: '1,204',
+    value: Math.round(model.value.calls * 0.026).toLocaleString(),
     icon: Zap,
     color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20',
     iconColor: 'text-violet-600 dark:text-violet-400',
   },
+])
+
+// 模型配置项 — 动态绑定
+const configItems = computed(() => [
+  { label: 'API 端点', value: model.value.endpoint },
+  { label: '最大 Token', value: model.value.maxTokens.toLocaleString() },
+  { label: 'Temperature', value: String(model.value.temperature) },
+  { label: '提供商', value: model.value.provider },
+  { label: '创建时间', value: model.value.createdAt },
+  { label: '最后更新', value: model.value.updatedAt },
+])
+
+/** 编辑配置 */
+function handleEditConfig() {
+  toast.info('编辑模型配置', { description: `${model.name} — 修改参数后将立即生效` })
+}
+
+// 运行日志数据
+const runLogs = [
+  { time: '14:23:05', level: 'INFO', message: '[GPT-4o] 推理请求已处理 — tokens: 2340, latency: 312ms' },
+  { time: '14:22:51', level: 'INFO', message: '[GPT-4o] 推理请求已处理 — tokens: 1850, latency: 287ms' },
+  { time: '14:22:30', level: 'WARN', message: '[GPT-4o] 响应延迟超过阈值 — latency: 456ms (阈值: 400ms)' },
+  { time: '14:21:58', level: 'INFO', message: '[GPT-4o] 推理请求已处理 — tokens: 980, latency: 198ms' },
+  { time: '14:21:12', level: 'ERROR', message: '[GPT-4o] 推理请求失败 — status: 429 Rate Limit Exceeded' },
+  { time: '14:20:45', level: 'INFO', message: '[GPT-4o] 推理请求已处理 — tokens: 1520, latency: 265ms' },
+  { time: '14:19:30', level: 'INFO', message: '[GPT-4o] 健康检查通过 — endpoint: api.openai.com' },
 ]
 
-// 模型配置项
-const configItems = [
-  { label: 'API 端点', value: 'https://api.openai.com/v1/chat/completions' },
-  { label: '最大 Token', value: '128,000' },
-  { label: 'Temperature', value: '0.7' },
-  { label: '提供商', value: 'OpenAI' },
-  { label: '创建时间', value: '2026-01-15' },
-  { label: '最后更新', value: '2026-03-18' },
-]
-
-// 最近调用记录
-const recentCalls = [
-  { time: '14:23:05', tokens: 2340, latency: '312ms', status: '成功' },
-  { time: '14:22:51', tokens: 1850, latency: '287ms', status: '成功' },
-  { time: '14:22:30', tokens: 4120, latency: '456ms', status: '成功' },
-  { time: '14:21:58', tokens: 980, latency: '198ms', status: '成功' },
-  { time: '14:21:12', tokens: 3200, latency: '401ms', status: '失败' },
-]
+// 最近调用记录 — 从 mock 数据中按模型名称过滤
+const recentCalls = computed(() => {
+  const modelName = model.value.name
+  return mockModelCalls
+    .filter(c => c.model === modelName)
+    .slice(0, 5)
+    .map(c => ({
+      time: c.time.split(' ')[1] || c.time,
+      tokens: c.tokens,
+      latency: c.latency,
+      status: c.status === 'success' ? '成功' : c.status === 'failed' ? '失败' : '超时',
+    }))
+})
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div>
+    <!-- 详情页骨架屏 -->
+    <div v-if="loading" class="flex flex-col gap-6">
+    <div class="flex items-center gap-3">
+      <Skeleton class="size-9 rounded-lg" />
+      <div class="space-y-2">
+        <Skeleton class="h-7 w-40" />
+        <Skeleton class="h-4 w-56" />
+      </div>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <Skeleton v-for="i in 4" :key="i" class="h-[100px] rounded-xl" />
+    </div>
+    <Skeleton class="h-[360px] rounded-xl" />
+  </div>
+
+  <div v-else class="flex flex-col gap-6">
     <!-- 顶部区域：返回按钮 + 模型名称 + 标签 + 状态 + 操作按钮 -->
     <div class="flex items-start justify-between">
       <div class="flex items-start gap-3">
@@ -122,11 +165,23 @@ const recentCalls = [
               {{ model.name }}
             </h2>
             <Badge variant="secondary">
-              {{ model.type }}
+              {{ model.type === 'chat' ? '大语言模型' : model.type }}
             </Badge>
             <div class="flex items-center gap-1.5">
-              <Circle class="size-2 fill-emerald-500 text-emerald-500" />
-              <span class="text-xs font-medium text-emerald-600 dark:text-emerald-400">运行中</span>
+              <Circle
+                :class="cn(
+                  'size-2',
+                  model.status === 'running' ? 'fill-emerald-500 text-emerald-500' : model.status === 'error' ? 'fill-red-500 text-red-500' : 'fill-gray-400 text-gray-400',
+                )"
+              />
+              <span
+                :class="cn(
+                  'text-xs font-medium',
+                  model.status === 'running' ? 'text-emerald-600 dark:text-emerald-400' : model.status === 'error' ? 'text-red-600 dark:text-red-400' : 'text-gray-500',
+                )"
+              >
+                {{ model.status === 'running' ? '运行中' : model.status === 'error' ? '异常' : '已停止' }}
+              </span>
             </div>
           </div>
           <p class="mt-1.5 text-sm text-muted-foreground">
@@ -134,7 +189,7 @@ const recentCalls = [
           </p>
         </div>
       </div>
-      <Button variant="outline" class="shrink-0">
+      <Button variant="outline" class="shrink-0" @click="handleEditConfig">
         <Settings class="mr-2 size-4" />
         编辑配置
       </Button>
@@ -262,19 +317,31 @@ const recentCalls = [
       <!-- 运行日志 -->
       <TabsContent value="logs">
         <Card class="border-0 shadow-sm">
-          <CardContent class="flex flex-col items-center justify-center py-16">
-            <div class="flex size-12 items-center justify-center rounded-full bg-muted">
-              <ScrollText class="size-5 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle class="text-base">
+              运行日志
+            </CardTitle>
+            <CardDescription>模型推理服务实时日志</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div class="rounded-lg bg-zinc-950 p-4 font-mono text-xs leading-relaxed text-zinc-300 max-h-[400px] overflow-y-auto space-y-1">
+              <div v-for="(log, i) in runLogs" :key="i" class="flex gap-2">
+                <span class="text-zinc-500 shrink-0">{{ log.time }}</span>
+                <span
+                  :class="cn(
+                    'shrink-0 w-12',
+                    log.level === 'ERROR' ? 'text-red-400' : log.level === 'WARN' ? 'text-amber-400' : 'text-emerald-400',
+                  )"
+                >
+                  {{ log.level }}
+                </span>
+                <span>{{ log.message }}</span>
+              </div>
             </div>
-            <h3 class="mt-4 text-sm font-medium text-foreground">
-              暂无运行日志
-            </h3>
-            <p class="mt-1.5 text-center text-xs text-muted-foreground">
-              模型运行后，日志将在此处展示
-            </p>
           </CardContent>
         </Card>
       </TabsContent>
     </Tabs>
+  </div>
   </div>
 </template>

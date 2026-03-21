@@ -15,13 +15,22 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@ui/components/ui/sidebar'
-import { ChevronDown, ChevronRight } from 'lucide-vue-next'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
+import { ChevronDown, ChevronRight, HelpCircle, LogOut, Settings } from 'lucide-vue-next'
 /**
  * @description 控制台侧边栏 — 配置驱动导航
  * @author Timon
  */
 import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
   featureNavItems,
   mainNavItems,
@@ -31,6 +40,7 @@ import {
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 const modelMenuOpen = ref(true)
 
@@ -141,8 +151,8 @@ function isModelActive() {
 
     <!-- 底部：配额 + 用户 -->
     <SidebarFooter>
-      <!-- 配额用量指示 -->
-      <div class="px-3 pb-2">
+      <!-- 配额用量指示（折叠时隐藏） -->
+      <div class="px-3 pb-2 group-data-[collapsible=icon]:hidden">
         <div class="rounded-lg bg-muted/50 p-3 space-y-2">
           <div class="flex items-center justify-between text-[11px]">
             <span class="text-muted-foreground">API 调用量</span>
@@ -160,16 +170,44 @@ function isModelActive() {
 
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton size="lg">
-            <div class="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-medium">
-              {{ userAvatar }}
-            </div>
-            <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ userName }}</span>
-              <span class="truncate text-xs text-muted-foreground">{{ userRole }}</span>
-            </div>
-            <ChevronDown class="ml-auto size-4" />
-          </SidebarMenuButton>
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <SidebarMenuButton size="lg">
+                <div class="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-medium">
+                  {{ userAvatar }}
+                </div>
+                <div class="grid flex-1 text-left text-sm leading-tight">
+                  <span class="truncate font-medium">{{ userName }}</span>
+                  <span class="truncate text-xs text-muted-foreground">{{ userRole }}</span>
+                </div>
+                <ChevronDown class="ml-auto size-4" />
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent class="w-56" side="top" align="start">
+              <DropdownMenuLabel class="font-normal">
+                <div class="flex flex-col gap-1">
+                  <p class="text-sm font-medium leading-none">{{ userName }}</p>
+                  <p class="text-xs leading-none text-muted-foreground">{{ authStore.user?.email || '' }}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem @click="router.push('/settings')">
+                  <Settings class="mr-2 size-4" />
+                  <span>个人设置</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <HelpCircle class="mr-2 size-4" />
+                  <span>帮助文档</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem class="text-destructive focus:text-destructive" @click="authStore.logout(); router.push('/login')">
+                <LogOut class="mr-2 size-4" />
+                <span>退出登录</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarFooter>

@@ -19,8 +19,8 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 // 表单状态
-const email = ref('')
-const password = ref('')
+const email = ref('timon@example.com')
+const password = ref('123456')
 const rememberMe = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
@@ -128,7 +128,7 @@ async function handleLogin() {
       <!-- 底部版权 -->
       <div class="relative z-10">
         <p class="text-xs text-primary-foreground/50">
-          &copy; 2025 shadcn-vue-ui. All rights reserved.
+          &copy; 2026 shadcn-vue-ui. All rights reserved.
         </p>
       </div>
     </div>

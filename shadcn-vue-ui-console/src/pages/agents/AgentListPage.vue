@@ -27,9 +27,17 @@ import { Clock, MoreHorizontal, Plus, Search } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import PageLoading from '@/components/common/PageLoading.vue'
 import AgentCreateDialog from '@/components/agents/AgentCreateDialog.vue'
 
 const router = useRouter()
+
+// ========== 加载状态 ==========
+const loading = ref(true)
+
+// 模拟初始加载
+setTimeout(() => { loading.value = false }, 600)
 
 // ========== 类型定义 ==========
 
@@ -171,14 +179,39 @@ function handleAgentSubmit(data: { name: string }) {
   showCreateDialog.value = false
 }
 
-/** 下拉菜单操作 */
-function handleMenuAction(action: string, agent: Agent) {
-  console.log(`[AgentListPage] ${action}:`, agent.id, agent.name)
+// ==================== 删除确认 ====================
+
+const showDeleteDialog = ref(false)
+const deleteTarget = ref<Agent | null>(null)
+
+/** 复制 Agent */
+function handleCopy(agent: Agent) {
+  toast.success('已复制 Agent 配置', { description: agent.name })
+}
+
+/** 打开删除确认 */
+function handleDeleteConfirm(agent: Agent) {
+  deleteTarget.value = agent
+  showDeleteDialog.value = true
+}
+
+/** 执行删除 */
+function handleDelete() {
+  if (!deleteTarget.value) return
+  const name = deleteTarget.value.name
+  agents.value = agents.value.filter(a => a.id !== deleteTarget.value!.id)
+  showDeleteDialog.value = false
+  deleteTarget.value = null
+  toast.success('已删除', { description: name })
 }
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div>
+    <!-- 骨架屏加载态 -->
+    <PageLoading v-if="loading" :count="6" :cols="3" />
+
+  <div v-else class="flex flex-col gap-6">
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
@@ -275,19 +308,19 @@ function handleMenuAction(action: string, agent: Agent) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem @click.stop="handleMenuAction('查看详情', agent)">
+                <DropdownMenuItem @click.stop="handleCardClick(agent)">
                   查看详情
                 </DropdownMenuItem>
-                <DropdownMenuItem @click.stop="handleMenuAction('编辑', agent)">
+                <DropdownMenuItem @click.stop="handleCardClick(agent)">
                   编辑
                 </DropdownMenuItem>
-                <DropdownMenuItem @click.stop="handleMenuAction('复制', agent)">
+                <DropdownMenuItem @click.stop="handleCopy(agent)">
                   复制
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   class="text-destructive"
-                  @click.stop="handleMenuAction('删除', agent)"
+                  @click.stop="handleDeleteConfirm(agent)"
                 >
                   删除
                 </DropdownMenuItem>
@@ -349,5 +382,15 @@ function handleMenuAction(action: string, agent: Agent) {
       v-model:open="showCreateDialog"
       @submit="handleAgentSubmit"
     />
+
+    <!-- 删除确认对话框 -->
+    <ConfirmDialog
+      v-model:open="showDeleteDialog"
+      title="删除 Agent"
+      :description="`确定要删除「${deleteTarget?.name}」吗？Agent 的配置和对话历史将被永久删除。`"
+      confirm-text="删除"
+      @confirm="handleDelete"
+    />
+  </div>
   </div>
 </template>

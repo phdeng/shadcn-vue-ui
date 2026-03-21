@@ -10,12 +10,18 @@ import {
 import { RouterView } from 'vue-router'
 import CommandPalette from '@/components/common/CommandPalette.vue'
 import KeyboardShortcuts from '@/components/common/KeyboardShortcuts.vue'
+import { useAppStore } from '@/stores/app'
 import AppHeader from './AppHeader.vue'
 import AppSidebar from './AppSidebar.vue'
+
+const appStore = useAppStore()
 </script>
 
 <template>
-  <SidebarProvider>
+  <SidebarProvider
+    :default-open="!appStore.sidebarCollapsed"
+    @update:open="(val: boolean) => appStore.sidebarCollapsed = !val"
+  >
     <AppSidebar />
     <SidebarInset class="bg-background">
       <AppHeader />

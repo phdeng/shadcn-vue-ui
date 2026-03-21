@@ -18,6 +18,7 @@ import {
   TableRow,
 } from '@ui/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import { cn } from '@ui/lib/utils'
 import {
   Activity,
@@ -37,26 +38,41 @@ import {
  * @author Timon
  */
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
 
 const router = useRouter()
+const route = useRoute()
+const loading = ref(true)
+setTimeout(() => { loading.value = false }, 500)
 
-// ========== Mock 数据 — Agent「客服助手」 ==========
+// ========== Agent 数据 — 根据路由 id 匹配 ==========
 
-const agent = {
-  id: '1',
-  name: '客服助手',
-  description: '智能客服对话机器人，支持多轮对话与意图识别',
-  status: 'running' as const,
-  model: 'GPT-4o',
-  tags: ['对话', 'NLP'],
-  avatarColor: 'bg-blue-500',
-  systemPrompt:
-    '你是一个专业的客服助手，负责回答用户关于产品功能、使用方法和常见问题的咨询。请保持友好、专业的语气，优先使用中文回答。如果用户的问题超出你的能力范围，请礼貌地引导用户联系人工客服。',
-  temperature: 0.7,
-  maxTokens: 4096,
-  createdAt: '2026-02-10',
+interface AgentData {
+  id: string
+  name: string
+  description: string
+  status: 'running' | 'draft' | 'stopped'
+  model: string
+  tags: string[]
+  avatarColor: string
+  systemPrompt: string
+  temperature: number
+  maxTokens: number
+  createdAt: string
 }
+
+const agentsData: AgentData[] = [
+  { id: '1', name: '客服助手', description: '智能客服对话机器人，支持多轮对话与意图识别', status: 'running', model: 'GPT-4o', tags: ['对话', 'NLP'], avatarColor: 'bg-blue-500', systemPrompt: '你是一个专业的客服助手，负责回答用户关于产品功能、使用方法和常见问题的咨询。请保持友好、专业的语气，优先使用中文回答。如果用户的问题超出你的能力范围，请礼貌地引导用户联系人工客服。', temperature: 0.7, maxTokens: 4096, createdAt: '2026-02-10' },
+  { id: '2', name: '文档摘要', description: '自动提取长文档核心内容生成结构化摘要', status: 'running', model: 'Claude 3.5 Sonnet', tags: ['摘要', 'RAG'], avatarColor: 'bg-violet-500', systemPrompt: '你是一个文档摘要专家。当用户提供文本内容时，你需要提取关键信息，生成简洁、结构化的摘要，包含核心要点和关键数据。', temperature: 0.3, maxTokens: 8192, createdAt: '2026-02-15' },
+  { id: '3', name: '代码审查', description: '基于规范自动审查代码质量与安全性', status: 'draft', model: 'DeepSeek-V3', tags: ['代码', '审查'], avatarColor: 'bg-emerald-500', systemPrompt: '你是一个资深代码审查工程师，负责从代码质量、安全性、性能和可维护性四个维度审查用户提交的代码。', temperature: 0.2, maxTokens: 4096, createdAt: '2026-02-20' },
+  { id: '4', name: '数据分析', description: '自然语言驱动的数据查询与可视化分析', status: 'running', model: 'GPT-4o', tags: ['数据', 'SQL'], avatarColor: 'bg-orange-500', systemPrompt: '你是一个数据分析师，帮助用户编写 SQL 查询、解读数据趋势、生成可视化方案。', temperature: 0.5, maxTokens: 4096, createdAt: '2026-02-25' },
+  { id: '5', name: '翻译助手', description: '多语言实时翻译与本地化适配', status: 'stopped', model: 'Qwen2.5-72B', tags: ['翻译', 'i18n'], avatarColor: 'bg-rose-500', systemPrompt: '你是一个专业翻译，支持中英日韩法德等 50+ 语种互译，保持原文语气和格式。', temperature: 0.4, maxTokens: 4096, createdAt: '2026-03-01' },
+  { id: '6', name: '知识问答', description: '基于知识库的智能问答系统', status: 'running', model: 'Claude 3.5 Sonnet', tags: ['RAG', '问答'], avatarColor: 'bg-cyan-500', systemPrompt: '你是一个知识问答助手，基于检索到的知识库文档内容回答用户问题，确保答案准确可追溯。', temperature: 0.6, maxTokens: 4096, createdAt: '2026-03-05' },
+]
+
+const agentId = route.params.id as string
+const agent = agentsData.find(a => a.id === agentId) || agentsData[0]
 
 // ========== 状态配置 ==========
 
@@ -68,10 +84,15 @@ const statusConfig = {
 
 // ========== 指标卡片 — 渐变背景风格 ==========
 
+// 根据 agent id 生成差异化指标
+const baseMetrics = [12580, 8420, 3210, 15800, 1560, 9340]
+const agentIndex = agentsData.findIndex(a => a.id === agentId)
+const baseCalls = baseMetrics[agentIndex >= 0 ? agentIndex : 0]
+
 const metrics = [
   {
     label: '总调用次数',
-    value: '12,580',
+    value: baseCalls.toLocaleString(),
     icon: Activity,
     color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20',
     iconColor: 'text-blue-600 dark:text-blue-400',
@@ -92,7 +113,7 @@ const metrics = [
   },
   {
     label: '今日调用',
-    value: '368',
+    value: Math.round(baseCalls * 0.029).toLocaleString(),
     icon: Zap,
     color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20',
     iconColor: 'text-violet-600 dark:text-violet-400',
@@ -116,19 +137,22 @@ const chatMessages = ref<ChatMessage[]>([
 ])
 
 const chatInput = ref('')
+const chatTyping = ref(false)
 
 /** 发送消息（仅前端模拟） */
 function handleSendMessage() {
   const text = chatInput.value.trim()
-  if (!text)
+  if (!text || chatTyping.value)
     return
   chatMessages.value.push({ role: 'user', content: text })
   chatInput.value = ''
+  chatTyping.value = true
   // 模拟 AI 回复
   setTimeout(() => {
+    chatTyping.value = false
     chatMessages.value.push({
       role: 'assistant',
-      content: '感谢您的提问，我正在查询相关信息，请稍候...',
+      content: `关于您的问题「${text}」：\n\n感谢您的咨询，我已查询相关信息。这是一个模拟回复，实际使用时会调用 **${agent.name}** 的后端 API 生成真实回答。`,
     })
   }, 800)
 }
@@ -154,7 +178,23 @@ const callLogs = [
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div>
+    <div v-if="loading" class="flex flex-col gap-6">
+      <div class="flex items-center gap-3">
+        <Skeleton class="size-9 rounded-lg" />
+        <Skeleton class="size-10 rounded-xl" />
+      <div class="space-y-2">
+        <Skeleton class="h-7 w-32" />
+        <Skeleton class="h-4 w-64" />
+      </div>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <Skeleton v-for="i in 4" :key="i" class="h-[100px] rounded-xl" />
+    </div>
+    <Skeleton class="h-[400px] rounded-xl" />
+  </div>
+
+  <div v-else class="flex flex-col gap-6">
     <!-- 顶部区域：返回按钮 + Agent 名称 + 头像 + 状态 + 编辑按钮 -->
     <div class="flex items-start justify-between">
       <div class="flex items-start gap-3">
@@ -192,7 +232,7 @@ const callLogs = [
           </p>
         </div>
       </div>
-      <Button variant="outline" class="shrink-0">
+      <Button variant="outline" class="shrink-0" @click="toast.info('编辑 Agent', { description: `${agent.name} — 修改配置后将立即生效` })">
         编辑
       </Button>
     </div>
@@ -292,6 +332,18 @@ const callLogs = [
                   <User class="size-4 text-muted-foreground" />
                 </div>
               </div>
+
+              <!-- 打字指示器 -->
+              <div v-if="chatTyping" class="flex gap-3 justify-start">
+                <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <Bot class="size-4 text-primary" />
+                </div>
+                <div class="inline-flex items-center gap-1 rounded-xl bg-card border shadow-sm px-4 py-3">
+                  <span class="size-1.5 rounded-full bg-muted-foreground/50 animate-bounce [animation-delay:0ms]" />
+                  <span class="size-1.5 rounded-full bg-muted-foreground/50 animate-bounce [animation-delay:150ms]" />
+                  <span class="size-1.5 rounded-full bg-muted-foreground/50 animate-bounce [animation-delay:300ms]" />
+                </div>
+              </div>
             </div>
 
             <!-- 输入框 + 发送按钮 -->
@@ -300,9 +352,10 @@ const callLogs = [
                 v-model="chatInput"
                 placeholder="输入消息进行测试..."
                 class="flex-1"
+                :disabled="chatTyping"
                 @keyup.enter="handleSendMessage"
               />
-              <Button size="icon" @click="handleSendMessage">
+              <Button size="icon" :disabled="chatTyping" @click="handleSendMessage">
                 <Send class="size-4" />
               </Button>
             </div>
@@ -416,5 +469,6 @@ const callLogs = [
         </Card>
       </TabsContent>
     </Tabs>
+  </div>
   </div>
 </template>

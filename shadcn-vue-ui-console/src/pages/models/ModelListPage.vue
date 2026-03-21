@@ -45,13 +45,21 @@ import {
  * - 状态指示器使用彩色圆点 + 文字
  * - 整体风格简洁、克制、通透
  */
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import PageError from '@/components/common/PageError.vue'
+import PageLoading from '@/components/common/PageLoading.vue'
 import ModelRegisterDialog from '@/components/models/ModelRegisterDialog.vue'
+import { useModels } from '@/composables/useModels'
 
 // 路由实例
 const router = useRouter()
+
+// 通过 composable 获取数据（支持 Mock/API 切换）
+const { models: rawModels, loading, error: loadError, fetchModels } = useModels()
+onMounted(fetchModels)
 
 // 注册对话框开关
 const showRegisterDialog = ref(false)
@@ -65,8 +73,18 @@ const activeTab = ref('all')
 /** 模型状态类型 */
 type ModelStatus = 'running' | 'stopped' | 'error'
 
-/** 模型数据接口 */
-interface ModelItem {
+/** 提供商品牌色映射 */
+const brandColorMap: Record<string, string> = {
+  OpenAI: 'from-emerald-500/10 to-teal-500/5',
+  Anthropic: 'from-orange-500/10 to-amber-500/5',
+  阿里云: 'from-violet-500/10 to-purple-500/5',
+  DeepSeek: 'from-blue-500/10 to-cyan-500/5',
+  Google: 'from-red-500/10 to-rose-500/5',
+  '智谱 AI': 'from-indigo-500/10 to-blue-500/5',
+}
+
+/** 列表视图模型接口 */
+interface ModelViewItem {
   id: string
   name: string
   provider: string
@@ -75,57 +93,26 @@ interface ModelItem {
   calls: string
   latency: string
   description: string
-  /** 提供商品牌色，用于卡片顶部渐变装饰 */
   brandColor: string
 }
 
-// 模拟数据 — 4 个模型
-const models = ref<ModelItem[]>([
-  {
-    id: 'gpt-4o',
-    name: 'GPT-4o',
-    provider: 'OpenAI',
-    type: '大语言模型',
-    status: 'running',
-    calls: '12,340',
-    latency: '320ms',
-    description: '多模态旗舰模型，支持文本、图像和音频理解与生成，适用于复杂推理与创意任务。',
-    brandColor: 'from-emerald-500/10 to-teal-500/5',
-  },
-  {
-    id: 'claude-3-5-sonnet',
-    name: 'Claude 3.5 Sonnet',
-    provider: 'Anthropic',
-    type: '大语言模型',
-    status: 'running',
-    calls: '8,921',
-    latency: '280ms',
-    description: '高性能对话模型，擅长深度分析、代码生成与长文档处理，具备出色的指令遵循能力。',
-    brandColor: 'from-orange-500/10 to-amber-500/5',
-  },
-  {
-    id: 'qwen2-5-72b',
-    name: 'Qwen2.5-72B',
-    provider: 'Alibaba',
-    type: '大语言模型',
-    status: 'stopped',
-    calls: '3,210',
-    latency: '\u2014',
-    description: '通义千问开源大模型，支持中英双语，具备强大的中文理解与生成能力。',
-    brandColor: 'from-violet-500/10 to-purple-500/5',
-  },
-  {
-    id: 'deepseek-v3',
-    name: 'DeepSeek-V3',
-    provider: 'DeepSeek',
-    type: '大语言模型',
-    status: 'running',
-    calls: '5,678',
-    latency: '410ms',
-    description: '基于 MoE 架构的高效推理模型，兼顾性能与成本，适合大规模生产环境部署。',
-    brandColor: 'from-blue-500/10 to-cyan-500/5',
-  },
-])
+// 从 useModels 数据转换为本地可变视图数据
+const models = ref<ModelViewItem[]>([])
+
+// 加载完成后转换数据
+watch(rawModels, (raw) => {
+  models.value = raw.map<ModelViewItem>(m => ({
+    id: m.id,
+    name: m.name,
+    provider: m.provider,
+    type: m.type === 'chat' ? '大语言模型' : m.type,
+    status: m.status,
+    calls: m.calls.toLocaleString(),
+    latency: m.latency,
+    description: m.description,
+    brandColor: brandColorMap[m.provider] || 'from-gray-500/10 to-gray-500/5',
+  }))
+})
 
 /** 状态配置映射 */
 const statusConfig: Record<
@@ -197,10 +184,53 @@ function handleModelSubmit(data: { name: string }) {
   toast.success('模型注册成功', { description: data.name })
   showRegisterDialog.value = false
 }
+
+// ==================== 删除确认 ====================
+
+const showDeleteDialog = ref(false)
+const deleteTarget = ref<ModelItem | null>(null)
+
+/** 复制模型 ID 到剪贴板 */
+function handleCopyId(model: ModelItem) {
+  navigator.clipboard.writeText(model.id)
+  toast.success('已复制', { description: model.id })
+}
+
+/** 暂停模型服务 */
+function handlePause(model: ModelItem) {
+  model.status = 'stopped'
+  toast.info('服务已暂停', { description: model.name })
+}
+
+/** 启动模型服务 */
+function handleStart(model: ModelItem) {
+  model.status = 'running'
+  toast.success('服务已启动', { description: model.name })
+}
+
+/** 打开删除确认 */
+function handleDeleteConfirm(model: ModelItem) {
+  deleteTarget.value = model
+  showDeleteDialog.value = true
+}
+
+/** 执行删除 */
+function handleDelete() {
+  if (!deleteTarget.value) return
+  const name = deleteTarget.value.name
+  models.value = models.value.filter(m => m.id !== deleteTarget.value!.id)
+  showDeleteDialog.value = false
+  deleteTarget.value = null
+  toast.success('已删除', { description: name })
+}
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
+  <div>
+    <PageLoading v-if="loading" :count="4" :cols="4" />
+    <PageError v-else-if="loadError" :message="loadError" @retry="fetchModels()" />
+
+  <div v-else class="flex flex-col gap-6">
     <!-- 页面头部：标题 + 操作按钮 -->
     <div class="flex items-start justify-between">
       <div class="space-y-1">
@@ -313,15 +343,15 @@ function handleModelSubmit(data: { name: string }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" class="w-40">
-                <DropdownMenuItem @click.stop>
+                <DropdownMenuItem @click.stop="navigateToDetail(model.id)">
                   <Eye class="mr-2 size-4" />
                   查看详情
                 </DropdownMenuItem>
-                <DropdownMenuItem @click.stop>
+                <DropdownMenuItem @click.stop="navigateToDetail(model.id)">
                   <Settings class="mr-2 size-4" />
                   编辑配置
                 </DropdownMenuItem>
-                <DropdownMenuItem @click.stop>
+                <DropdownMenuItem @click.stop="handleCopyId(model)">
                   <Copy class="mr-2 size-4" />
                   复制 ID
                 </DropdownMenuItem>
@@ -329,7 +359,7 @@ function handleModelSubmit(data: { name: string }) {
                 <DropdownMenuItem
                   v-if="model.status === 'running'"
                   class="text-amber-600 dark:text-amber-400"
-                  @click.stop
+                  @click.stop="handlePause(model)"
                 >
                   <PauseCircle class="mr-2 size-4" />
                   暂停服务
@@ -337,12 +367,12 @@ function handleModelSubmit(data: { name: string }) {
                 <DropdownMenuItem
                   v-if="model.status === 'stopped'"
                   class="text-emerald-600 dark:text-emerald-400"
-                  @click.stop
+                  @click.stop="handleStart(model)"
                 >
                   <PlayCircle class="mr-2 size-4" />
                   启动服务
                 </DropdownMenuItem>
-                <DropdownMenuItem class="text-destructive" @click.stop>
+                <DropdownMenuItem class="text-destructive" @click.stop="handleDeleteConfirm(model)">
                   <Trash2 class="mr-2 size-4" />
                   删除模型
                 </DropdownMenuItem>
@@ -432,5 +462,15 @@ function handleModelSubmit(data: { name: string }) {
       v-model:open="showRegisterDialog"
       @submit="handleModelSubmit"
     />
+
+    <!-- 删除确认对话框 -->
+    <ConfirmDialog
+      v-model:open="showDeleteDialog"
+      title="删除模型"
+      :description="`确定要删除「${deleteTarget?.name}」吗？相关的 API 配置和调用记录将被永久删除。`"
+      confirm-text="删除"
+      @confirm="handleDelete"
+    />
+  </div>
   </div>
 </template>

@@ -19,56 +19,142 @@ import { Input } from '@ui/components/ui/input'
 import { Separator } from '@ui/components/ui/separator'
 import { cn } from '@ui/lib/utils'
 import {
+  Box,
   Clock,
   Database,
   File,
+  Layers,
   MoreHorizontal,
   Plus,
   Search,
   Upload,
 } from 'lucide-vue-next'
 /**
- * @description 知识库管理页 — 产品控制台风格
+ * @description 知识库管理页 — 参考百炼，丰富卡片信息展示
  * @author Timon
  */
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import PageLoading from '@/components/common/PageLoading.vue'
+import KnowledgeCreateDialog from '@/components/knowledge/KnowledgeCreateDialog.vue'
 
 const router = useRouter()
 const searchQuery = ref('')
+const loading = ref(true)
 
-const knowledgeBases = ref([
-  { id: '1', name: '产品文档', description: '产品使用手册、API 文档、FAQ 等', docCount: 156, size: '24.3 MB', status: 'ready' as const, updatedAt: '2 小时前', icon: '📄' },
-  { id: '2', name: '技术规范', description: '系统架构文档、开发规范、接口协议', docCount: 89, size: '15.7 MB', status: 'ready' as const, updatedAt: '1 天前', icon: '🔧' },
-  { id: '3', name: '客服话术库', description: '标准回复模板、场景话术、投诉处理流程', docCount: 342, size: '8.1 MB', status: 'indexing' as const, updatedAt: '10 分钟前', icon: '💬' },
-  { id: '4', name: '行业报告', description: '市场分析、竞品调研、行业白皮书', docCount: 45, size: '67.2 MB', status: 'ready' as const, updatedAt: '3 天前', icon: '📊' },
-  { id: '5', name: '法律法规', description: '合规文件、政策法规、审计要求', docCount: 78, size: '12.4 MB', status: 'error' as const, updatedAt: '5 天前', icon: '⚖️' },
-])
+// 模拟初始加载
+setTimeout(() => { loading.value = false }, 600)
+const showCreateDialog = ref(false)
+const showDeleteDialog = ref(false)
+
+// ==================== 类型与状态配置 ====================
+
+const typeLabels = {
+  unstructured: '非结构化',
+  structured: '结构化',
+  qa: 'Q&A',
+}
 
 const statusConfig = {
   ready: { label: '已就绪', dotClass: 'bg-emerald-500', badgeVariant: 'secondary' as const },
   indexing: { label: '索引中', dotClass: 'bg-amber-500 animate-pulse', badgeVariant: 'secondary' as const },
   error: { label: '异常', dotClass: 'bg-destructive', badgeVariant: 'destructive' as const },
 }
+
+// ==================== 知识库数据 ====================
+
+const knowledgeBases = ref([
+  { id: '1', name: '产品文档', description: '产品使用手册、API 文档、FAQ 等', type: 'unstructured' as const, embeddingModel: 'text-embedding-v3', docCount: 156, segmentCount: 2840, size: '24.3 MB', status: 'ready' as const, updatedAt: '2 小时前', icon: '📄' },
+  { id: '2', name: '技术规范', description: '系统架构文档、开发规范、接口协议', type: 'unstructured' as const, embeddingModel: 'bge-large-zh-v1.5', docCount: 89, segmentCount: 1560, size: '15.7 MB', status: 'ready' as const, updatedAt: '1 天前', icon: '🔧' },
+  { id: '3', name: '客服话术库', description: '标准回复模板、场景话术、投诉处理流程', type: 'qa' as const, embeddingModel: 'text-embedding-v3', docCount: 342, segmentCount: 4200, size: '8.1 MB', status: 'indexing' as const, updatedAt: '10 分钟前', icon: '💬' },
+  { id: '4', name: '行业报告', description: '市场分析、竞品调研、行业白皮书', type: 'unstructured' as const, embeddingModel: 'text-embedding-v2', docCount: 45, segmentCount: 890, size: '67.2 MB', status: 'ready' as const, updatedAt: '3 天前', icon: '📊' },
+  { id: '5', name: '法律法规', description: '合规文件、政策法规、审计要求', type: 'structured' as const, embeddingModel: 'bge-m3', docCount: 78, segmentCount: 1230, size: '12.4 MB', status: 'error' as const, updatedAt: '5 天前', icon: '⚖️' },
+  { id: '6', name: '运维知识库', description: '故障排查手册、运维 SOP、监控告警规则', type: 'unstructured' as const, embeddingModel: 'text-embedding-v3', docCount: 210, segmentCount: 3680, size: '31.5 MB', status: 'ready' as const, updatedAt: '6 小时前', icon: '🔬' },
+])
+
+// ==================== 搜索过滤 ====================
+
+/** 根据搜索关键词过滤知识库列表 */
+const filteredKnowledgeBases = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query)
+    return knowledgeBases.value
+  return knowledgeBases.value.filter(
+    kb =>
+      kb.name.toLowerCase().includes(query)
+      || kb.description.toLowerCase().includes(query),
+  )
+})
+
+const deleteTarget = ref<typeof knowledgeBases.value[0] | null>(null)
+
+// ==================== 事件处理 ====================
+
+/** 创建知识库提交 */
+function handleCreateSubmit(data: { name: string }) {
+  toast.success('知识库已创建', { description: data.name })
+}
+
+/** 批量导入 */
+function handleBulkImport() {
+  toast.info('批量导入功能', { description: '请选择要导入的文件夹' })
+}
+
+/** 查看文档 */
+function handleViewDocs(kb: typeof knowledgeBases.value[0]) {
+  router.push(`/knowledge/${kb.id}`)
+}
+
+/** 上传文档 */
+function handleUploadDocs(kb: typeof knowledgeBases.value[0]) {
+  toast.info(`上传文档至「${kb.name}」`, { description: '请选择要上传的文件' })
+}
+
+/** 重建索引 */
+function handleRebuildIndex(kb: typeof knowledgeBases.value[0]) {
+  kb.status = 'indexing'
+  toast.info('索引重建中', { description: kb.name })
+}
+
+/** 打开删除确认 */
+function handleDeleteConfirm(kb: typeof knowledgeBases.value[0]) {
+  deleteTarget.value = kb
+  showDeleteDialog.value = true
+}
+
+/** 执行删除 */
+function handleDelete() {
+  if (!deleteTarget.value) return
+  const name = deleteTarget.value.name
+  knowledgeBases.value = knowledgeBases.value.filter(kb => kb.id !== deleteTarget.value!.id)
+  showDeleteDialog.value = false
+  deleteTarget.value = null
+  toast.success('已删除', { description: name })
+}
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div>
+    <PageLoading v-if="loading" :count="6" :cols="3" />
+
+  <div v-else class="flex flex-col gap-6">
     <div class="flex items-end justify-between">
       <div>
         <h2 class="text-2xl font-semibold tracking-tight">
           知识库
         </h2>
         <p class="mt-1 text-sm text-muted-foreground">
-          管理文档、数据集与向量索引
+          管理文档、数据集与向量索引，支持 RAG 检索增强生成
         </p>
       </div>
       <div class="flex items-center gap-2">
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" @click="handleBulkImport">
           <Upload class="mr-2 size-4" />
           批量导入
         </Button>
-        <Button size="sm">
+        <Button size="sm" @click="showCreateDialog = true">
           <Plus class="mr-2 size-4" />
           创建知识库
         </Button>
@@ -81,12 +167,12 @@ const statusConfig = {
         <Input v-model="searchQuery" placeholder="搜索知识库..." class="pl-8 h-9" />
       </div>
       <Separator orientation="vertical" class="!h-5" />
-      <span class="text-sm text-muted-foreground">共 {{ knowledgeBases.length }} 个知识库</span>
+      <span class="text-sm text-muted-foreground">共 {{ filteredKnowledgeBases.length }} 个知识库</span>
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       <Card
-        v-for="kb in knowledgeBases"
+        v-for="kb in filteredKnowledgeBases"
         :key="kb.id"
         class="group cursor-pointer border-0 shadow-sm transition-all hover:shadow-md"
         @click="router.push(`/knowledge/${kb.id}`)"
@@ -113,11 +199,17 @@ const statusConfig = {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>查看文档</DropdownMenuItem>
-                <DropdownMenuItem>上传文档</DropdownMenuItem>
-                <DropdownMenuItem>重建索引</DropdownMenuItem>
+                <DropdownMenuItem @click.stop="handleViewDocs(kb)">
+                  查看文档
+                </DropdownMenuItem>
+                <DropdownMenuItem @click.stop="handleUploadDocs(kb)">
+                  上传文档
+                </DropdownMenuItem>
+                <DropdownMenuItem @click.stop="handleRebuildIndex(kb)">
+                  重建索引
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem class="text-destructive">
+                <DropdownMenuItem class="text-destructive" @click.stop="handleDeleteConfirm(kb)">
                   删除
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -126,10 +218,25 @@ const statusConfig = {
         </CardHeader>
 
         <CardContent class="pb-3">
+          <!-- 类型 + Embedding 模型标签 -->
+          <div class="mb-3 flex items-center gap-1.5">
+            <Badge variant="outline" class="text-[10px] px-1.5 py-0">
+              {{ typeLabels[kb.type] }}
+            </Badge>
+            <Badge variant="secondary" class="text-[10px] px-1.5 py-0 gap-1">
+              <Box class="size-2.5" />
+              {{ kb.embeddingModel }}
+            </Badge>
+          </div>
+          <!-- 数据指标 -->
           <div class="flex items-center gap-4 text-xs text-muted-foreground">
             <span class="flex items-center gap-1">
               <File class="size-3" />
-              {{ kb.docCount }} 篇文档
+              {{ kb.docCount }} 篇
+            </span>
+            <span class="flex items-center gap-1">
+              <Layers class="size-3" />
+              {{ kb.segmentCount.toLocaleString() }} 段
             </span>
             <span class="flex items-center gap-1">
               <Database class="size-3" />
@@ -153,5 +260,37 @@ const statusConfig = {
         </CardFooter>
       </Card>
     </div>
+
+    <!-- 空状态提示 -->
+    <div
+      v-if="filteredKnowledgeBases.length === 0"
+      class="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16"
+    >
+      <Search class="size-10 text-muted-foreground/40" />
+      <div class="text-center">
+        <p class="text-sm font-medium text-muted-foreground">
+          未找到匹配的知识库
+        </p>
+        <p class="mt-1 text-xs text-muted-foreground/60">
+          尝试调整搜索关键词
+        </p>
+      </div>
+    </div>
+
+    <!-- 创建知识库对话框 -->
+    <KnowledgeCreateDialog
+      v-model:open="showCreateDialog"
+      @submit="handleCreateSubmit"
+    />
+
+    <!-- 删除确认对话框 -->
+    <ConfirmDialog
+      v-model:open="showDeleteDialog"
+      title="删除知识库"
+      :description="`确定要删除「${deleteTarget?.name}」吗？知识库中的所有文档和索引将被永久删除。`"
+      confirm-text="删除"
+      @confirm="handleDelete"
+    />
+  </div>
   </div>
 </template>

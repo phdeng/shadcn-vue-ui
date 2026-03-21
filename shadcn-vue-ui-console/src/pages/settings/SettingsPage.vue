@@ -54,18 +54,23 @@ function saveBasicSettings() {
  */
 function saveSecuritySettings() {
   // 密码校验
-  if (newPassword.value && newPassword.value !== confirmPassword.value) {
-    toast.error('保存失败', {
-      description: '两次输入的新密码不一致',
-    })
-    return
-  }
-
-  if (newPassword.value && !currentPassword.value) {
-    toast.error('保存失败', {
-      description: '请输入当前密码',
-    })
-    return
+  if (newPassword.value) {
+    if (!currentPassword.value) {
+      toast.error('保存失败', { description: '请输入当前密码' })
+      return
+    }
+    if (newPassword.value.length < 8) {
+      toast.error('保存失败', { description: '新密码至少需要 8 个字符' })
+      return
+    }
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword.value)) {
+      toast.error('保存失败', { description: '密码需包含大小写字母和数字' })
+      return
+    }
+    if (newPassword.value !== confirmPassword.value) {
+      toast.error('保存失败', { description: '两次输入的新密码不一致' })
+      return
+    }
   }
 
   // 重置密码字段
@@ -82,11 +87,16 @@ function saveSecuritySettings() {
  * 保存通知设置
  */
 function saveNotificationSettings() {
-  if (webhookNotification.value && !webhookUrl.value.trim()) {
-    toast.error('保存失败', {
-      description: '请填写 Webhook URL',
-    })
-    return
+  if (webhookNotification.value) {
+    const url = webhookUrl.value.trim()
+    if (!url) {
+      toast.error('保存失败', { description: '请填写 Webhook URL' })
+      return
+    }
+    if (!/^https?:\/\/.+/.test(url)) {
+      toast.error('保存失败', { description: 'Webhook URL 格式不正确，需以 http:// 或 https:// 开头' })
+      return
+    }
   }
 
   toast.success('通知设置已保存', {
@@ -96,7 +106,7 @@ function saveNotificationSettings() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-6">
     <!-- 页面头部 -->
     <div class="space-y-1">
       <h1 class="text-2xl font-semibold tracking-tight">
@@ -298,7 +308,7 @@ function saveNotificationSettings() {
               <Switch
                 id="two-factor"
                 :checked="twoFactorEnabled"
-                @update:checked="twoFactorEnabled = $event"
+                @update:checked="(val: boolean) => { twoFactorEnabled = val; toast.info(val ? '双因素认证已启用' : '双因素认证已关闭', { description: val ? '下次登录时需要输入验证码' : '已关闭双因素认证' }) }"
               />
             </div>
 

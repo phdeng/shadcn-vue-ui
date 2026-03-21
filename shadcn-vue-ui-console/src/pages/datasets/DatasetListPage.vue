@@ -35,7 +35,12 @@ import {
  * @description 数据集管理列表页 — 表格布局，支持搜索与状态筛选
  * @author Timon
  */
+import { Skeleton } from '@ui/components/ui/skeleton'
 import { computed, ref } from 'vue'
+import { toast } from 'vue-sonner'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import SimplePagination from '@/components/common/SimplePagination.vue'
+import DatasetUploadDialog from '@/components/datasets/DatasetUploadDialog.vue'
 
 // ==================== 类型定义 ====================
 
@@ -54,6 +59,9 @@ interface DatasetItem {
 }
 
 // ==================== 状态 ====================
+
+const loading = ref(true)
+setTimeout(() => { loading.value = false }, 600)
 
 /** 搜索关键词 */
 const searchQuery = ref('')
@@ -108,6 +116,69 @@ const datasets = ref<DatasetItem[]>([
     format: 'jsonl',
     status: 'processed',
     updatedAt: '2026-03-17 22:05',
+  },
+  {
+    id: 'ds-006',
+    name: '用户反馈语料',
+    records: 4560,
+    size: '78 MB',
+    format: 'csv',
+    status: 'processed',
+    updatedAt: '2026-03-16 14:20',
+  },
+  {
+    id: 'ds-007',
+    name: '知识图谱三元组',
+    records: 15200,
+    size: '410 MB',
+    format: 'json',
+    status: 'processed',
+    updatedAt: '2026-03-15 08:45',
+  },
+  {
+    id: 'ds-008',
+    name: '意图分类标注',
+    records: 6780,
+    size: '92 MB',
+    format: 'jsonl',
+    status: 'pending',
+    updatedAt: '2026-03-14 17:30',
+  },
+  {
+    id: 'ds-009',
+    name: '翻译平行语料',
+    records: 22100,
+    size: '540 MB',
+    format: 'txt',
+    status: 'processing',
+    updatedAt: '2026-03-14 10:15',
+  },
+  {
+    id: 'ds-010',
+    name: '文本摘要数据',
+    records: 3400,
+    size: '65 MB',
+    format: 'jsonl',
+    status: 'processed',
+    updatedAt: '2026-03-13 21:00',
+  },
+  {
+    id: 'ds-011',
+    name: '情感分析标注',
+    records: 9800,
+    size: '145 MB',
+    format: 'csv',
+    status: 'processed',
+    updatedAt: '2026-03-12 13:25',
+  },
+  {
+    id: 'ds-012',
+    name: 'NER 实体标注',
+    records: 7200,
+    size: '210 MB',
+    format: 'json',
+    status: 'processed',
+    updatedAt: '2026-03-11 09:50',
   },
 ])
 
@@ -176,16 +247,89 @@ const datasetCounts = computed(() => ({
   pending: datasets.value.filter(d => d.status === 'pending').length,
 }))
 
+// ==================== 分页 ====================
+
+const currentPage = ref(1)
+const pageSize = 10
+
+/** 当前页数据 */
+const pagedDatasets = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return filteredDatasets.value.slice(start, start + pageSize)
+})
+
 /**
  * 格式化记录数（千分位）
  */
 function formatNumber(num: number): string {
   return num.toLocaleString()
 }
+
+// ==================== 对话框状态 ====================
+
+const showUploadDialog = ref(false)
+const showDeleteDialog = ref(false)
+const deleteTarget = ref<DatasetItem | null>(null)
+
+// ==================== 事件处理 ====================
+
+/** 上传数据集表单提交 */
+function handleUploadSubmit(data: { name: string }) {
+  toast.success('数据集上传成功', { description: data.name })
+}
+
+/** 查看详情 */
+function handleView(dataset: DatasetItem) {
+  toast.info(`查看数据集：${dataset.name}`, { description: `ID: ${dataset.id}` })
+}
+
+/** 下载数据集 */
+function handleDownload(dataset: DatasetItem) {
+  toast.success('开始下载', { description: `${dataset.name} (${dataset.size})` })
+}
+
+/** 重新处理 */
+function handleReprocess(dataset: DatasetItem) {
+  dataset.status = 'processing'
+  toast.info('已提交重新处理', { description: dataset.name })
+}
+
+/** 打开删除确认 */
+function handleDeleteConfirm(dataset: DatasetItem) {
+  deleteTarget.value = dataset
+  showDeleteDialog.value = true
+}
+
+/** 执行删除 */
+function handleDelete() {
+  if (!deleteTarget.value) return
+  const name = deleteTarget.value.name
+  datasets.value = datasets.value.filter(d => d.id !== deleteTarget.value!.id)
+  showDeleteDialog.value = false
+  deleteTarget.value = null
+  toast.success('已删除', { description: name })
+}
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
+  <div>
+    <!-- 表格骨架屏 -->
+    <div v-if="loading" class="flex flex-col gap-6">
+    <div class="flex items-end justify-between">
+      <div class="space-y-2">
+        <Skeleton class="h-8 w-32" />
+        <Skeleton class="h-4 w-64" />
+      </div>
+      <Skeleton class="h-9 w-28" />
+    </div>
+    <div class="flex items-center gap-3">
+      <Skeleton class="h-9 w-72" />
+      <Skeleton class="h-9 w-64" />
+    </div>
+    <Skeleton class="h-[400px] rounded-xl" />
+  </div>
+
+  <div v-else class="flex flex-col gap-6">
     <!-- 页面头部：标题 + 操作按钮 -->
     <div class="flex items-start justify-between">
       <div class="space-y-1">
@@ -196,7 +340,7 @@ function formatNumber(num: number): string {
           管理训练数据集、数据标注与预处理
         </p>
       </div>
-      <Button class="shrink-0">
+      <Button class="shrink-0" @click="showUploadDialog = true">
         <Plus class="mr-2 size-4" />
         上传数据集
       </Button>
@@ -295,7 +439,7 @@ function formatNumber(num: number): string {
           </TableHeader>
           <TableBody>
             <TableRow
-              v-for="dataset in filteredDatasets"
+              v-for="dataset in pagedDatasets"
               :key="dataset.id"
               class="group"
             >
@@ -369,20 +513,20 @@ function formatNumber(num: number): string {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" class="w-40">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click="handleView(dataset)">
                       <Eye class="mr-2 size-4" />
                       查看详情
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click="handleDownload(dataset)">
                       <Download class="mr-2 size-4" />
                       下载数据集
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click="handleReprocess(dataset)">
                       <RefreshCw class="mr-2 size-4" />
                       重新处理
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem class="text-destructive">
+                    <DropdownMenuItem class="text-destructive" @click="handleDeleteConfirm(dataset)">
                       <Trash2 class="mr-2 size-4" />
                       删除
                     </DropdownMenuItem>
@@ -394,6 +538,15 @@ function formatNumber(num: number): string {
         </Table>
       </CardContent>
     </Card>
+
+    <!-- 分页 -->
+    <div class="flex justify-end">
+      <SimplePagination
+        :total="filteredDatasets.length"
+        :page-size="pageSize"
+        v-model:current-page="currentPage"
+      />
+    </div>
 
     <!-- 空状态提示 -->
     <div
@@ -410,5 +563,21 @@ function formatNumber(num: number): string {
         </p>
       </div>
     </div>
+
+    <!-- 上传数据集对话框 -->
+    <DatasetUploadDialog
+      v-model:open="showUploadDialog"
+      @submit="handleUploadSubmit"
+    />
+
+    <!-- 删除确认对话框 -->
+    <ConfirmDialog
+      v-model:open="showDeleteDialog"
+      title="删除数据集"
+      :description="`确定要删除「${deleteTarget?.name}」吗？此操作不可撤销，数据集中的所有记录将被永久删除。`"
+      confirm-text="删除"
+      @confirm="handleDelete"
+    />
+  </div>
   </div>
 </template>
