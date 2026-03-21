@@ -1,0 +1,21 @@
+{
+  "models": [
+    { "id": "model-001", "name": "GPT-4o", "provider": "OpenAI", "type": "chat", "status": "running", "description": "多模态旗舰模型，支持文本、图像、音频", "calls": 128450, "latency": "320ms", "maxTokens": 128000, "temperature": 0.7, "createdAt": "2025-08-01" },
+    { "id": "model-002", "name": "Claude 3.5 Sonnet", "provider": "Anthropic", "type": "chat", "status": "running", "description": "高性能对话模型，擅长分析与代码生成", "calls": 89210, "latency": "280ms", "maxTokens": 200000, "temperature": 0.7, "createdAt": "2025-09-15" },
+    { "id": "model-003", "name": "Qwen2.5-72B", "provider": "Alibaba", "type": "chat", "status": "stopped", "description": "开源大模型，中英双语", "calls": 32100, "latency": "450ms", "maxTokens": 131072, "temperature": 0.7, "createdAt": "2025-11-20" },
+    { "id": "model-004", "name": "DeepSeek-V3", "provider": "DeepSeek", "type": "chat", "status": "running", "description": "MoE 架构高效推理模型", "calls": 56780, "latency": "410ms", "maxTokens": 65536, "temperature": 0.7, "createdAt": "2026-01-10" },
+    { "id": "model-005", "name": "Gemini 2.0 Flash", "provider": "Google", "type": "chat", "status": "running", "description": "低延迟推理模型，适合实时应用", "calls": 41200, "latency": "180ms", "maxTokens": 1048576, "temperature": 0.7, "createdAt": "2026-02-01" },
+    { "id": "model-006", "name": "GLM-4-Plus", "provider": "Zhipu", "type": "chat", "status": "error", "description": "国产大模型，支持长文本处理", "calls": 18500, "latency": "520ms", "maxTokens": 128000, "temperature": 0.7, "createdAt": "2026-01-25" }
+  ],
+  "agents": [
+    { "id": "agent-001", "name": "客服助手", "description": "智能客服对话机器人，支持多轮对话与意图识别", "model": "GPT-4o", "status": "running", "tags": ["对话", "NLP"], "color": "blue", "createdAt": "2026-02-10" },
+    { "id": "agent-002", "name": "文档摘要", "description": "自动提取长文档核心内容生成结构化摘要", "model": "Claude 3.5", "status": "running", "tags": ["摘要", "RAG"], "color": "violet", "createdAt": "2026-02-15" },
+    { "id": "agent-003", "name": "代码审查", "description": "基于规范自动审查代码质量与安全性", "model": "DeepSeek-V3", "status": "draft", "tags": ["代码", "审查"], "color": "emerald", "createdAt": "2026-03-01" },
+    { "id": "agent-004", "name": "数据分析", "description": "自然语言驱动的数据查询与可视化分析", "model": "GPT-4o", "status": "running", "tags": ["数据", "SQL"], "color": "amber", "createdAt": "2026-03-05" }
+  ],
+  "knowledge": [
+    { "id": "kb-001", "name": "产品文档", "description": "产品使用手册、API 文档、FAQ", "docCount": 156, "size": "24.3 MB", "status": "ready", "updatedAt": "2026-03-20" },
+    { "id": "kb-002", "name": "技术规范", "description": "系统架构文档、开发规范、接口协议", "docCount": 89, "size": "15.7 MB", "status": "ready", "updatedAt": "2026-03-19" },
+    { "id": "kb-003", "name": "客服话术库", "description": "标准回复模板、场景话术", "docCount": 342, "size": "8.1 MB", "status": "indexing", "updatedAt": "2026-03-21" }
+  ]
+}
