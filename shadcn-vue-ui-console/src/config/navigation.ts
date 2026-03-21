@@ -11,6 +11,7 @@ import {
   GraduationCap,
   LayoutDashboard,
   MessageCircle,
+  Rocket,
   Settings,
   Store,
 } from 'lucide-vue-next'
@@ -40,6 +41,7 @@ export const modelNavGroup: NavGroup = {
     { title: '数据集', icon: Database, path: '/datasets' },
     { title: '模型管理', icon: Box, path: '/models' },
     { title: '模型训练', icon: GraduationCap, path: '/training' },
+    { title: '模型部署', icon: Rocket, path: '/deployments' },
   ],
 }
 

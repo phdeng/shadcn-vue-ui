@@ -58,6 +58,14 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: '模型训练' },
       },
 
+      // 模型 — 模型部署
+      {
+        path: 'deployments',
+        name: 'DeploymentList',
+        component: () => import('@/pages/deployments/DeploymentListPage.vue'),
+        meta: { title: '模型部署' },
+      },
+
       // 知识库
       {
         path: 'knowledge',
