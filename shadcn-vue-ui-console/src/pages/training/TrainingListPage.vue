@@ -72,10 +72,10 @@ const jobs = ref<TrainingJob[]>([
 ])
 
 const statusConfig: Record<TrainingStatus, { label: string, icon: typeof Play, dotClass: string, badgeClass: string }> = {
-  running: { label: '训练中', icon: Activity, dotClass: 'bg-blue-500 animate-pulse', badgeClass: 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400' },
-  completed: { label: '已完成', icon: CheckCircle2, dotClass: 'bg-emerald-500', badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400' },
-  failed: { label: '失败', icon: XCircle, dotClass: 'bg-red-500', badgeClass: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400' },
-  queued: { label: '排队中', icon: Clock, dotClass: 'bg-gray-400', badgeClass: 'bg-gray-100 text-gray-600 dark:bg-gray-800/50 dark:text-gray-400' },
+  running: { label: '训练中', icon: Activity, dotClass: 'bg-primary animate-pulse', badgeClass: 'bg-primary/10 text-primary' },
+  completed: { label: '已完成', icon: CheckCircle2, dotClass: 'bg-success', badgeClass: 'bg-success/10 text-success' },
+  failed: { label: '失败', icon: XCircle, dotClass: 'bg-destructive', badgeClass: 'bg-destructive/10 text-destructive' },
+  queued: { label: '排队中', icon: Clock, dotClass: 'bg-muted-foreground', badgeClass: 'bg-muted text-muted-foreground' },
 }
 
 // ==================== 搜索过滤 ====================
@@ -191,65 +191,49 @@ function handleDelete() {
       </Button>
     </div>
 
-    <!-- 统计概览 -->
+    <!-- 统计概览 — HUD 水印风格 -->
     <div class="grid gap-4 sm:grid-cols-3">
-      <Card class="border-0 shadow-sm">
-        <CardContent class="flex items-center justify-between pt-5">
-          <div>
-            <p class="text-xs text-muted-foreground">
-              总任务数
-            </p>
-            <p class="text-2xl font-bold">
-              {{ stats.total }}
-            </p>
+      <div class="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm px-6 py-6 transition-all duration-500 hover:border-border/50 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20">
+        <Activity class="absolute right-4 top-1/2 -translate-y-1/2 size-20 text-muted-foreground/10 transition-all duration-700 ease-out group-hover:scale-125 group-hover:rotate-6 group-hover:text-muted-foreground/20" />
+        <div class="relative z-10">
+          <span class="text-[13px] font-medium text-muted-foreground">总任务数</span>
+          <div class="mt-3 text-[32px] font-bold tracking-tighter tabular-nums leading-none">
+            {{ stats.total }}
           </div>
-          <div class="rounded-lg bg-muted p-2.5">
-            <Activity class="size-4 text-muted-foreground" />
+        </div>
+      </div>
+      <div class="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm px-6 py-6 transition-all duration-500 hover:border-border/50 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20">
+        <Play class="absolute right-4 top-1/2 -translate-y-1/2 size-20 text-primary/20 dark:text-primary/10 transition-all duration-700 ease-out group-hover:scale-125 group-hover:rotate-6 group-hover:text-primary/40 dark:group-hover:text-primary/25" />
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 size-40 rounded-full bg-gradient-radial from-primary/30 via-primary/8 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 blur-3xl scale-75 group-hover:scale-100" />
+        <div class="relative z-10">
+          <span class="text-[13px] font-medium text-muted-foreground">训练中</span>
+          <div class="mt-3 text-[32px] font-bold tracking-tighter tabular-nums leading-none">
+            {{ stats.running }}
           </div>
-        </CardContent>
-      </Card>
-      <Card class="border-0 shadow-sm">
-        <CardContent class="flex items-center justify-between pt-5">
-          <div>
-            <p class="text-xs text-muted-foreground">
-              训练中
-            </p>
-            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {{ stats.running }}
-            </p>
+        </div>
+      </div>
+      <div class="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm px-6 py-6 transition-all duration-500 hover:border-border/50 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20">
+        <CheckCircle2 class="absolute right-4 top-1/2 -translate-y-1/2 size-20 text-success/20 dark:text-success/10 transition-all duration-700 ease-out group-hover:scale-125 group-hover:rotate-6 group-hover:text-success/40 dark:group-hover:text-success/25" />
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 size-40 rounded-full bg-gradient-radial from-success/30 via-success/8 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 blur-3xl scale-75 group-hover:scale-100" />
+        <div class="relative z-10">
+          <span class="text-[13px] font-medium text-muted-foreground">已完成</span>
+          <div class="mt-3 text-[32px] font-bold tracking-tighter tabular-nums leading-none">
+            {{ stats.completed }}
           </div>
-          <div class="rounded-lg bg-blue-50 p-2.5 dark:bg-blue-950/50">
-            <Play class="size-4 text-blue-600 dark:text-blue-400" />
-          </div>
-        </CardContent>
-      </Card>
-      <Card class="border-0 shadow-sm">
-        <CardContent class="flex items-center justify-between pt-5">
-          <div>
-            <p class="text-xs text-muted-foreground">
-              已完成
-            </p>
-            <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-              {{ stats.completed }}
-            </p>
-          </div>
-          <div class="rounded-lg bg-emerald-50 p-2.5 dark:bg-emerald-950/50">
-            <CheckCircle2 class="size-4 text-emerald-600 dark:text-emerald-400" />
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
 
     <!-- 训练任务表格 -->
-    <Card class="border-0 shadow-sm">
+    <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
       <CardHeader class="pb-3">
         <div class="flex items-center justify-between">
-          <CardTitle class="text-base">
+          <CardTitle class="text-[15px] font-semibold">
             训练任务
           </CardTitle>
           <div class="relative w-64">
-            <Search class="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-            <Input v-model="searchQuery" placeholder="搜索任务..." class="pl-8 h-8 text-xs" />
+            <Search class="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <Input v-model="searchQuery" placeholder="搜索任务..." class="pl-9 h-9 rounded-xl text-xs" />
           </div>
         </div>
       </CardHeader>
@@ -323,10 +307,10 @@ function handleDelete() {
                       导出模型
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem v-if="job.status === 'running'" class="text-amber-600" @click="handlePause(job)">
+                    <DropdownMenuItem v-if="job.status === 'running'" class="text-warning" @click="handlePause(job)">
                       暂停训练
                     </DropdownMenuItem>
-                    <DropdownMenuItem v-if="job.status === 'failed'" class="text-blue-600" @click="handleRetrain(job)">
+                    <DropdownMenuItem v-if="job.status === 'failed'" class="text-primary" @click="handleRetrain(job)">
                       重新训练
                     </DropdownMenuItem>
                     <DropdownMenuItem class="text-destructive" @click="handleDeleteConfirm(job)">

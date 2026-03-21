@@ -12,7 +12,7 @@ import {
 } from '@ui/components/ui/card'
 import { Skeleton } from '@ui/components/ui/skeleton'
 import { cn } from '@ui/lib/utils'
-import { Activity, ArrowDownRight, ArrowUpRight, BookOpen, Bot, Box, Sparkles } from 'lucide-vue-next'
+import { Activity, ArrowDownRight, ArrowUpRight, BookOpen, Bot, Box, MessageSquare, Plus, Sparkles } from 'lucide-vue-next'
 /**
  * @description 控制台概览页 — 云平台产品风格
  * @author Timon
@@ -59,10 +59,10 @@ const countKnowledge = useCountUp(24, 800)
 const countCalls = useCountUp(mockDashboardStats.todayCalls, 1000)
 
 const stats = [
-  { title: '已注册模型', countRef: countModels, change: '+3', trend: 'up' as const, desc: '较上月', icon: Box, color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20', iconColor: 'text-blue-600 dark:text-blue-400' },
-  { title: '运行中模型', countRef: countRunning, change: '+2', trend: 'up' as const, desc: '较上月', icon: Bot, color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20', iconColor: 'text-violet-600 dark:text-violet-400' },
-  { title: '知识库总量', countRef: countKnowledge, change: '+5', trend: 'up' as const, desc: '较上月', icon: BookOpen, color: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20', iconColor: 'text-emerald-600 dark:text-emerald-400' },
-  { title: '今日调用次数', countRef: countCalls, change: '-3%', trend: 'down' as const, desc: '较昨日', icon: Activity, color: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20', iconColor: 'text-amber-600 dark:text-amber-400' },
+  { title: '已注册模型', countRef: countModels, change: '+3', trend: 'up' as const, desc: '较上月', icon: Box, iconBase: 'text-chart-1/20 dark:text-chart-1/10', iconHover: 'group-hover:text-chart-1/40 dark:group-hover:text-chart-1/25', glow: 'from-chart-1/30 via-chart-1/8 to-transparent' },
+  { title: '运行中模型', countRef: countRunning, change: '+2', trend: 'up' as const, desc: '较上月', icon: Bot, iconBase: 'text-chart-4/20 dark:text-chart-4/10', iconHover: 'group-hover:text-chart-4/40 dark:group-hover:text-chart-4/25', glow: 'from-chart-4/30 via-chart-4/8 to-transparent' },
+  { title: '知识库总量', countRef: countKnowledge, change: '+5', trend: 'up' as const, desc: '较上月', icon: BookOpen, iconBase: 'text-success/20 dark:text-success/10', iconHover: 'group-hover:text-success/40 dark:group-hover:text-success/25', glow: 'from-success/30 via-success/8 to-transparent' },
+  { title: '今日调用次数', countRef: countCalls, change: '-3%', trend: 'down' as const, desc: '较昨日', icon: Activity, iconBase: 'text-chart-5/20 dark:text-chart-5/10', iconHover: 'group-hover:text-chart-5/40 dark:group-hover:text-chart-5/25', glow: 'from-chart-5/30 via-chart-5/8 to-transparent' },
 ]
 
 // ==================== 最近活动数据 ====================
@@ -75,13 +75,15 @@ const recentActivities = [
 ]
 
 // ==================== 调用趋势折线图数据 ====================
+// 注意：Chart.js 不支持 oklch/CSS 变量，此处使用 rgba 硬编码
+// 颜色对应关系：蓝色 → --chart-1，橙色 → --chart-5
 const lineChartData = {
   labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
   datasets: [
     {
       label: 'GPT-4o',
       data: [1200, 1900, 1500, 2100, 2400, 1800, 2200],
-      borderColor: 'rgba(59, 130, 246, 0.9)', // 蓝色
+      borderColor: 'rgba(59, 130, 246, 0.9)', // --chart-1
       backgroundColor: 'rgba(59, 130, 246, 0.08)',
       fill: true,
       tension: 0.4,
@@ -90,12 +92,13 @@ const lineChartData = {
       pointBackgroundColor: 'rgba(59, 130, 246, 1)',
       pointBorderColor: '#fff',
       pointBorderWidth: 1.5,
+      pointStyle: 'circle' as const,
       borderWidth: 2,
     },
     {
       label: 'Claude 3.5',
       data: [800, 1100, 950, 1400, 1600, 1200, 1500],
-      borderColor: 'rgba(245, 158, 11, 0.9)', // 橙色
+      borderColor: 'rgba(245, 158, 11, 0.9)', // --chart-5
       backgroundColor: 'rgba(245, 158, 11, 0.08)',
       fill: true,
       tension: 0.4,
@@ -104,6 +107,7 @@ const lineChartData = {
       pointBackgroundColor: 'rgba(245, 158, 11, 1)',
       pointBorderColor: '#fff',
       pointBorderWidth: 1.5,
+      pointStyle: 'circle' as const,
       borderWidth: 2,
     },
   ],
@@ -152,22 +156,23 @@ const lineChartOptions = {
 }
 
 // ==================== 模型调用分布环形图数据 ====================
+// 颜色对应：蓝 → --chart-1，橙 → --chart-5，绿 → --chart-3，灰 → --muted
 const doughnutChartData = {
   labels: ['GPT-4o', 'Claude 3.5', 'DeepSeek', '其他'],
   datasets: [
     {
       data: [42, 30, 18, 10],
       backgroundColor: [
-        'rgba(59, 130, 246, 0.8)', // 蓝色 — GPT-4o
-        'rgba(245, 158, 11, 0.8)', // 橙色 — Claude
-        'rgba(16, 185, 129, 0.8)', // 绿色 — DeepSeek
-        'rgba(156, 163, 175, 0.5)', // 灰色 — 其他
+        'rgba(59, 130, 246, 0.8)', // --chart-1
+        'rgba(245, 158, 11, 0.8)', // --chart-5
+        'rgba(16, 185, 129, 0.8)', // --chart-3
+        'rgba(156, 163, 175, 0.4)', // --muted
       ],
       borderColor: [
         'rgba(59, 130, 246, 1)',
         'rgba(245, 158, 11, 1)',
         'rgba(16, 185, 129, 1)',
-        'rgba(156, 163, 175, 0.7)',
+        'rgba(156, 163, 175, 0.6)',
       ],
       borderWidth: 1,
       hoverOffset: 6,
@@ -204,9 +209,9 @@ const doughnutChartOptions = {
 
 // ==================== 快速操作数据 ====================
 const quickActions = [
-  { label: '注册模型', desc: '接入新的大语言模型', path: '/models' },
-  { label: '创建 Agent', desc: '配置智能体工作流', path: '/agents' },
-  { label: '开始对话', desc: '与 Agent 进行对话测试', path: '/chat' },
+  { label: '注册模型', desc: '接入新的大语言模型', path: '/models', icon: Plus },
+  { label: '创建 Agent', desc: '配置智能体工作流', path: '/agents', icon: Bot },
+  { label: '开始对话', desc: '与 Agent 进行对话测试', path: '/chat', icon: MessageSquare },
 ]
 </script>
 
@@ -242,51 +247,55 @@ const quickActions = [
 
     <!-- 统计卡片 — 渐变背景风格 -->
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <Card
+      <div
         v-for="item in stats"
         :key="item.title"
-        class="overflow-hidden border-0 shadow-sm transition-all hover:shadow-md"
+        class="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm px-6 py-6 transition-all duration-500 hover:border-border/50 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20"
       >
-        <div :class="cn('bg-gradient-to-br', item.color)">
-          <CardHeader class="flex flex-row items-center justify-between pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground">
-              {{ item.title }}
-            </CardTitle>
-            <div :class="cn('rounded-lg bg-background/60 p-2 backdrop-blur-sm', item.iconColor)">
-              <component :is="item.icon" class="size-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div class="text-3xl font-bold tracking-tight tabular-nums">
-              {{ item.countRef.value.toLocaleString() }}
-            </div>
-            <div class="mt-2 flex items-center gap-1.5 text-xs">
-              <Badge
-                variant="secondary"
-                :class="[
-                  'gap-0.5 rounded-full px-1.5 py-0 text-[10px] font-medium',
-                  item.trend === 'down' && 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-400',
-                ]"
-              >
-                <ArrowUpRight v-if="item.trend === 'up'" class="size-3" />
-                <ArrowDownRight v-else class="size-3" />
-                {{ item.change }}
-              </Badge>
-              <span class="text-muted-foreground">{{ item.desc }}</span>
-            </div>
-          </CardContent>
+        <!-- 大图标水印 — 右侧居中，完整可见 -->
+        <component
+          :is="item.icon"
+          :class="cn(
+            'absolute right-4 top-1/2 -translate-y-1/2 size-20 transition-all duration-700 ease-out',
+            'group-hover:scale-125 group-hover:rotate-6',
+            item.iconBase, item.iconHover,
+          )"
+        />
+        <!-- 径向光晕 — hover 时从图标位置衍射 -->
+        <div :class="cn('absolute right-0 top-1/2 -translate-y-1/2 size-40 rounded-full bg-gradient-radial opacity-0 group-hover:opacity-100 transition-all duration-700 blur-3xl scale-75 group-hover:scale-100', item.glow)" />
+
+        <!-- 内容层 -->
+        <div class="relative z-10">
+          <span class="text-[13px] font-medium text-muted-foreground">{{ item.title }}</span>
+          <div class="mt-3 text-[32px] font-bold tracking-tighter tabular-nums leading-none">
+            {{ item.countRef.value.toLocaleString() }}
+          </div>
+          <div class="mt-4 flex items-center gap-1.5 text-xs">
+            <Badge
+              variant="secondary"
+              :class="[
+                'gap-0.5 rounded-full px-1.5 py-0 text-[10px] font-medium',
+                item.trend === 'down' && 'bg-destructive/10 text-destructive',
+              ]"
+            >
+              <ArrowUpRight v-if="item.trend === 'up'" class="size-3" />
+              <ArrowDownRight v-else class="size-3" />
+              {{ item.change }}
+            </Badge>
+            <span class="text-muted-foreground/50">{{ item.desc }}</span>
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
 
     <!-- 中间区 — 调用趋势 + 模型分布与最近活动 -->
     <div class="grid gap-4 lg:grid-cols-7">
       <!-- 调用趋势折线图 -->
-      <Card class="lg:col-span-4 shadow-sm border-0">
+      <Card class="lg:col-span-4 border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
-              <CardTitle class="text-base">
+              <CardTitle class="text-[15px] font-semibold">
                 调用趋势
               </CardTitle>
               <CardDescription>近 7 日模型调用量变化</CardDescription>
@@ -304,11 +313,11 @@ const quickActions = [
       </Card>
 
       <!-- 模型分布 + 最近活动 -->
-      <Card class="lg:col-span-3 shadow-sm border-0">
+      <Card class="lg:col-span-3 border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
-              <CardTitle class="text-base">
+              <CardTitle class="text-[15px] font-semibold">
                 最近活动
               </CardTitle>
               <CardDescription>模型调用分布与平台动态</CardDescription>
@@ -359,32 +368,36 @@ const quickActions = [
     <div class="grid gap-4 lg:grid-cols-2">
       <ServiceStatus />
 
-      <!-- 快速操作 -->
-      <div>
-        <h3 class="mb-3 text-sm font-medium text-muted-foreground">
-          快速开始
-        </h3>
-        <div class="grid gap-3 sm:grid-cols-3">
-          <RouterLink
-            v-for="action in quickActions"
-            :key="action.label"
-            :to="action.path"
-            class="group flex items-center gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:border-primary/20 hover:shadow-md"
-          >
-            <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-              <Sparkles class="size-4" />
-            </div>
-            <div>
-              <p class="text-sm font-medium">
-                {{ action.label }}
-              </p>
-              <p class="text-[11px] text-muted-foreground">
-                {{ action.desc }}
-              </p>
-            </div>
-          </RouterLink>
-        </div>
-      </div>
+      <!-- 快速开始 -->
+      <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
+        <CardHeader class="pb-3">
+          <CardTitle class="text-[15px] font-semibold">
+            快速开始
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="grid gap-3 sm:grid-cols-3">
+            <RouterLink
+              v-for="action in quickActions"
+              :key="action.label"
+              :to="action.path"
+              class="group flex flex-col items-center gap-2.5 rounded-xl border border-border/40 bg-muted/30 p-5 text-center transition-all duration-300 hover:border-primary/30 hover:bg-primary/5 hover:shadow-md hover:shadow-primary/5"
+            >
+              <div class="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110">
+                <component :is="action.icon" class="size-[18px]" />
+              </div>
+              <div>
+                <p class="text-[13px] font-medium">
+                  {{ action.label }}
+                </p>
+                <p class="mt-0.5 text-[11px] text-muted-foreground leading-snug">
+                  {{ action.desc }}
+                </p>
+              </div>
+            </RouterLink>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   </div>
   </div>

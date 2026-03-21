@@ -197,7 +197,7 @@ function handleCancel() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div class="flex flex-col gap-8">
     <!-- 面包屑 + 标题 -->
     <div class="flex items-center gap-3">
       <Button variant="ghost" size="icon" class="shrink-0" @click="handleCancel">
@@ -212,14 +212,14 @@ function handleCancel() {
     <!-- 步骤条 -->
     <div class="flex items-center justify-center gap-0">
       <template v-for="(step, index) in steps" :key="step.num">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2.5">
           <div
             :class="cn(
-              'flex size-7 items-center justify-center rounded-full text-xs font-semibold transition-all',
+              'flex size-8 items-center justify-center rounded-full text-xs font-semibold transition-all',
               currentStep === step.num
-                ? 'bg-primary text-primary-foreground'
+                ? 'bg-primary text-primary-foreground ring-4 ring-primary/10'
                 : currentStep > step.num
-                  ? 'bg-primary/20 text-primary'
+                  ? 'bg-success/15 text-success'
                   : 'bg-muted text-muted-foreground',
             )"
           >
@@ -238,8 +238,8 @@ function handleCancel() {
         <div
           v-if="index < steps.length - 1"
           :class="cn(
-            'mx-4 h-px w-24 transition-colors',
-            currentStep > step.num ? 'bg-primary/40' : 'bg-border',
+            'mx-4 h-px w-20 transition-colors',
+            currentStep > step.num ? 'bg-success/30' : 'bg-border/60',
           )"
         />
       </template>
@@ -249,24 +249,24 @@ function handleCancel() {
     <div class="mx-auto w-full max-w-3xl">
 
       <!-- ==================== 步骤 1：基础信息 ==================== -->
-      <Card v-if="currentStep === 1" class="border-0 shadow-sm">
+      <Card v-if="currentStep === 1" class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-xl shadow-xs">
         <CardHeader>
-          <CardTitle class="text-base">基础信息</CardTitle>
+          <CardTitle class="text-[15px]">基础信息</CardTitle>
           <CardDescription>设置知识库的名称、描述和类型</CardDescription>
         </CardHeader>
-        <CardContent class="space-y-6">
+        <CardContent class="space-y-7">
           <!-- 图标 -->
-          <div class="grid gap-2">
-            <Label>图标</Label>
+          <div class="grid gap-2.5">
+            <Label class="text-[13px] font-medium">图标</Label>
             <div class="flex items-center gap-2">
               <button
                 v-for="icon in iconOptions"
                 :key="icon"
                 type="button"
-                class="flex size-9 items-center justify-center rounded-lg border text-lg transition-all"
+                class="flex size-9 items-center justify-center rounded-xl border text-lg transition-all"
                 :class="form.icon === icon
-                  ? 'border-primary bg-primary/10 scale-110'
-                  : 'border-border/60 hover:border-primary/30 hover:bg-muted/30'"
+                  ? 'border-primary/30 bg-primary/[0.03] shadow-xs shadow-primary/5 scale-110'
+                  : 'border-border/40 hover:border-border/60 hover:bg-muted/20'"
                 @click="form.icon = icon"
               >
                 {{ icon }}
@@ -274,10 +274,12 @@ function handleCancel() {
             </div>
           </div>
 
+          <Separator class="!bg-border/40" />
+
           <!-- 名称 -->
-          <div class="grid gap-2">
+          <div class="grid gap-2.5">
             <div class="flex items-center justify-between">
-              <Label for="kb-name">
+              <Label for="kb-name" class="text-[13px] font-medium">
                 知识库名称 <span class="text-destructive">*</span>
               </Label>
               <span class="text-xs text-muted-foreground">{{ form.name.length }} / 20</span>
@@ -287,13 +289,14 @@ function handleCancel() {
               v-model="form.name"
               placeholder="请输入知识库名称"
               :maxlength="20"
+              class="h-10 rounded-xl"
             />
           </div>
 
           <!-- 描述 -->
-          <div class="grid gap-2">
+          <div class="grid gap-2.5">
             <div class="flex items-center justify-between">
-              <Label for="kb-desc">知识库描述</Label>
+              <Label for="kb-desc" class="text-[13px] font-medium">知识库描述</Label>
               <span class="text-xs text-muted-foreground">{{ form.description.length }} / 200</span>
             </div>
             <textarea
@@ -302,27 +305,29 @@ function handleCancel() {
               rows="3"
               :maxlength="200"
               placeholder="请输入知识库描述，介绍知识库中包含的内容，描述会用于指导智能体调用知识库"
-              class="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 w-full rounded-lg border bg-transparent px-3 py-2.5 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:ring-[3px]"
+              class="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 w-full rounded-xl border bg-transparent px-3 py-2.5 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:ring-[3px]"
             />
           </div>
 
+          <Separator class="!bg-border/40" />
+
           <!-- 知识库类型 -->
           <div class="grid gap-3">
-            <Label>知识库类型</Label>
+            <Label class="text-[13px] font-medium">知识库类型</Label>
             <div class="grid gap-3 sm:grid-cols-2">
               <button
                 v-for="opt in typeOptions"
                 :key="opt.value"
                 type="button"
                 :class="cn(
-                  'flex items-start gap-3 rounded-lg border p-4 text-left transition-all',
+                  'flex items-start gap-3 rounded-xl border p-5 text-left transition-all',
                   form.type === opt.value
-                    ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                    : 'border-border/60 hover:border-primary/30 hover:bg-muted/30',
+                    ? 'border-primary/30 bg-primary/[0.03] shadow-xs shadow-primary/5'
+                    : 'border-border/40 hover:border-border/60 hover:bg-muted/20',
                 )"
                 @click="form.type = opt.value"
               >
-                <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted/50 backdrop-blur-sm">
                   <component :is="opt.icon" class="size-4 text-muted-foreground" />
                 </div>
                 <div class="flex-1 min-w-0">
@@ -335,7 +340,7 @@ function handleCancel() {
                       <Check class="size-2.5 text-primary-foreground" />
                     </div>
                   </div>
-                  <p class="mt-1 text-xs leading-relaxed text-muted-foreground line-clamp-2">
+                  <p class="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-2">
                     {{ opt.description }}
                   </p>
                 </div>
@@ -343,19 +348,21 @@ function handleCancel() {
             </div>
           </div>
 
+          <Separator class="!bg-border/40" />
+
           <!-- 使用场景 -->
           <div class="grid gap-3">
-            <Label>使用场景</Label>
+            <Label class="text-[13px] font-medium">使用场景</Label>
             <div class="grid gap-3 sm:grid-cols-2">
               <button
                 v-for="opt in sceneOptions"
                 :key="opt.value"
                 type="button"
                 :class="cn(
-                  'flex items-start gap-3 rounded-lg border p-4 text-left transition-all',
+                  'flex items-start gap-3 rounded-xl border p-5 text-left transition-all',
                   form.scene === opt.value
-                    ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                    : 'border-border/60 hover:border-primary/30 hover:bg-muted/30',
+                    ? 'border-primary/30 bg-primary/[0.03] shadow-xs shadow-primary/5'
+                    : 'border-border/40 hover:border-border/60 hover:bg-muted/20',
                 )"
                 @click="form.scene = opt.value"
               >
@@ -369,7 +376,7 @@ function handleCancel() {
                       <Check class="size-2.5 text-primary-foreground" />
                     </div>
                   </div>
-                  <p class="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  <p class="mt-1.5 text-xs leading-relaxed text-muted-foreground">
                     {{ opt.description }}
                   </p>
                 </div>
@@ -380,18 +387,18 @@ function handleCancel() {
       </Card>
 
       <!-- ==================== 步骤 2：选择数据 ==================== -->
-      <Card v-if="currentStep === 2" class="border-0 shadow-sm">
+      <Card v-if="currentStep === 2" class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-xl shadow-xs">
         <CardHeader>
-          <CardTitle class="text-base">选择数据</CardTitle>
+          <CardTitle class="text-[15px]">选择数据</CardTitle>
           <CardDescription>上传本地文件或通过 URL 导入数据到知识库</CardDescription>
         </CardHeader>
-        <CardContent class="space-y-5">
+        <CardContent class="space-y-7">
           <!-- 导入方式切换 -->
-          <div class="flex gap-1 rounded-lg bg-muted p-1">
+          <div class="flex gap-1 rounded-xl bg-muted/40 p-1">
             <button
               type="button"
               :class="cn(
-                'flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm transition-all',
+                'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-all',
                 uploadTab === 'file'
                   ? 'bg-background font-medium shadow-sm'
                   : 'text-muted-foreground hover:text-foreground',
@@ -404,7 +411,7 @@ function handleCancel() {
             <button
               type="button"
               :class="cn(
-                'flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm transition-all',
+                'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-all',
                 uploadTab === 'url'
                   ? 'bg-background font-medium shadow-sm'
                   : 'text-muted-foreground hover:text-foreground',
@@ -417,19 +424,19 @@ function handleCancel() {
           </div>
 
           <!-- 本地文件上传 -->
-          <div v-if="uploadTab === 'file'" class="grid gap-4">
+          <div v-if="uploadTab === 'file'" class="grid gap-5">
             <div
               :class="cn(
-                'relative flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-6 py-10 transition-colors',
+                'relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed px-6 py-12 transition-colors',
                 isDragOver
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border/60 hover:border-primary/30',
+                  ? 'border-primary bg-primary/[0.03]'
+                  : 'border-border/40 hover:border-border/60',
               )"
               @dragover.prevent="isDragOver = true"
               @dragleave="isDragOver = false"
               @drop.prevent="handleDrop"
             >
-              <div class="flex size-14 items-center justify-center rounded-xl bg-muted">
+              <div class="flex size-14 items-center justify-center rounded-2xl bg-muted/50 backdrop-blur-sm">
                 <Upload class="size-6 text-muted-foreground" />
               </div>
               <div class="text-center">
@@ -446,14 +453,14 @@ function handleCancel() {
                     >
                   </label>
                 </p>
-                <p class="mt-1.5 text-xs text-muted-foreground">
+                <p class="mt-2 text-xs text-muted-foreground">
                   支持 {{ supportedTypes.join('、') }}，单文件最大 50 MB
                 </p>
               </div>
             </div>
 
             <!-- 已选文件 -->
-            <div v-if="form.files.length > 0" class="grid gap-2">
+            <div v-if="form.files.length > 0" class="grid gap-2.5">
               <div class="flex items-center justify-between">
                 <span class="text-sm font-medium">
                   已选择 {{ form.files.length }} 个文件
@@ -467,7 +474,7 @@ function handleCancel() {
                 <div
                   v-for="(file, index) in form.files"
                   :key="file.name"
-                  class="flex items-center gap-2 rounded-md border bg-card px-3 py-2"
+                  class="flex items-center gap-2 rounded-xl border border-border/40 bg-card/80 px-3 py-2"
                 >
                   <FileText class="size-4 shrink-0 text-muted-foreground" />
                   <span class="flex-1 truncate text-sm">{{ file.name }}</span>
@@ -485,17 +492,17 @@ function handleCancel() {
           </div>
 
           <!-- URL 导入 -->
-          <div v-if="uploadTab === 'url'" class="grid gap-4">
-            <div class="grid gap-2">
-              <Label>网页 URL</Label>
+          <div v-if="uploadTab === 'url'" class="grid gap-5">
+            <div class="grid gap-2.5">
+              <Label class="text-[13px] font-medium">网页 URL</Label>
               <div class="flex gap-2">
                 <Input
                   v-model="urlInput"
                   placeholder="https://example.com/document"
-                  class="flex-1"
+                  class="flex-1 h-10 rounded-xl"
                   @keyup.enter="addUrl"
                 />
-                <Button type="button" variant="outline" size="icon" :disabled="!urlInput.trim()" @click="addUrl">
+                <Button type="button" variant="outline" size="icon" class="h-10 w-10 rounded-xl" :disabled="!urlInput.trim()" @click="addUrl">
                   <Plus class="size-4" />
                 </Button>
               </div>
@@ -504,7 +511,7 @@ function handleCancel() {
               </p>
             </div>
 
-            <div v-if="form.urls.length > 0" class="grid gap-2">
+            <div v-if="form.urls.length > 0" class="grid gap-2.5">
               <span class="text-sm font-medium">
                 已添加 {{ form.urls.length }} 个 URL
               </span>
@@ -512,7 +519,7 @@ function handleCancel() {
                 <div
                   v-for="(url, index) in form.urls"
                   :key="url"
-                  class="flex items-center gap-2 rounded-md border bg-card px-3 py-2"
+                  class="flex items-center gap-2 rounded-xl border border-border/40 bg-card/80 px-3 py-2"
                 >
                   <Globe class="size-4 shrink-0 text-muted-foreground" />
                   <span class="flex-1 truncate text-sm">{{ url }}</span>
@@ -529,12 +536,12 @@ function handleCancel() {
           </div>
 
           <!-- 汇总信息 -->
-          <div class="flex items-center gap-2 rounded-lg bg-muted/50 px-4 py-3">
+          <div class="flex items-center gap-2 rounded-xl bg-muted/30 px-5 py-4">
             <span class="text-xs text-muted-foreground">待导入：</span>
-            <Badge v-if="form.files.length > 0" variant="secondary" class="text-[11px]">
+            <Badge v-if="form.files.length > 0" variant="secondary" class="text-[10px] tracking-wide">
               {{ form.files.length }} 个文件
             </Badge>
-            <Badge v-if="form.urls.length > 0" variant="secondary" class="text-[11px]">
+            <Badge v-if="form.urls.length > 0" variant="secondary" class="text-[10px] tracking-wide">
               {{ form.urls.length }} 个 URL
             </Badge>
             <span v-if="!step2Valid" class="text-xs text-muted-foreground">暂无内容，可在创建后上传</span>
@@ -543,17 +550,17 @@ function handleCancel() {
       </Card>
 
       <!-- ==================== 步骤 3：索引设置 ==================== -->
-      <Card v-if="currentStep === 3" class="border-0 shadow-sm">
+      <Card v-if="currentStep === 3" class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-xl shadow-xs">
         <CardHeader>
-          <CardTitle class="text-base">索引设置</CardTitle>
+          <CardTitle class="text-[15px]">索引设置</CardTitle>
           <CardDescription>配置 Embedding 向量模型与文档分段策略</CardDescription>
         </CardHeader>
-        <CardContent class="space-y-6">
+        <CardContent class="space-y-7">
           <!-- Embedding 模型 -->
           <div class="grid gap-3">
-            <Label>Embedding 模型</Label>
+            <Label class="text-[13px] font-medium">Embedding 模型</Label>
             <Select v-model="form.embeddingModel">
-              <SelectTrigger>
+              <SelectTrigger class="h-10 rounded-xl">
                 <SelectValue placeholder="选择 Embedding 模型" />
               </SelectTrigger>
               <SelectContent>
@@ -569,7 +576,7 @@ function handleCancel() {
                 </SelectItem>
               </SelectContent>
             </Select>
-            <div v-if="selectedModel" class="flex items-center gap-4 rounded-lg bg-muted/50 px-4 py-3">
+            <div v-if="selectedModel" class="flex items-center gap-4 rounded-xl bg-muted/30 px-5 py-4">
               <div class="space-y-0.5">
                 <p class="text-xs text-muted-foreground">向量维度</p>
                 <p class="font-mono text-sm font-medium">{{ selectedModel.dimension }}</p>
@@ -582,17 +589,19 @@ function handleCancel() {
             </div>
           </div>
 
+          <Separator class="!bg-border/40" />
+
           <!-- 分段策略 -->
           <div class="grid gap-3">
-            <Label>分段策略</Label>
+            <Label class="text-[13px] font-medium">分段策略</Label>
             <div class="grid gap-3 sm:grid-cols-2">
               <button
                 type="button"
                 :class="cn(
-                  'rounded-lg border p-4 text-left transition-all',
+                  'rounded-xl border p-5 text-left transition-all',
                   form.chunkStrategy === 'auto'
-                    ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                    : 'border-border/60 hover:border-primary/30 hover:bg-muted/30',
+                    ? 'border-primary/30 bg-primary/[0.03] shadow-xs shadow-primary/5'
+                    : 'border-border/40 hover:border-border/60 hover:bg-muted/20',
                 )"
                 @click="form.chunkStrategy = 'auto'"
               >
@@ -605,17 +614,17 @@ function handleCancel() {
                     <Check class="size-2.5 text-primary-foreground" />
                   </div>
                 </div>
-                <p class="mt-1 text-xs text-muted-foreground">
+                <p class="mt-1.5 text-xs text-muted-foreground">
                   系统根据文档格式自动选择最优分段方式
                 </p>
               </button>
               <button
                 type="button"
                 :class="cn(
-                  'rounded-lg border p-4 text-left transition-all',
+                  'rounded-xl border p-5 text-left transition-all',
                   form.chunkStrategy === 'custom'
-                    ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                    : 'border-border/60 hover:border-primary/30 hover:bg-muted/30',
+                    ? 'border-primary/30 bg-primary/[0.03] shadow-xs shadow-primary/5'
+                    : 'border-border/40 hover:border-border/60 hover:bg-muted/20',
                 )"
                 @click="form.chunkStrategy = 'custom'"
               >
@@ -628,16 +637,16 @@ function handleCancel() {
                     <Check class="size-2.5 text-primary-foreground" />
                   </div>
                 </div>
-                <p class="mt-1 text-xs text-muted-foreground">
+                <p class="mt-1.5 text-xs text-muted-foreground">
                   手动指定分段长度与重叠长度
                 </p>
               </button>
             </div>
 
             <!-- 自定义参数 -->
-            <div v-if="form.chunkStrategy === 'custom'" class="grid grid-cols-2 gap-4 rounded-lg bg-muted/50 p-4">
-              <div class="grid gap-2">
-                <Label for="chunk-size" class="text-xs">分段长度 (Token)</Label>
+            <div v-if="form.chunkStrategy === 'custom'" class="grid grid-cols-2 gap-4 rounded-xl bg-muted/30 px-5 py-5">
+              <div class="grid gap-2.5">
+                <Label for="chunk-size" class="text-[13px] font-medium">分段长度 (Token)</Label>
                 <Input
                   id="chunk-size"
                   v-model.number="form.chunkSize"
@@ -645,10 +654,11 @@ function handleCancel() {
                   :min="100"
                   :max="2000"
                   placeholder="500"
+                  class="h-10 rounded-xl"
                 />
               </div>
-              <div class="grid gap-2">
-                <Label for="chunk-overlap" class="text-xs">重叠长度 (Token)</Label>
+              <div class="grid gap-2.5">
+                <Label for="chunk-overlap" class="text-[13px] font-medium">重叠长度 (Token)</Label>
                 <Input
                   id="chunk-overlap"
                   v-model.number="form.chunkOverlap"
@@ -656,6 +666,7 @@ function handleCancel() {
                   :min="0"
                   :max="500"
                   placeholder="50"
+                  class="h-10 rounded-xl"
                 />
               </div>
               <p class="col-span-2 text-xs text-muted-foreground">
@@ -664,11 +675,12 @@ function handleCancel() {
             </div>
           </div>
 
+          <Separator class="!bg-border/40" />
+
           <!-- 创建预览 -->
-          <Separator />
-          <div class="rounded-lg bg-muted/50 p-4 space-y-3">
-            <h4 class="text-sm font-medium">创建预览</h4>
-            <div class="grid gap-2 text-xs">
+          <div class="rounded-xl bg-gradient-to-br from-muted/30 to-muted/10 p-5 space-y-4">
+            <h4 class="text-[15px] font-medium">创建预览</h4>
+            <div class="grid gap-3 text-xs">
               <div class="flex items-center justify-between">
                 <span class="text-muted-foreground">知识库名称</span>
                 <span class="font-medium">{{ form.name || '—' }}</span>
@@ -695,7 +707,7 @@ function handleCancel() {
       </Card>
 
       <!-- 底部操作栏 -->
-      <div class="flex items-center justify-between pt-4">
+      <div class="flex items-center justify-between pt-6 pb-2">
         <Button variant="outline" @click="handleCancel">
           取消
         </Button>

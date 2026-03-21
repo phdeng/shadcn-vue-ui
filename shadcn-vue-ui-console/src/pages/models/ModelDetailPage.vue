@@ -57,36 +57,12 @@ const model = computed(() => {
   return mockModel
 })
 
-// 指标卡片 — 渐变背景风格，根据模型真实数据动态生成
+// 指标卡片 — HUD 水印风格，根据模型真实数据动态生成
 const metrics = computed(() => [
-  {
-    label: '总调用次数',
-    value: model.value.calls.toLocaleString(),
-    icon: Activity,
-    color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-  },
-  {
-    label: '平均延迟',
-    value: model.value.latency,
-    icon: Clock,
-    color: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
-  },
-  {
-    label: '成功率',
-    value: '99.7%',
-    icon: TrendingUp,
-    color: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-  },
-  {
-    label: '今日调用',
-    value: Math.round(model.value.calls * 0.026).toLocaleString(),
-    icon: Zap,
-    color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20',
-    iconColor: 'text-violet-600 dark:text-violet-400',
-  },
+  { label: '总调用次数', value: model.value.calls.toLocaleString(), icon: Activity, iconBase: 'text-chart-1/20 dark:text-chart-1/10', iconHover: 'group-hover:text-chart-1/40 dark:group-hover:text-chart-1/25', glow: 'from-chart-1/30 via-chart-1/8 to-transparent' },
+  { label: '平均延迟', value: model.value.latency, icon: Clock, iconBase: 'text-chart-5/20 dark:text-chart-5/10', iconHover: 'group-hover:text-chart-5/40 dark:group-hover:text-chart-5/25', glow: 'from-chart-5/30 via-chart-5/8 to-transparent' },
+  { label: '成功率', value: '99.2%', icon: TrendingUp, iconBase: 'text-success/20 dark:text-success/10', iconHover: 'group-hover:text-success/40 dark:group-hover:text-success/25', glow: 'from-success/30 via-success/8 to-transparent' },
+  { label: '今日调用', value: Math.round(model.value.calls * 0.026).toLocaleString(), icon: Zap, iconBase: 'text-chart-4/20 dark:text-chart-4/10', iconHover: 'group-hover:text-chart-4/40 dark:group-hover:text-chart-4/25', glow: 'from-chart-4/30 via-chart-4/8 to-transparent' },
 ])
 
 // 模型配置项 — 动态绑定
@@ -171,13 +147,13 @@ const recentCalls = computed(() => {
               <Circle
                 :class="cn(
                   'size-2',
-                  model.status === 'running' ? 'fill-emerald-500 text-emerald-500' : model.status === 'error' ? 'fill-red-500 text-red-500' : 'fill-gray-400 text-gray-400',
+                  model.status === 'running' ? 'fill-success text-success' : model.status === 'error' ? 'fill-destructive text-destructive' : 'fill-muted-foreground text-muted-foreground',
                 )"
               />
               <span
                 :class="cn(
                   'text-xs font-medium',
-                  model.status === 'running' ? 'text-emerald-600 dark:text-emerald-400' : model.status === 'error' ? 'text-red-600 dark:text-red-400' : 'text-gray-500',
+                  model.status === 'running' ? 'text-success' : model.status === 'error' ? 'text-destructive' : 'text-muted-foreground',
                 )"
               >
                 {{ model.status === 'running' ? '运行中' : model.status === 'error' ? '异常' : '已停止' }}
@@ -195,34 +171,25 @@ const recentCalls = computed(() => {
       </Button>
     </div>
 
-    <!-- 指标卡片 — 渐变背景 + 毛玻璃图标容器 -->
+    <!-- 指标卡片 — HUD 水印风格 -->
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <Card
+      <div
         v-for="item in metrics"
         :key="item.label"
-        class="overflow-hidden border-0 shadow-sm transition-all hover:shadow-md"
+        class="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm px-6 py-6 transition-all duration-500 hover:border-border/50 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20"
       >
-        <div :class="cn('bg-gradient-to-br', item.color)">
-          <CardHeader class="flex flex-row items-center justify-between pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground">
-              {{ item.label }}
-            </CardTitle>
-            <div
-              :class="cn(
-                'rounded-lg bg-background/60 p-2 backdrop-blur-sm',
-                item.iconColor,
-              )"
-            >
-              <component :is="item.icon" class="size-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div class="text-3xl font-bold tracking-tight">
-              {{ item.value }}
-            </div>
-          </CardContent>
+        <component
+          :is="item.icon"
+          :class="cn('absolute right-4 top-1/2 -translate-y-1/2 size-20 transition-all duration-700 ease-out group-hover:scale-125 group-hover:rotate-6', item.iconBase, item.iconHover)"
+        />
+        <div :class="cn('absolute right-0 top-1/2 -translate-y-1/2 size-40 rounded-full bg-gradient-radial opacity-0 group-hover:opacity-100 transition-all duration-700 blur-3xl scale-75 group-hover:scale-100', item.glow)" />
+        <div class="relative z-10">
+          <span class="text-[13px] font-medium text-muted-foreground">{{ item.label }}</span>
+          <div class="mt-3 text-[32px] font-bold tracking-tighter tabular-nums leading-none">
+            {{ item.value }}
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
 
     <!-- Tab 区域：调用记录 / 模型配置 / 运行日志 -->
@@ -330,7 +297,7 @@ const recentCalls = computed(() => {
                 <span
                   :class="cn(
                     'shrink-0 w-12',
-                    log.level === 'ERROR' ? 'text-red-400' : log.level === 'WARN' ? 'text-amber-400' : 'text-emerald-400',
+                    log.level === 'ERROR' ? 'text-destructive' : log.level === 'WARN' ? 'text-warning' : 'text-success',
                   )"
                 >
                   {{ log.level }}

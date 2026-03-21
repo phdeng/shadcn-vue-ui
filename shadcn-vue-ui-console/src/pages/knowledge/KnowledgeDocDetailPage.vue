@@ -57,8 +57,8 @@ const document = {
 }
 
 const docStatusConfig = {
-  indexed: { label: '已索引', dotClass: 'bg-emerald-500', badgeVariant: 'secondary' as const },
-  indexing: { label: '索引中', dotClass: 'bg-amber-500 animate-pulse', badgeVariant: 'secondary' as const },
+  indexed: { label: '已索引', dotClass: 'bg-success', badgeVariant: 'secondary' as const },
+  indexing: { label: '索引中', dotClass: 'bg-warning animate-pulse', badgeVariant: 'secondary' as const },
   pending: { label: '待处理', dotClass: 'bg-muted-foreground', badgeVariant: 'outline' as const },
   error: { label: '解析失败', dotClass: 'bg-destructive', badgeVariant: 'destructive' as const },
 }
@@ -140,175 +140,175 @@ function handleEditSegment(seg: Segment) {
 
 <template>
   <div>
-    <div v-if="loading" class="flex flex-col gap-6">
+    <div v-if="loading" class="flex flex-col gap-8">
       <div class="flex items-center gap-3">
-        <Skeleton class="size-9 rounded-lg" />
+        <Skeleton class="size-9 rounded-xl" />
         <div class="space-y-2">
           <Skeleton class="h-7 w-48" />
-        <Skeleton class="h-4 w-80" />
-      </div>
-    </div>
-    <div class="grid gap-4 sm:grid-cols-4">
-      <Skeleton v-for="i in 4" :key="i" class="h-[72px] rounded-lg" />
-    </div>
-    <Skeleton class="h-[500px] rounded-xl" />
-  </div>
-
-  <div v-else class="flex flex-col gap-6">
-    <!-- 顶部：返回 + 文档名称 + 状态 -->
-    <div class="flex items-start justify-between">
-      <div class="flex items-start gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          class="mt-0.5 shrink-0"
-          @click="router.push(`/knowledge/${kbId}`)"
-        >
-          <ArrowLeft class="size-4" />
-        </Button>
-        <div>
-          <div class="flex items-center gap-3">
-            <FileText class="size-5 text-muted-foreground" />
-            <h2 class="text-2xl font-semibold tracking-tight text-foreground">
-              {{ document.name }}
-            </h2>
-            <Badge
-              :variant="docStatusConfig[document.status].badgeVariant"
-              class="gap-1.5 text-[11px]"
-            >
-              <span :class="cn('size-1.5 rounded-full', docStatusConfig[document.status].dotClass)" />
-              {{ docStatusConfig[document.status].label }}
-            </Badge>
-          </div>
-          <p class="mt-1.5 text-sm text-muted-foreground">
-            上传于 {{ document.uploadedAt }} · 来源：{{ document.source === 'url' ? 'URL 导入' : '本地上传' }}
-          </p>
+          <Skeleton class="h-4 w-80" />
         </div>
       </div>
-    </div>
-
-    <!-- 统计指标 -->
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <div
-        v-for="stat in stats"
-        :key="stat.label"
-        class="flex items-center gap-3 rounded-lg border bg-card px-4 py-3"
-      >
-        <div class="flex size-9 items-center justify-center rounded-lg bg-muted">
-          <component :is="stat.icon" class="size-4 text-muted-foreground" />
-        </div>
-        <div>
-          <p class="text-xs text-muted-foreground">{{ stat.label }}</p>
-          <p class="text-sm font-semibold tabular-nums">{{ stat.value }}</p>
-        </div>
+      <div class="grid gap-4 sm:grid-cols-4">
+        <Skeleton v-for="i in 4" :key="i" class="h-[76px] rounded-xl" />
       </div>
+      <Skeleton class="h-[500px] rounded-xl" />
     </div>
 
-    <!-- 分段列表 -->
-    <Card class="border-0 shadow-sm">
-      <CardHeader>
-        <div class="flex items-center justify-between">
+    <div v-else class="flex flex-col gap-8">
+      <!-- 顶部：返回 + 文档名称 + 状态 -->
+      <div class="flex items-start justify-between">
+        <div class="flex items-start gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            class="mt-0.5 shrink-0 rounded-xl hover:bg-muted/40 transition-all duration-300"
+            @click="router.push(`/knowledge/${kbId}`)"
+          >
+            <ArrowLeft class="size-4" />
+          </Button>
           <div>
-            <CardTitle class="text-base">文档分段</CardTitle>
-            <CardDescription>
-              共 {{ segments.length }} 个分段，已启用 {{ enabledCount }} 个
-            </CardDescription>
-          </div>
-          <div class="relative w-64">
-            <Search class="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-            <Input v-model="searchQuery" placeholder="搜索分段内容..." class="pl-8 h-8" />
+            <div class="flex items-center gap-3">
+              <FileText class="size-5 text-muted-foreground/60" />
+              <h2 class="text-2xl font-bold tracking-tight text-foreground">
+                {{ document.name }}
+              </h2>
+              <Badge
+                :variant="docStatusConfig[document.status].badgeVariant"
+                class="gap-1.5 text-[10px] tracking-wide"
+              >
+                <span :class="cn('size-1.5 rounded-full', docStatusConfig[document.status].dotClass)" />
+                {{ docStatusConfig[document.status].label }}
+              </Badge>
+            </div>
+            <p class="mt-2 text-[13px] text-muted-foreground">
+              上传于 {{ document.uploadedAt }} · 来源：{{ document.source === 'url' ? 'URL 导入' : '本地上传' }}
+            </p>
           </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div class="space-y-3">
-          <div
-            v-for="seg in filteredSegments"
-            :key="seg.id"
-            :class="cn(
-              'group rounded-lg border transition-all',
-              seg.enabled
-                ? 'bg-card hover:shadow-sm'
-                : 'bg-muted/30 opacity-60',
-            )"
-          >
-            <!-- 分段头部：切片编号 + 字符数 + 操作按钮 -->
-            <div class="flex items-center justify-between px-4 py-3 border-b border-border/50">
-              <div class="flex items-center gap-3">
-                <span class="text-sm font-medium text-foreground">
-                  切片 {{ String(seg.index - 1).padStart(2, '0') }}
-                </span>
-                <Separator orientation="vertical" class="!h-3.5" />
-                <span class="text-xs text-muted-foreground">{{ seg.chars }} 字符</span>
-                <Separator orientation="vertical" class="!h-3.5" />
-                <span class="text-xs text-muted-foreground">{{ seg.tokens }} Token</span>
+      </div>
+
+      <!-- 统计指标 -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div
+          v-for="stat in stats"
+          :key="stat.label"
+          class="flex items-center gap-3.5 rounded-xl border border-border/40 bg-card/60 backdrop-blur-sm px-5 py-3.5 transition-all duration-300 hover:border-border/60 hover:shadow-xs"
+        >
+          <div class="flex size-10 items-center justify-center rounded-xl bg-muted/40">
+            <component :is="stat.icon" class="size-4 text-muted-foreground" />
+          </div>
+          <div>
+            <p class="text-[13px] text-muted-foreground">{{ stat.label }}</p>
+            <p class="text-sm font-semibold tabular-nums">{{ stat.value }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分段列表 -->
+      <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-xl shadow-xs">
+        <CardHeader class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <CardTitle class="text-base font-semibold">文档分段</CardTitle>
+              <CardDescription class="mt-1 text-[13px]">
+                共 {{ segments.length }} 个分段，已启用 {{ enabledCount }} 个
+              </CardDescription>
+            </div>
+            <div class="relative w-64">
+              <Search class="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground/60 pointer-events-none" />
+              <Input v-model="searchQuery" placeholder="搜索分段内容..." class="pl-9 h-9 rounded-xl" />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div class="space-y-3">
+            <div
+              v-for="seg in filteredSegments"
+              :key="seg.id"
+              :class="cn(
+                'group rounded-xl border border-border/40 transition-all duration-300',
+                seg.enabled
+                  ? 'bg-card/80 hover:border-border/60 hover:shadow-xs'
+                  : 'bg-muted/20 opacity-60',
+              )"
+            >
+              <!-- 分段头部：切片编号 + 字符数 + 操作按钮 -->
+              <div class="flex items-center justify-between bg-muted/15 px-5 py-3.5 rounded-t-xl border-b border-border/40">
+                <div class="flex items-center gap-3">
+                  <span class="border-l-2 border-primary pl-3 text-sm font-medium text-foreground">
+                    切片 {{ String(seg.index - 1).padStart(2, '0') }}
+                  </span>
+                  <Separator orientation="vertical" class="!h-3.5" />
+                  <span class="text-[13px] text-muted-foreground">{{ seg.chars }} 字符</span>
+                  <Separator orientation="vertical" class="!h-3.5" />
+                  <span class="text-[13px] text-muted-foreground">{{ seg.tokens }} Token</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    class="h-7 gap-1 px-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-muted/40"
+                    @click="handleEditSegment(seg)"
+                  >
+                    <Pencil class="size-3" />
+                    编辑
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    class="h-7 gap-1 px-2 text-xs text-muted-foreground transition-all duration-300 hover:bg-muted/40"
+                    @click="handleToggleCollapse(seg)"
+                  >
+                    <component :is="seg.collapsed ? ChevronDown : ChevronUp" class="size-3" />
+                    {{ seg.collapsed ? '展开' : '收起' }}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    class="size-7 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-muted/40"
+                    @click="handleCopySegment(seg)"
+                  >
+                    <Copy class="size-3.5" />
+                  </Button>
+                  <Switch
+                    :checked="seg.enabled"
+                    class="ml-1 scale-75"
+                    @update:checked="handleToggleSegment(seg)"
+                  />
+                </div>
               </div>
-              <div class="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  class="h-7 gap-1 px-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                  @click="handleEditSegment(seg)"
-                >
-                  <Pencil class="size-3" />
-                  编辑
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  class="h-7 gap-1 px-2 text-xs text-muted-foreground"
-                  @click="handleToggleCollapse(seg)"
-                >
-                  <component :is="seg.collapsed ? ChevronDown : ChevronUp" class="size-3" />
-                  {{ seg.collapsed ? '展开' : '收起' }}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  class="size-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                  @click="handleCopySegment(seg)"
-                >
-                  <Copy class="size-3.5" />
-                </Button>
-                <Switch
-                  :checked="seg.enabled"
-                  class="scale-75"
-                  @update:checked="handleToggleSegment(seg)"
-                />
+
+              <!-- 分段内容 -->
+              <div v-if="!seg.collapsed" class="px-5 py-4">
+                <p class="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
+                  {{ seg.content }}
+                </p>
+
+                <!-- 关键词标签 -->
+                <div v-if="seg.keywords.length > 0" class="mt-4 flex flex-wrap gap-1.5">
+                  <Badge
+                    v-for="kw in seg.keywords"
+                    :key="kw"
+                    variant="secondary"
+                    class="bg-muted/40 border-0 text-[10px] tracking-wide px-2.5 py-0.5"
+                  >
+                    {{ kw }}
+                  </Badge>
+                </div>
               </div>
             </div>
 
-            <!-- 分段内容 -->
-            <div v-if="!seg.collapsed" class="px-4 py-3">
-              <p class="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
-                {{ seg.content }}
-              </p>
-
-              <!-- 关键词标签 -->
-              <div v-if="seg.keywords.length > 0" class="mt-3 flex flex-wrap gap-1.5">
-                <Badge
-                  v-for="kw in seg.keywords"
-                  :key="kw"
-                  variant="secondary"
-                  class="text-[10px] px-2 py-0"
-                >
-                  {{ kw }}
-                </Badge>
-              </div>
+            <!-- 空状态 -->
+            <div
+              v-if="filteredSegments.length === 0"
+              class="flex flex-col items-center justify-center gap-4 py-16"
+            >
+              <Search class="size-16 text-muted-foreground/15" />
+              <p class="text-sm text-muted-foreground/60">未找到匹配的分段，请尝试其他关键词</p>
             </div>
           </div>
-
-          <!-- 空状态 -->
-          <div
-            v-if="filteredSegments.length === 0"
-            class="flex flex-col items-center justify-center gap-3 py-12"
-          >
-            <Search class="size-10 text-muted-foreground/40" />
-            <p class="text-sm text-muted-foreground">未找到匹配的分段</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
+        </CardContent>
+      </Card>
+    </div>
   </div>
 </template>

@@ -17,13 +17,6 @@ import {
 } from '@ui/components/ui/dropdown-menu'
 import { Input } from '@ui/components/ui/input'
 import { Label } from '@ui/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@ui/components/ui/select'
 import { Separator } from '@ui/components/ui/separator'
 import {
   Table,
@@ -88,8 +81,8 @@ const knowledgeBase = {
 }
 
 const kbStatusConfig = {
-  ready: { label: '已就绪', dotClass: 'bg-emerald-500', badgeVariant: 'secondary' as const },
-  indexing: { label: '索引中', dotClass: 'bg-amber-500 animate-pulse', badgeVariant: 'secondary' as const },
+  ready: { label: '已就绪', dotClass: 'bg-success', badgeVariant: 'secondary' as const },
+  indexing: { label: '索引中', dotClass: 'bg-warning animate-pulse', badgeVariant: 'secondary' as const },
   error: { label: '异常', dotClass: 'bg-destructive', badgeVariant: 'destructive' as const },
 }
 
@@ -102,10 +95,10 @@ const typeLabels = {
 // ==================== 统计指标 ====================
 
 const stats = [
-  { label: '文档数', value: `${knowledgeBase.docCount} 篇`, icon: FileText, color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20', iconColor: 'text-blue-600 dark:text-blue-400' },
-  { label: '分段数', value: `${knowledgeBase.segmentCount.toLocaleString()}`, icon: Layers, color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20', iconColor: 'text-violet-600 dark:text-violet-400' },
-  { label: '总大小', value: knowledgeBase.totalSize, icon: Database, color: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20', iconColor: 'text-emerald-600 dark:text-emerald-400' },
-  { label: '最后索引', value: knowledgeBase.lastIndexedAt.split(' ')[0], icon: Clock, color: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20', iconColor: 'text-amber-600 dark:text-amber-400' },
+  { label: '文档数', value: `${knowledgeBase.docCount} 篇`, icon: FileText, iconBase: 'text-chart-1/20 dark:text-chart-1/10', iconHover: 'group-hover:text-chart-1/40 dark:group-hover:text-chart-1/25', glow: 'from-chart-1/30 via-chart-1/8 to-transparent' },
+  { label: '分段数', value: `${knowledgeBase.segmentCount.toLocaleString()}`, icon: Layers, iconBase: 'text-chart-4/20 dark:text-chart-4/10', iconHover: 'group-hover:text-chart-4/40 dark:group-hover:text-chart-4/25', glow: 'from-chart-4/30 via-chart-4/8 to-transparent' },
+  { label: '总大小', value: knowledgeBase.totalSize, icon: Database, iconBase: 'text-success/20 dark:text-success/10', iconHover: 'group-hover:text-success/40 dark:group-hover:text-success/25', glow: 'from-success/30 via-success/8 to-transparent' },
+  { label: '最后索引', value: knowledgeBase.lastIndexedAt.split(' ')[0], icon: Clock, iconBase: 'text-chart-5/20 dark:text-chart-5/10', iconHover: 'group-hover:text-chart-5/40 dark:group-hover:text-chart-5/25', glow: 'from-chart-5/30 via-chart-5/8 to-transparent' },
 ]
 
 // ==================== 文档管理 ====================
@@ -115,8 +108,8 @@ const showDeleteDialog = ref(false)
 const deleteTarget = ref<typeof documents.value[0] | null>(null)
 
 const docStatusConfig = {
-  indexed: { label: '已索引', dotClass: 'bg-emerald-500', badgeVariant: 'secondary' as const },
-  indexing: { label: '索引中', dotClass: 'bg-amber-500 animate-pulse', badgeVariant: 'secondary' as const },
+  indexed: { label: '已索引', dotClass: 'bg-success', badgeVariant: 'secondary' as const },
+  indexing: { label: '索引中', dotClass: 'bg-warning animate-pulse', badgeVariant: 'secondary' as const },
   pending: { label: '待处理', dotClass: 'bg-muted-foreground', badgeVariant: 'outline' as const },
   error: { label: '解析失败', dotClass: 'bg-destructive', badgeVariant: 'destructive' as const },
 }
@@ -151,19 +144,11 @@ const recallQuery = ref('')
 const recallLoading = ref(false)
 const recallResults = ref<RecallResult[]>([])
 
-// 召回参数 — 参考百炼命中测试配置
-const recallRerankModel = ref('qwen3-rerank')
+// 召回参数
 const recallVectorTopK = ref(50)
 const recallKeywordTopK = ref(50)
 const recallSimilarityThreshold = ref(0.20)
 const recallMaxResults = ref(5)
-
-const rerankModels = [
-  { value: 'qwen3-rerank', label: 'qwen3-rerank' },
-  { value: 'gte-rerank-v2', label: 'gte-rerank-v2' },
-  { value: 'bge-reranker-v2-m3', label: 'bge-reranker-v2-m3' },
-  { value: 'none', label: '不使用 Rerank' },
-]
 
 /** 执行召回测试 */
 function handleRecallTest() {
@@ -215,564 +200,547 @@ function handleRebuildAll() {
 
 <template>
   <div>
-    <div v-if="loading" class="flex flex-col gap-6">
+    <div v-if="loading" class="flex flex-col gap-8">
       <div class="flex items-center gap-3">
-        <Skeleton class="size-9 rounded-lg" />
+        <Skeleton class="size-9 rounded-xl" />
         <Skeleton class="size-10 rounded-xl" />
         <div class="space-y-2">
           <Skeleton class="h-7 w-32" />
           <Skeleton class="h-4 w-80" />
-      </div>
-    </div>
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <Skeleton v-for="i in 4" :key="i" class="h-[100px] rounded-xl" />
-    </div>
-    <Skeleton class="h-[400px] rounded-xl" />
-  </div>
-
-  <div v-else class="flex flex-col gap-6">
-    <!-- 顶部区域：返回 + 知识库名称 + 状态 + 操作按钮 -->
-    <div class="flex items-start justify-between">
-      <div class="flex items-start gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          class="mt-0.5 shrink-0"
-          @click="router.back()"
-        >
-          <ArrowLeft class="size-4" />
-        </Button>
-        <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 text-lg mt-0.5">
-          {{ knowledgeBase.icon }}
         </div>
-        <div>
-          <div class="flex items-center gap-3">
-            <h2 class="text-2xl font-semibold tracking-tight text-foreground">
-              {{ knowledgeBase.name }}
-            </h2>
-            <Badge
-              :variant="kbStatusConfig[knowledgeBase.status].badgeVariant"
-              class="gap-1.5 text-[11px]"
-            >
-              <span :class="cn('size-1.5 rounded-full', kbStatusConfig[knowledgeBase.status].dotClass)" />
-              {{ kbStatusConfig[knowledgeBase.status].label }}
-            </Badge>
-            <Badge variant="outline" class="text-[11px]">
-              {{ typeLabels[knowledgeBase.type] }}
-            </Badge>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Skeleton v-for="i in 4" :key="i" class="h-[100px] rounded-xl" />
+      </div>
+      <Skeleton class="h-[400px] rounded-xl" />
+    </div>
+
+    <div v-else class="flex flex-col gap-8">
+      <!-- 顶部区域：返回 + 知识库名称 + 状态 + 操作按钮 -->
+      <div class="flex items-start justify-between">
+        <div class="flex items-start gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            class="mt-0.5 shrink-0"
+            @click="router.back()"
+          >
+            <ArrowLeft class="size-4" />
+          </Button>
+          <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/8 to-primary/3 text-lg mt-0.5">
+            {{ knowledgeBase.icon }}
           </div>
-          <p class="mt-1.5 max-w-2xl text-sm text-muted-foreground">
-            {{ knowledgeBase.description }}
-          </p>
+          <div>
+            <div class="flex items-center gap-3">
+              <h2 class="text-2xl font-bold tracking-tight text-foreground">
+                {{ knowledgeBase.name }}
+              </h2>
+              <Badge
+                :variant="kbStatusConfig[knowledgeBase.status].badgeVariant"
+                class="gap-1.5 text-[11px]"
+              >
+                <span :class="cn('size-1.5 rounded-full', kbStatusConfig[knowledgeBase.status].dotClass)" />
+                {{ kbStatusConfig[knowledgeBase.status].label }}
+              </Badge>
+              <Badge variant="outline" class="text-[11px]">
+                {{ typeLabels[knowledgeBase.type] }}
+              </Badge>
+            </div>
+            <p class="mt-2 max-w-2xl text-sm text-muted-foreground">
+              {{ knowledgeBase.description }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <Button variant="outline" size="sm" @click="handleRebuildAll">
+            <RefreshCw class="mr-2 size-4" />
+            重建索引
+          </Button>
+          <Button variant="outline" size="sm" @click="router.push(`/knowledge/${knowledgeBase.id}/edit`)">
+            <Pencil class="mr-2 size-4" />
+            编辑
+          </Button>
+          <Button size="sm" @click="router.push(`/knowledge/${knowledgeBase.id}/upload`)">
+            <Upload class="mr-2 size-4" />
+            上传文档
+          </Button>
         </div>
       </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <Button variant="outline" size="sm" @click="handleRebuildAll">
-          <RefreshCw class="mr-2 size-4" />
-          重建索引
-        </Button>
-        <Button variant="outline" size="sm" @click="router.push(`/knowledge/${knowledgeBase.id}/edit`)">
-          <Pencil class="mr-2 size-4" />
-          编辑
-        </Button>
-        <Button size="sm" @click="router.push(`/knowledge/${knowledgeBase.id}/upload`)">
-          <Upload class="mr-2 size-4" />
-          上传文档
-        </Button>
-      </div>
-    </div>
 
-    <!-- 统计指标 — 渐变背景风格 -->
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <Card
-        v-for="item in stats"
-        :key="item.label"
-        class="overflow-hidden border-0 shadow-sm transition-all hover:shadow-md"
-      >
-        <div :class="cn('bg-gradient-to-br', item.color)">
-          <CardHeader class="flex flex-row items-center justify-between pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground">
-              {{ item.label }}
-            </CardTitle>
-            <div
-              :class="cn(
-                'rounded-lg bg-background/60 p-2 backdrop-blur-sm',
-                item.iconColor,
-              )"
-            >
-              <component :is="item.icon" class="size-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div class="text-3xl font-bold tracking-tight">
+      <!-- 统计指标 — HUD 水印风格 -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div
+          v-for="item in stats"
+          :key="item.label"
+          class="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm px-6 py-6 transition-all duration-500 hover:border-border/50 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20"
+        >
+          <!-- 大图标水印 — 右侧居中 -->
+          <component
+            :is="item.icon"
+            :class="cn(
+              'absolute right-4 top-1/2 -translate-y-1/2 size-20 transition-all duration-700 ease-out',
+              'group-hover:scale-125 group-hover:rotate-6',
+              item.iconBase, item.iconHover,
+            )"
+          />
+          <!-- 径向光晕衍射 -->
+          <div :class="cn('absolute right-0 top-1/2 -translate-y-1/2 size-40 rounded-full bg-gradient-radial opacity-0 group-hover:opacity-100 transition-all duration-700 blur-3xl scale-75 group-hover:scale-100', item.glow)" />
+
+          <div class="relative z-10">
+            <span class="text-[13px] font-medium text-muted-foreground">{{ item.label }}</span>
+            <div class="mt-3 text-[32px] font-bold tracking-tighter tabular-nums leading-none">
               {{ item.value }}
             </div>
-          </CardContent>
+          </div>
         </div>
-      </Card>
-    </div>
+      </div>
 
-    <!-- Tab 区域：文档管理 / 召回测试 / 配置信息 -->
-    <Tabs default-value="documents">
-      <TabsList>
-        <TabsTrigger value="documents" class="gap-1.5">
-          <FileText class="size-3.5" />
-          文档管理
-        </TabsTrigger>
-        <TabsTrigger value="recall" class="gap-1.5">
-          <Search class="size-3.5" />
-          召回测试
-        </TabsTrigger>
-        <TabsTrigger value="config" class="gap-1.5">
-          <Settings class="size-3.5" />
-          配置信息
-        </TabsTrigger>
-      </TabsList>
+      <!-- Tab 区域：文档管理 / 召回测试 / 配置信息 -->
+      <Tabs default-value="documents">
+        <TabsList class="rounded-xl p-1">
+          <TabsTrigger value="documents" class="gap-1.5 rounded-lg">
+            <FileText class="size-3.5" />
+            文档管理
+          </TabsTrigger>
+          <TabsTrigger value="recall" class="gap-1.5 rounded-lg">
+            <Search class="size-3.5" />
+            召回测试
+          </TabsTrigger>
+          <TabsTrigger value="config" class="gap-1.5 rounded-lg">
+            <Settings class="size-3.5" />
+            配置信息
+          </TabsTrigger>
+        </TabsList>
 
-      <!-- ==================== Tab 1: 文档管理 ==================== -->
-      <TabsContent value="documents">
-        <Card class="border-0 shadow-sm">
-          <CardHeader>
-            <div class="flex items-center justify-between">
-              <div>
-                <CardTitle class="text-base">文档列表</CardTitle>
-                <CardDescription>管理知识库中的文档，支持查看分段详情</CardDescription>
-              </div>
-              <div class="relative w-64">
-                <Search class="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                <Input v-model="docSearch" placeholder="搜索文档..." class="pl-8 h-8" />
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>文档名称</TableHead>
-                  <TableHead>来源</TableHead>
-                  <TableHead>大小</TableHead>
-                  <TableHead>分段数</TableHead>
-                  <TableHead>Token 数</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead>上传时间</TableHead>
-                  <TableHead class="w-[60px]">
-                    操作
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow
-                  v-for="doc in filteredDocuments"
-                  :key="doc.id"
-                  class="cursor-pointer"
-                  @click="handleViewDoc(doc)"
-                >
-                  <TableCell>
-                    <div class="flex items-center gap-2">
-                      <FileText class="size-4 shrink-0 text-muted-foreground" />
-                      <span class="font-medium max-w-[240px] truncate">{{ doc.name }}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" class="text-[10px]">
-                      {{ doc.source === 'url' ? 'URL' : '上传' }}
-                    </Badge>
-                  </TableCell>
-                  <TableCell class="tabular-nums text-muted-foreground">
-                    {{ doc.size }}
-                  </TableCell>
-                  <TableCell class="tabular-nums text-muted-foreground">
-                    {{ doc.segments }}
-                  </TableCell>
-                  <TableCell class="tabular-nums text-muted-foreground">
-                    {{ doc.tokens.toLocaleString() }}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      :variant="docStatusConfig[doc.status].badgeVariant"
-                      class="gap-1.5 text-[11px]"
-                    >
-                      <span :class="cn('size-1.5 rounded-full', docStatusConfig[doc.status].dotClass)" />
-                      {{ docStatusConfig[doc.status].label }}
-                    </Badge>
-                  </TableCell>
-                  <TableCell class="text-muted-foreground whitespace-nowrap">
-                    {{ doc.uploadedAt }}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger as-child>
-                        <Button variant="ghost" size="icon" class="size-7" @click.stop>
-                          <MoreHorizontal class="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem @click.stop="handleViewDoc(doc)">
-                          查看分段
-                        </DropdownMenuItem>
-                        <DropdownMenuItem @click.stop="handleReindex(doc)">
-                          重新索引
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem class="text-destructive" @click.stop="handleDeleteConfirm(doc)">
-                          删除
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-
-            <!-- 空状态 -->
-            <div
-              v-if="filteredDocuments.length === 0"
-              class="flex flex-col items-center justify-center gap-3 py-12"
-            >
-              <FileText class="size-10 text-muted-foreground/40" />
-              <p class="text-sm text-muted-foreground">暂无文档</p>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-
-      <!-- ==================== Tab 2: 召回测试（左右分栏） ==================== -->
-      <TabsContent value="recall">
-        <div class="grid gap-4 lg:grid-cols-[360px_1fr]">
-          <!-- 左侧：配置面板 -->
-          <Card class="border-0 shadow-sm self-start">
+        <!-- ==================== Tab 1: 文档管理 ==================== -->
+        <TabsContent value="documents">
+          <Card class="border border-border/40 shadow-xs">
             <CardHeader class="pb-4">
-              <CardTitle class="text-base">配置调试</CardTitle>
-            </CardHeader>
-            <CardContent class="space-y-5">
-              <!-- Rerank 模型 -->
-              <div class="space-y-2">
-                <Label class="text-xs">选择排序模型</Label>
-                <Select v-model="recallRerankModel">
-                  <SelectTrigger class="h-8 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem v-for="m in rerankModels" :key="m.value" :value="m.value">
-                      {{ m.label }}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <!-- 向量检索 TopK -->
-              <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                  <Label class="text-xs">初步向量检索 TopK</Label>
-                  <Input
-                    v-model.number="recallVectorTopK"
-                    type="number"
-                    :min="10"
-                    :max="100"
-                    class="h-6 w-14 text-xs text-center"
-                  />
+              <div class="flex items-center justify-between">
+                <div>
+                  <CardTitle class="text-[15px] font-semibold">文档列表</CardTitle>
+                  <CardDescription class="mt-1">管理知识库中的文档，支持查看分段详情</CardDescription>
                 </div>
-                <input
-                  v-model.number="recallVectorTopK"
-                  type="range"
-                  :min="10"
-                  :max="100"
-                  class="w-full accent-primary h-1.5"
-                >
-                <div class="flex justify-between text-[10px] text-muted-foreground">
-                  <span>10</span>
-                  <span>100</span>
+                <div class="relative w-64">
+                  <Search class="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                  <Input v-model="docSearch" placeholder="搜索文档..." class="pl-9 h-9 rounded-lg" />
                 </div>
-              </div>
-
-              <!-- 关键词检索 TopK -->
-              <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                  <Label class="text-xs">初步关键词检索 TopK</Label>
-                  <Input
-                    v-model.number="recallKeywordTopK"
-                    type="number"
-                    :min="10"
-                    :max="100"
-                    class="h-6 w-14 text-xs text-center"
-                  />
-                </div>
-                <input
-                  v-model.number="recallKeywordTopK"
-                  type="range"
-                  :min="10"
-                  :max="100"
-                  class="w-full accent-primary h-1.5"
-                >
-                <div class="flex justify-between text-[10px] text-muted-foreground">
-                  <span>10</span>
-                  <span>100</span>
-                </div>
-              </div>
-
-              <!-- 相似度阈值 -->
-              <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                  <Label class="text-xs">相似度阈值</Label>
-                  <Input
-                    v-model.number="recallSimilarityThreshold"
-                    type="number"
-                    :min="0.01"
-                    :max="1"
-                    :step="0.01"
-                    class="h-6 w-14 text-xs text-center"
-                  />
-                </div>
-                <input
-                  v-model.number="recallSimilarityThreshold"
-                  type="range"
-                  :min="0.01"
-                  :max="1"
-                  :step="0.01"
-                  class="w-full accent-primary h-1.5"
-                >
-                <div class="flex justify-between text-[10px] text-muted-foreground">
-                  <span>0.01</span>
-                  <span>1</span>
-                </div>
-              </div>
-
-              <!-- 最终召回数量 -->
-              <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                  <Label class="text-xs">最终召回最大数量</Label>
-                  <Input
-                    v-model.number="recallMaxResults"
-                    type="number"
-                    :min="1"
-                    :max="20"
-                    class="h-6 w-14 text-xs text-center"
-                  />
-                </div>
-                <input
-                  v-model.number="recallMaxResults"
-                  type="range"
-                  :min="1"
-                  :max="20"
-                  class="w-full accent-primary h-1.5"
-                >
-                <div class="flex justify-between text-[10px] text-muted-foreground">
-                  <span>1</span>
-                  <span>20</span>
-                </div>
-              </div>
-
-              <Separator />
-
-              <!-- 查询输入 -->
-              <div class="space-y-2">
-                <Label class="text-xs">输入</Label>
-                <textarea
-                  v-model="recallQuery"
-                  rows="4"
-                  placeholder="输入查询内容，例如：如何获取 API 密钥？"
-                  class="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 w-full rounded-lg border bg-transparent px-3 py-2.5 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:ring-[3px]"
-                  @keydown.meta.enter="handleRecallTest"
-                />
-                <div class="flex items-center justify-between">
-                  <p class="text-[10px] text-muted-foreground">⌘ + Enter 发送</p>
-                  <Button
-                    size="sm"
-                    :disabled="!recallQuery.trim() || recallLoading"
-                    @click="handleRecallTest"
-                  >
-                    <Send class="mr-1.5 size-3.5" />
-                    测试
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <!-- 右侧：结果展示 -->
-          <Card class="border-0 shadow-sm">
-            <CardHeader class="pb-4">
-              <div class="flex items-center gap-2">
-                <div class="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 text-sm">
-                  {{ knowledgeBase.icon }}
-                </div>
-                <CardTitle class="text-base">{{ knowledgeBase.name }}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <!-- 加载态 -->
-              <div v-if="recallLoading" class="space-y-3">
-                <Skeleton v-for="i in 3" :key="i" class="h-[120px] rounded-lg" />
-              </div>
-
-              <!-- 结果列表 -->
-              <div v-else-if="recallResults.length > 0" class="space-y-3">
-                <div class="flex items-center justify-between mb-1">
-                  <span class="text-sm font-medium">
-                    召回结果（{{ recallResults.length }} 条）
-                  </span>
-                  <Badge variant="outline" class="text-[10px]">
-                    阈值 ≥ {{ recallSimilarityThreshold }}
-                  </Badge>
-                </div>
-
-                <div
-                  v-for="(result, index) in recallResults"
-                  :key="result.segmentId"
-                  class="rounded-lg border bg-card p-4 transition-all hover:shadow-sm"
-                >
-                  <div class="mb-2 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                      <span class="flex size-5 items-center justify-center rounded bg-primary/10 text-xs font-semibold text-primary">
-                        {{ index + 1 }}
-                      </span>
-                      <span class="text-sm font-medium">{{ result.docName }}</span>
-                      <Badge variant="outline" class="text-[10px]">
-                        {{ result.segmentId }}
+              <Table>
+                <TableHeader>
+                  <TableRow class="border-border/50">
+                    <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">文档名称</TableHead>
+                    <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">来源</TableHead>
+                    <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">大小</TableHead>
+                    <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">分段数</TableHead>
+                    <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">Token 数</TableHead>
+                    <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">状态</TableHead>
+                    <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">上传时间</TableHead>
+                    <TableHead class="w-[60px] text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      操作
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow
+                    v-for="doc in filteredDocuments"
+                    :key="doc.id"
+                    class="cursor-pointer border-border/50 transition-colors duration-200 hover:bg-muted/30"
+                    @click="handleViewDoc(doc)"
+                  >
+                    <TableCell class="py-3.5">
+                      <div class="flex items-center gap-2.5">
+                        <FileText class="size-4 shrink-0 text-muted-foreground/60" />
+                        <span class="font-medium max-w-[240px] truncate">{{ doc.name }}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell class="py-3.5">
+                      <Badge variant="outline" class="text-[10px] tracking-wide">
+                        {{ doc.source === 'url' ? 'URL' : '上传' }}
                       </Badge>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                      <span class="text-xs text-muted-foreground">相似度</span>
+                    </TableCell>
+                    <TableCell class="py-3.5 tabular-nums text-muted-foreground">
+                      {{ doc.size }}
+                    </TableCell>
+                    <TableCell class="py-3.5 tabular-nums text-muted-foreground">
+                      {{ doc.segments }}
+                    </TableCell>
+                    <TableCell class="py-3.5 tabular-nums text-muted-foreground">
+                      {{ doc.tokens.toLocaleString() }}
+                    </TableCell>
+                    <TableCell class="py-3.5">
                       <Badge
-                        :variant="result.score >= 0.9 ? 'default' : 'secondary'"
-                        class="font-mono text-[11px]"
+                        :variant="docStatusConfig[doc.status].badgeVariant"
+                        class="gap-1.5 text-[11px]"
                       >
-                        {{ (result.score * 100).toFixed(1) }}%
+                        <span :class="cn('size-1.5 rounded-full', docStatusConfig[doc.status].dotClass)" />
+                        {{ docStatusConfig[doc.status].label }}
                       </Badge>
-                    </div>
-                  </div>
-                  <p class="text-sm leading-relaxed text-muted-foreground">
-                    {{ result.segment }}
-                  </p>
-                </div>
-              </div>
+                    </TableCell>
+                    <TableCell class="py-3.5 text-muted-foreground whitespace-nowrap">
+                      {{ doc.uploadedAt }}
+                    </TableCell>
+                    <TableCell class="py-3.5">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                          <Button variant="ghost" size="icon" class="size-7" @click.stop>
+                            <MoreHorizontal class="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem @click.stop="handleViewDoc(doc)">
+                            查看分段
+                          </DropdownMenuItem>
+                          <DropdownMenuItem @click.stop="handleReindex(doc)">
+                            重新索引
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem class="text-destructive" @click.stop="handleDeleteConfirm(doc)">
+                            删除
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
 
               <!-- 空状态 -->
               <div
-                v-else
-                class="flex flex-col items-center justify-center gap-3 py-24"
+                v-if="filteredDocuments.length === 0"
+                class="flex flex-col items-center justify-center gap-4 py-16"
               >
-                <Search class="size-12 text-muted-foreground/30" />
-                <div class="text-center">
-                  <p class="text-sm font-medium text-muted-foreground">暂无数据</p>
-                  <p class="mt-1 text-xs text-muted-foreground/60">
-                    请在左侧输入内容，点击测试进行结果查看
-                  </p>
+                <FileText class="size-16 text-muted-foreground/20" />
+                <p class="text-sm text-muted-foreground">暂无文档</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <!-- ==================== Tab 2: 召回测试（左右分栏） ==================== -->
+        <TabsContent value="recall">
+          <div class="grid gap-6 lg:grid-cols-[360px_1fr]">
+            <!-- 左侧：配置面板 -->
+            <Card class="border border-border/40 bg-card/80 backdrop-blur-sm shadow-xs self-start">
+              <CardHeader class="pb-4">
+                <CardTitle class="text-[15px] font-semibold">配置调试</CardTitle>
+              </CardHeader>
+              <CardContent class="space-y-6">
+                <!-- 向量检索 TopK -->
+                <div class="space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <Label class="text-xs font-medium">初步向量检索 TopK</Label>
+                    <Input
+                      v-model.number="recallVectorTopK"
+                      type="number"
+                      :min="10"
+                      :max="100"
+                      class="h-6 w-14 text-xs text-center rounded-md"
+                    />
+                  </div>
+                  <input
+                    v-model.number="recallVectorTopK"
+                    type="range"
+                    :min="10"
+                    :max="100"
+                    class="w-full accent-primary h-1.5"
+                  >
+                  <div class="flex justify-between text-[10px] text-muted-foreground/60">
+                    <span>10</span>
+                    <span>100</span>
+                  </div>
+                </div>
+
+                <!-- 关键词检索 TopK -->
+                <div class="space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <Label class="text-xs font-medium">初步关键词检索 TopK</Label>
+                    <Input
+                      v-model.number="recallKeywordTopK"
+                      type="number"
+                      :min="10"
+                      :max="100"
+                      class="h-6 w-14 text-xs text-center rounded-md"
+                    />
+                  </div>
+                  <input
+                    v-model.number="recallKeywordTopK"
+                    type="range"
+                    :min="10"
+                    :max="100"
+                    class="w-full accent-primary h-1.5"
+                  >
+                  <div class="flex justify-between text-[10px] text-muted-foreground/60">
+                    <span>10</span>
+                    <span>100</span>
+                  </div>
+                </div>
+
+                <!-- 相似度阈值 -->
+                <div class="space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <Label class="text-xs font-medium">相似度阈值</Label>
+                    <Input
+                      v-model.number="recallSimilarityThreshold"
+                      type="number"
+                      :min="0.01"
+                      :max="1"
+                      :step="0.01"
+                      class="h-6 w-14 text-xs text-center rounded-md"
+                    />
+                  </div>
+                  <input
+                    v-model.number="recallSimilarityThreshold"
+                    type="range"
+                    :min="0.01"
+                    :max="1"
+                    :step="0.01"
+                    class="w-full accent-primary h-1.5"
+                  >
+                  <div class="flex justify-between text-[10px] text-muted-foreground/60">
+                    <span>0.01</span>
+                    <span>1</span>
+                  </div>
+                </div>
+
+                <!-- 最终召回数量 -->
+                <div class="space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <Label class="text-xs font-medium">最终召回最大数量</Label>
+                    <Input
+                      v-model.number="recallMaxResults"
+                      type="number"
+                      :min="1"
+                      :max="20"
+                      class="h-6 w-14 text-xs text-center rounded-md"
+                    />
+                  </div>
+                  <input
+                    v-model.number="recallMaxResults"
+                    type="range"
+                    :min="1"
+                    :max="20"
+                    class="w-full accent-primary h-1.5"
+                  >
+                  <div class="flex justify-between text-[10px] text-muted-foreground/60">
+                    <span>1</span>
+                    <span>20</span>
+                  </div>
+                </div>
+
+                <Separator class="border-border/50" />
+
+                <!-- 查询输入 -->
+                <div class="space-y-2.5">
+                  <Label class="text-xs font-medium">输入</Label>
+                  <textarea
+                    v-model="recallQuery"
+                    rows="4"
+                    placeholder="输入查询内容，例如：如何获取 API 密钥？"
+                    class="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 w-full rounded-xl border bg-transparent px-3 py-2.5 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:ring-[3px]"
+                    @keydown.meta.enter="handleRecallTest"
+                  />
+                  <div class="flex items-center justify-between">
+                    <p class="text-[10px] text-muted-foreground/60">⌘ + Enter 发送</p>
+                    <Button
+                      size="sm"
+                      :disabled="!recallQuery.trim() || recallLoading"
+                      @click="handleRecallTest"
+                    >
+                      <Send class="mr-1.5 size-3.5" />
+                      测试
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <!-- 右侧：结果展示 -->
+            <Card class="border border-border/40 shadow-xs">
+              <CardHeader class="pb-4">
+                <div class="flex items-center gap-2.5">
+                  <div class="flex size-8 items-center justify-center rounded-xl bg-background/60 backdrop-blur-sm text-sm">
+                    {{ knowledgeBase.icon }}
+                  </div>
+                  <CardTitle class="text-[15px] font-semibold">{{ knowledgeBase.name }}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <!-- 加载态 -->
+                <div v-if="recallLoading" class="space-y-3">
+                  <Skeleton v-for="i in 3" :key="i" class="h-[120px] rounded-xl" />
+                </div>
+
+                <!-- 结果列表 -->
+                <div v-else-if="recallResults.length > 0" class="space-y-3">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-[15px] font-semibold">
+                      召回结果（{{ recallResults.length }} 条）
+                    </span>
+                    <Badge variant="outline" class="text-[10px] tracking-wide">
+                      阈值 ≥ {{ recallSimilarityThreshold }}
+                    </Badge>
+                  </div>
+
+                  <div
+                    v-for="(result, index) in recallResults"
+                    :key="result.segmentId"
+                    class="rounded-xl border border-border/40 bg-card/80 p-4 transition-all duration-300 hover:border-primary/10 hover:shadow-sm"
+                  >
+                    <div class="mb-2.5 flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <span class="flex size-5 items-center justify-center rounded-lg bg-primary/8 text-xs font-semibold text-primary">
+                          {{ index + 1 }}
+                        </span>
+                        <span class="text-sm font-medium">{{ result.docName }}</span>
+                        <span class="text-[10px] font-mono text-muted-foreground/60">
+                          {{ result.segmentId }}
+                        </span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-xs text-muted-foreground/60">相似度</span>
+                        <Badge
+                          :variant="result.score >= 0.9 ? 'default' : 'secondary'"
+                          class="font-mono text-[11px]"
+                        >
+                          {{ (result.score * 100).toFixed(1) }}%
+                        </Badge>
+                      </div>
+                    </div>
+                    <p class="text-sm leading-relaxed text-muted-foreground">
+                      {{ result.segment }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 空状态 -->
+                <div
+                  v-else
+                  class="flex flex-col items-center justify-center gap-4 py-24"
+                >
+                  <Search class="size-16 text-muted-foreground/20" />
+                  <div class="text-center">
+                    <p class="text-sm font-medium text-muted-foreground">暂无数据</p>
+                    <p class="mt-1.5 text-xs text-muted-foreground/60">
+                      请在左侧输入内容，点击测试进行结果查看
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <!-- ==================== Tab 3: 配置信息 ==================== -->
+        <TabsContent value="config">
+          <Card class="border border-border/40 shadow-xs">
+            <CardHeader>
+              <CardTitle class="text-[15px] font-semibold">知识库配置</CardTitle>
+              <CardDescription class="mt-1">Embedding 模型、分段策略与索引参数</CardDescription>
+            </CardHeader>
+            <CardContent class="space-y-8">
+              <!-- 基本信息 -->
+              <div class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                  <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">知识库类型</p>
+                  <p class="text-sm font-medium text-foreground">{{ typeLabels[knowledgeBase.type] }}</p>
+                </div>
+                <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                  <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">创建时间</p>
+                  <p class="text-sm font-medium text-foreground">{{ knowledgeBase.createdAt }}</p>
+                </div>
+              </div>
+
+              <!-- Embedding 模型 -->
+              <div class="space-y-4">
+                <h4 class="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                  <Box class="size-4" />
+                  Embedding 模型
+                </h4>
+                <div class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">模型名称</p>
+                    <p class="break-all font-mono text-sm font-medium text-foreground">{{ knowledgeBase.embeddingModel }}</p>
+                  </div>
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">提供方</p>
+                    <p class="text-sm font-medium text-foreground">{{ knowledgeBase.embeddingProvider }}</p>
+                  </div>
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">向量维度</p>
+                    <p class="font-mono text-sm font-medium text-foreground">{{ knowledgeBase.vectorDimension }}</p>
+                  </div>
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">最后索引时间</p>
+                    <p class="text-sm font-medium text-foreground">{{ knowledgeBase.lastIndexedAt }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 分段策略 -->
+              <div class="space-y-4">
+                <h4 class="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                  <Layers class="size-4" />
+                  分段策略
+                </h4>
+                <div class="grid gap-x-8 gap-y-5 sm:grid-cols-3">
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">策略模式</p>
+                    <p class="text-sm font-medium text-foreground">
+                      {{ knowledgeBase.chunkStrategy === 'auto' ? '智能分段' : '自定义' }}
+                    </p>
+                  </div>
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">分段长度</p>
+                    <p class="font-mono text-sm font-medium text-foreground">
+                      {{ knowledgeBase.chunkStrategy === 'auto' ? '自适应' : `${knowledgeBase.chunkSize} Token` }}
+                    </p>
+                  </div>
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">重叠长度</p>
+                    <p class="font-mono text-sm font-medium text-foreground">
+                      {{ knowledgeBase.chunkStrategy === 'auto' ? '自适应' : `${knowledgeBase.chunkOverlap} Token` }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 索引统计 -->
+              <div class="space-y-4">
+                <h4 class="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                  <Database class="size-4" />
+                  索引统计
+                </h4>
+                <div class="grid gap-x-8 gap-y-5 sm:grid-cols-3">
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">总文档数</p>
+                    <p class="font-mono text-sm font-medium text-foreground">{{ knowledgeBase.docCount }}</p>
+                  </div>
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">总分段数</p>
+                    <p class="font-mono text-sm font-medium text-foreground">{{ knowledgeBase.segmentCount.toLocaleString() }}</p>
+                  </div>
+                  <div class="space-y-1.5 rounded-xl bg-muted/30 px-5 py-4">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">存储占用</p>
+                    <p class="text-sm font-medium text-foreground">{{ knowledgeBase.totalSize }}</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-        </div>
-      </TabsContent>
+        </TabsContent>
+      </Tabs>
 
-      <!-- ==================== Tab 3: 配置信息 ==================== -->
-      <TabsContent value="config">
-        <Card class="border-0 shadow-sm">
-          <CardHeader>
-            <CardTitle class="text-base">知识库配置</CardTitle>
-            <CardDescription>Embedding 模型、分段策略与索引参数</CardDescription>
-          </CardHeader>
-          <CardContent class="space-y-6">
-            <!-- 基本信息 -->
-            <div class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
-              <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                <p class="text-xs font-medium text-muted-foreground">知识库类型</p>
-                <p class="text-sm font-medium text-foreground">{{ typeLabels[knowledgeBase.type] }}</p>
-              </div>
-              <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                <p class="text-xs font-medium text-muted-foreground">创建时间</p>
-                <p class="text-sm font-medium text-foreground">{{ knowledgeBase.createdAt }}</p>
-              </div>
-            </div>
-
-            <!-- Embedding 模型 -->
-            <div class="space-y-3">
-              <h4 class="text-sm font-medium flex items-center gap-2">
-                <Box class="size-4 text-muted-foreground" />
-                Embedding 模型
-              </h4>
-              <div class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">模型名称</p>
-                  <p class="break-all font-mono text-sm font-medium text-foreground">{{ knowledgeBase.embeddingModel }}</p>
-                </div>
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">提供方</p>
-                  <p class="text-sm font-medium text-foreground">{{ knowledgeBase.embeddingProvider }}</p>
-                </div>
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">向量维度</p>
-                  <p class="font-mono text-sm font-medium text-foreground">{{ knowledgeBase.vectorDimension }}</p>
-                </div>
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">最后索引时间</p>
-                  <p class="text-sm font-medium text-foreground">{{ knowledgeBase.lastIndexedAt }}</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 分段策略 -->
-            <div class="space-y-3">
-              <h4 class="text-sm font-medium flex items-center gap-2">
-                <Layers class="size-4 text-muted-foreground" />
-                分段策略
-              </h4>
-              <div class="grid gap-x-8 gap-y-5 sm:grid-cols-3">
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">策略模式</p>
-                  <p class="text-sm font-medium text-foreground">
-                    {{ knowledgeBase.chunkStrategy === 'auto' ? '智能分段' : '自定义' }}
-                  </p>
-                </div>
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">分段长度</p>
-                  <p class="font-mono text-sm font-medium text-foreground">
-                    {{ knowledgeBase.chunkStrategy === 'auto' ? '自适应' : `${knowledgeBase.chunkSize} Token` }}
-                  </p>
-                </div>
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">重叠长度</p>
-                  <p class="font-mono text-sm font-medium text-foreground">
-                    {{ knowledgeBase.chunkStrategy === 'auto' ? '自适应' : `${knowledgeBase.chunkOverlap} Token` }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 索引统计 -->
-            <div class="space-y-3">
-              <h4 class="text-sm font-medium flex items-center gap-2">
-                <Database class="size-4 text-muted-foreground" />
-                索引统计
-              </h4>
-              <div class="grid gap-x-8 gap-y-5 sm:grid-cols-3">
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">总文档数</p>
-                  <p class="font-mono text-sm font-medium text-foreground">{{ knowledgeBase.docCount }}</p>
-                </div>
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">总分段数</p>
-                  <p class="font-mono text-sm font-medium text-foreground">{{ knowledgeBase.segmentCount.toLocaleString() }}</p>
-                </div>
-                <div class="space-y-1 rounded-lg bg-muted/40 px-4 py-3">
-                  <p class="text-xs font-medium text-muted-foreground">存储占用</p>
-                  <p class="text-sm font-medium text-foreground">{{ knowledgeBase.totalSize }}</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-    </Tabs>
-
-    <!-- 删除确认对话框 -->
-    <ConfirmDialog
-      v-model:open="showDeleteDialog"
-      title="删除文档"
-      :description="`确定要删除「${deleteTarget?.name}」吗？文档及其索引数据将被永久删除。`"
-      confirm-text="删除"
-      @confirm="handleDeleteDoc"
-    />
-  </div>
+      <!-- 删除确认对话框 -->
+      <ConfirmDialog
+        v-model:open="showDeleteDialog"
+        title="删除文档"
+        :description="`确定要删除「${deleteTarget?.name}」吗？文档及其索引数据将被永久删除。`"
+        confirm-text="删除"
+        @confirm="handleDeleteDoc"
+      />
+    </div>
   </div>
 </template>

@@ -16,6 +16,11 @@
   box-shadow: 0 0 10px var(--primary), 0 0 5px var(--primary) !important;
 }
 
+/* 径向渐变工具类 — 用于卡片光晕效果 */
+.bg-gradient-radial {
+  background-image: radial-gradient(circle at center, var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to));
+}
+
 /* 本地 Inter 字体 */
 @font-face {
   font-family: 'Inter';

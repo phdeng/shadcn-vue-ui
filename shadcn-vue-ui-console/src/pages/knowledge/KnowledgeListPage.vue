@@ -56,8 +56,8 @@ const typeLabels = {
 }
 
 const statusConfig = {
-  ready: { label: '已就绪', dotClass: 'bg-emerald-500', badgeVariant: 'secondary' as const },
-  indexing: { label: '索引中', dotClass: 'bg-amber-500 animate-pulse', badgeVariant: 'secondary' as const },
+  ready: { label: '已就绪', dotClass: 'bg-success', badgeVariant: 'secondary' as const },
+  indexing: { label: '索引中', dotClass: 'bg-warning animate-pulse', badgeVariant: 'secondary' as const },
   error: { label: '异常', dotClass: 'bg-destructive', badgeVariant: 'destructive' as const },
 }
 
@@ -132,152 +132,154 @@ function handleDelete() {
   <div>
     <PageLoading v-if="loading" :count="6" :cols="3" />
 
-  <div v-else class="flex flex-col gap-6">
-    <div class="flex items-end justify-between">
-      <div>
-        <h2 class="text-2xl font-semibold tracking-tight">
-          知识库
-        </h2>
-        <p class="mt-1 text-sm text-muted-foreground">
-          管理文档、数据集与向量索引，支持 RAG 检索增强生成
-        </p>
+    <div v-else class="flex flex-col gap-8">
+      <!-- 页面标题区 -->
+      <div class="flex items-end justify-between">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight">
+            知识库
+          </h2>
+          <p class="mt-1.5 text-sm text-muted-foreground">
+            管理文档、数据集与向量索引，支持 RAG 检索增强生成
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <Button variant="outline" size="sm" @click="handleBulkImport">
+            <Upload class="mr-2 size-4" />
+            批量导入
+          </Button>
+          <Button size="sm" @click="router.push('/knowledge/create')">
+            <Plus class="mr-2 size-4" />
+            创建知识库
+          </Button>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <Button variant="outline" size="sm" @click="handleBulkImport">
-          <Upload class="mr-2 size-4" />
-          批量导入
-        </Button>
-        <Button size="sm" @click="router.push('/knowledge/create')">
-          <Plus class="mr-2 size-4" />
-          创建知识库
-        </Button>
-      </div>
-    </div>
 
-    <div class="flex items-center gap-3">
-      <div class="relative w-80">
-        <Search class="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-        <Input v-model="searchQuery" placeholder="搜索知识库..." class="pl-8 h-9" />
+      <!-- 搜索栏 -->
+      <div class="flex items-center gap-3">
+        <div class="relative w-80">
+          <Search class="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+          <Input v-model="searchQuery" placeholder="搜索知识库..." class="pl-9 h-10 rounded-xl" />
+        </div>
+        <Separator orientation="vertical" class="!h-5" />
+        <span class="text-sm text-muted-foreground">共 {{ filteredKnowledgeBases.length }} 个知识库</span>
       </div>
-      <Separator orientation="vertical" class="!h-5" />
-      <span class="text-sm text-muted-foreground">共 {{ filteredKnowledgeBases.length }} 个知识库</span>
-    </div>
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      <Card
-        v-for="kb in filteredKnowledgeBases"
-        :key="kb.id"
-        class="group cursor-pointer border-0 shadow-sm transition-all hover:shadow-md"
-        @click="router.push(`/knowledge/${kb.id}`)"
-      >
-        <CardHeader class="pb-2">
-          <div class="flex items-start justify-between">
-            <div class="flex items-center gap-3">
-              <div class="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 text-lg">
-                {{ kb.icon }}
+      <!-- 知识库卡片网格 -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <Card
+          v-for="kb in filteredKnowledgeBases"
+          :key="kb.id"
+          class="group cursor-pointer border border-border/40 bg-card/80 backdrop-blur-sm shadow-xs transition-all duration-300 hover:border-primary/15 hover:shadow-sm"
+          @click="router.push(`/knowledge/${kb.id}`)"
+        >
+          <CardHeader class="pb-3">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <div class="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/8 to-primary/3 text-lg">
+                  {{ kb.icon }}
+                </div>
+                <div>
+                  <CardTitle class="text-base leading-none">
+                    {{ kb.name }}
+                  </CardTitle>
+                  <p class="mt-2 text-xs text-muted-foreground line-clamp-1">
+                    {{ kb.description }}
+                  </p>
+                </div>
               </div>
-              <div>
-                <CardTitle class="text-base leading-none">
-                  {{ kb.name }}
-                </CardTitle>
-                <p class="mt-1.5 text-xs text-muted-foreground line-clamp-1">
-                  {{ kb.description }}
-                </p>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="ghost" size="icon" class="size-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" @click.stop>
+                    <MoreHorizontal class="size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem @click.stop="handleViewDocs(kb)">
+                    查看文档
+                  </DropdownMenuItem>
+                  <DropdownMenuItem @click.stop="handleUploadDocs(kb)">
+                    上传文档
+                  </DropdownMenuItem>
+                  <DropdownMenuItem @click.stop="handleRebuildIndex(kb)">
+                    重建索引
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem class="text-destructive" @click.stop="handleDeleteConfirm(kb)">
+                    删除
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button variant="ghost" size="icon" class="size-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" @click.stop>
-                  <MoreHorizontal class="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem @click.stop="handleViewDocs(kb)">
-                  查看文档
-                </DropdownMenuItem>
-                <DropdownMenuItem @click.stop="handleUploadDocs(kb)">
-                  上传文档
-                </DropdownMenuItem>
-                <DropdownMenuItem @click.stop="handleRebuildIndex(kb)">
-                  重建索引
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem class="text-destructive" @click.stop="handleDeleteConfirm(kb)">
-                  删除
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </CardHeader>
+          </CardHeader>
 
-        <CardContent class="pb-3">
-          <!-- 类型 + Embedding 模型标签 -->
-          <div class="mb-3 flex items-center gap-1.5">
-            <Badge variant="outline" class="text-[10px] px-1.5 py-0">
-              {{ typeLabels[kb.type] }}
-            </Badge>
-            <Badge variant="secondary" class="text-[10px] px-1.5 py-0 gap-1">
-              <Box class="size-2.5" />
-              {{ kb.embeddingModel }}
-            </Badge>
-          </div>
-          <!-- 数据指标 -->
-          <div class="flex items-center gap-4 text-xs text-muted-foreground">
-            <span class="flex items-center gap-1">
-              <File class="size-3" />
-              {{ kb.docCount }} 篇
-            </span>
-            <span class="flex items-center gap-1">
-              <Layers class="size-3" />
-              {{ kb.segmentCount.toLocaleString() }} 段
-            </span>
-            <span class="flex items-center gap-1">
-              <Database class="size-3" />
-              {{ kb.size }}
-            </span>
-          </div>
-        </CardContent>
+          <CardContent class="pb-3">
+            <!-- 类型标签 + Embedding 模型 -->
+            <div class="mb-3.5 flex items-center gap-2">
+              <Badge variant="outline" class="text-[10px] tracking-wide px-1.5 py-0">
+                {{ typeLabels[kb.type] }}
+              </Badge>
+              <span class="text-[10px] font-mono text-muted-foreground/70">
+                {{ kb.embeddingModel }}
+              </span>
+            </div>
+            <!-- 数据指标 -->
+            <div class="flex items-center gap-4 text-xs text-muted-foreground">
+              <span class="flex items-center gap-1">
+                <File class="size-3 opacity-60" />
+                {{ kb.docCount }} 篇
+              </span>
+              <span class="flex items-center gap-1">
+                <Layers class="size-3 opacity-60" />
+                {{ kb.segmentCount.toLocaleString() }} 段
+              </span>
+              <span class="flex items-center gap-1">
+                <Database class="size-3 opacity-60" />
+                {{ kb.size }}
+              </span>
+            </div>
+          </CardContent>
 
-        <CardFooter class="flex-col items-stretch gap-3 pt-0">
-          <Separator />
-          <div class="flex items-center justify-between">
-            <Badge :variant="statusConfig[kb.status].badgeVariant" class="gap-1.5 text-[11px]">
-              <span :class="cn('size-1.5 rounded-full', statusConfig[kb.status].dotClass)" />
-              {{ statusConfig[kb.status].label }}
-            </Badge>
-            <span class="flex items-center gap-1 text-[11px] text-muted-foreground">
-              <Clock class="size-3" />
-              {{ kb.updatedAt }}
-            </span>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
-
-    <!-- 空状态提示 -->
-    <div
-      v-if="filteredKnowledgeBases.length === 0"
-      class="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16"
-    >
-      <Search class="size-10 text-muted-foreground/40" />
-      <div class="text-center">
-        <p class="text-sm font-medium text-muted-foreground">
-          未找到匹配的知识库
-        </p>
-        <p class="mt-1 text-xs text-muted-foreground/60">
-          尝试调整搜索关键词
-        </p>
+          <CardFooter class="flex-col items-stretch gap-3 pt-0">
+            <Separator class="border-border/50" />
+            <div class="flex items-center justify-between">
+              <Badge :variant="statusConfig[kb.status].badgeVariant" class="gap-1.5 text-[11px]">
+                <span :class="cn('size-1.5 rounded-full', statusConfig[kb.status].dotClass)" />
+                {{ statusConfig[kb.status].label }}
+              </Badge>
+              <span class="flex items-center gap-1 text-[11px] text-muted-foreground/60">
+                <Clock class="size-3 opacity-50" />
+                {{ kb.updatedAt }}
+              </span>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
-    </div>
 
-    <!-- 删除确认对话框 -->
-    <ConfirmDialog
-      v-model:open="showDeleteDialog"
-      title="删除知识库"
-      :description="`确定要删除「${deleteTarget?.name}」吗？知识库中的所有文档和索引将被永久删除。`"
-      confirm-text="删除"
-      @confirm="handleDelete"
-    />
-  </div>
+      <!-- 空状态提示 -->
+      <div
+        v-if="filteredKnowledgeBases.length === 0"
+        class="flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-border/50 py-20"
+      >
+        <Search class="size-16 text-muted-foreground/20" />
+        <div class="text-center">
+          <p class="text-sm font-medium text-muted-foreground">
+            未找到匹配的知识库
+          </p>
+          <p class="mt-1.5 text-xs text-muted-foreground/60">
+            尝试调整搜索关键词
+          </p>
+        </div>
+      </div>
+
+      <!-- 删除确认对话框 -->
+      <ConfirmDialog
+        v-model:open="showDeleteDialog"
+        title="删除知识库"
+        :description="`确定要删除「${deleteTarget?.name}」吗？知识库中的所有文档和索引将被永久删除。`"
+        confirm-text="删除"
+        @confirm="handleDelete"
+      />
+    </div>
   </div>
 </template>

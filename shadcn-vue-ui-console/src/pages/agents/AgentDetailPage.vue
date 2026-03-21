@@ -63,12 +63,12 @@ interface AgentData {
 }
 
 const agentsData: AgentData[] = [
-  { id: '1', name: '客服助手', description: '智能客服对话机器人，支持多轮对话与意图识别', status: 'running', model: 'GPT-4o', tags: ['对话', 'NLP'], avatarColor: 'bg-blue-500', systemPrompt: '你是一个专业的客服助手，负责回答用户关于产品功能、使用方法和常见问题的咨询。请保持友好、专业的语气，优先使用中文回答。如果用户的问题超出你的能力范围，请礼貌地引导用户联系人工客服。', temperature: 0.7, maxTokens: 4096, createdAt: '2026-02-10' },
-  { id: '2', name: '文档摘要', description: '自动提取长文档核心内容生成结构化摘要', status: 'running', model: 'Claude 3.5 Sonnet', tags: ['摘要', 'RAG'], avatarColor: 'bg-violet-500', systemPrompt: '你是一个文档摘要专家。当用户提供文本内容时，你需要提取关键信息，生成简洁、结构化的摘要，包含核心要点和关键数据。', temperature: 0.3, maxTokens: 8192, createdAt: '2026-02-15' },
-  { id: '3', name: '代码审查', description: '基于规范自动审查代码质量与安全性', status: 'draft', model: 'DeepSeek-V3', tags: ['代码', '审查'], avatarColor: 'bg-emerald-500', systemPrompt: '你是一个资深代码审查工程师，负责从代码质量、安全性、性能和可维护性四个维度审查用户提交的代码。', temperature: 0.2, maxTokens: 4096, createdAt: '2026-02-20' },
-  { id: '4', name: '数据分析', description: '自然语言驱动的数据查询与可视化分析', status: 'running', model: 'GPT-4o', tags: ['数据', 'SQL'], avatarColor: 'bg-orange-500', systemPrompt: '你是一个数据分析师，帮助用户编写 SQL 查询、解读数据趋势、生成可视化方案。', temperature: 0.5, maxTokens: 4096, createdAt: '2026-02-25' },
-  { id: '5', name: '翻译助手', description: '多语言实时翻译与本地化适配', status: 'stopped', model: 'Qwen2.5-72B', tags: ['翻译', 'i18n'], avatarColor: 'bg-rose-500', systemPrompt: '你是一个专业翻译，支持中英日韩法德等 50+ 语种互译，保持原文语气和格式。', temperature: 0.4, maxTokens: 4096, createdAt: '2026-03-01' },
-  { id: '6', name: '知识问答', description: '基于知识库的智能问答系统', status: 'running', model: 'Claude 3.5 Sonnet', tags: ['RAG', '问答'], avatarColor: 'bg-cyan-500', systemPrompt: '你是一个知识问答助手，基于检索到的知识库文档内容回答用户问题，确保答案准确可追溯。', temperature: 0.6, maxTokens: 4096, createdAt: '2026-03-05' },
+  { id: '1', name: '客服助手', description: '智能客服对话机器人，支持多轮对话与意图识别', status: 'running', model: 'GPT-4o', tags: ['对话', 'NLP'], avatarColor: 'bg-chart-1', systemPrompt: '你是一个专业的客服助手，负责回答用户关于产品功能、使用方法和常见问题的咨询。请保持友好、专业的语气，优先使用中文回答。如果用户的问题超出你的能力范围，请礼貌地引导用户联系人工客服。', temperature: 0.7, maxTokens: 4096, createdAt: '2026-02-10' },
+  { id: '2', name: '文档摘要', description: '自动提取长文档核心内容生成结构化摘要', status: 'running', model: 'Claude 3.5 Sonnet', tags: ['摘要', 'RAG'], avatarColor: 'bg-chart-4', systemPrompt: '你是一个文档摘要专家。当用户提供文本内容时，你需要提取关键信息，生成简洁、结构化的摘要，包含核心要点和关键数据。', temperature: 0.3, maxTokens: 8192, createdAt: '2026-02-15' },
+  { id: '3', name: '代码审查', description: '基于规范自动审查代码质量与安全性', status: 'draft', model: 'DeepSeek-V3', tags: ['代码', '审查'], avatarColor: 'bg-success', systemPrompt: '你是一个资深代码审查工程师，负责从代码质量、安全性、性能和可维护性四个维度审查用户提交的代码。', temperature: 0.2, maxTokens: 4096, createdAt: '2026-02-20' },
+  { id: '4', name: '数据分析', description: '自然语言驱动的数据查询与可视化分析', status: 'running', model: 'GPT-4o', tags: ['数据', 'SQL'], avatarColor: 'bg-chart-5', systemPrompt: '你是一个数据分析师，帮助用户编写 SQL 查询、解读数据趋势、生成可视化方案。', temperature: 0.5, maxTokens: 4096, createdAt: '2026-02-25' },
+  { id: '5', name: '翻译助手', description: '多语言实时翻译与本地化适配', status: 'stopped', model: 'Qwen2.5-72B', tags: ['翻译', 'i18n'], avatarColor: 'bg-destructive', systemPrompt: '你是一个专业翻译，支持中英日韩法德等 50+ 语种互译，保持原文语气和格式。', temperature: 0.4, maxTokens: 4096, createdAt: '2026-03-01' },
+  { id: '6', name: '知识问答', description: '基于知识库的智能问答系统', status: 'running', model: 'Claude 3.5 Sonnet', tags: ['RAG', '问答'], avatarColor: 'bg-chart-2', systemPrompt: '你是一个知识问答助手，基于检索到的知识库文档内容回答用户问题，确保答案准确可追溯。', temperature: 0.6, maxTokens: 4096, createdAt: '2026-03-05' },
 ]
 
 const agentId = route.params.id as string
@@ -77,12 +77,12 @@ const agent = agentsData.find(a => a.id === agentId) || agentsData[0]
 // ========== 状态配置 ==========
 
 const statusConfig = {
-  running: { label: '运行中', dotClass: 'bg-emerald-500' },
-  draft: { label: '草稿', dotClass: 'bg-amber-400' },
+  running: { label: '运行中', dotClass: 'bg-success' },
+  draft: { label: '草稿', dotClass: 'bg-warning' },
   stopped: { label: '已停止', dotClass: 'bg-muted-foreground/50' },
 }
 
-// ========== 指标卡片 — 渐变背景风格 ==========
+// ========== 指标卡片 — HUD 水印风格 ==========
 
 // 根据 agent id 生成差异化指标
 const baseMetrics = [12580, 8420, 3210, 15800, 1560, 9340]
@@ -90,34 +90,10 @@ const agentIndex = agentsData.findIndex(a => a.id === agentId)
 const baseCalls = baseMetrics[agentIndex >= 0 ? agentIndex : 0]
 
 const metrics = [
-  {
-    label: '总调用次数',
-    value: baseCalls.toLocaleString(),
-    icon: Activity,
-    color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-  },
-  {
-    label: '平均响应时间',
-    value: '1.2s',
-    icon: Clock,
-    color: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
-  },
-  {
-    label: '成功率',
-    value: '98.5%',
-    icon: TrendingUp,
-    color: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-  },
-  {
-    label: '今日调用',
-    value: Math.round(baseCalls * 0.029).toLocaleString(),
-    icon: Zap,
-    color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20',
-    iconColor: 'text-violet-600 dark:text-violet-400',
-  },
+  { label: '总调用次数', value: baseCalls.toLocaleString(), icon: Activity, iconBase: 'text-chart-1/20 dark:text-chart-1/10', iconHover: 'group-hover:text-chart-1/40 dark:group-hover:text-chart-1/25', glow: 'from-chart-1/30 via-chart-1/8 to-transparent' },
+  { label: '平均响应时间', value: '1.2s', icon: Clock, iconBase: 'text-chart-5/20 dark:text-chart-5/10', iconHover: 'group-hover:text-chart-5/40 dark:group-hover:text-chart-5/25', glow: 'from-chart-5/30 via-chart-5/8 to-transparent' },
+  { label: '成功率', value: '98.5%', icon: TrendingUp, iconBase: 'text-success/20 dark:text-success/10', iconHover: 'group-hover:text-success/40 dark:group-hover:text-success/25', glow: 'from-success/30 via-success/8 to-transparent' },
+  { label: '今日调用', value: Math.round(baseCalls * 0.029).toLocaleString(), icon: Zap, iconBase: 'text-chart-4/20 dark:text-chart-4/10', iconHover: 'group-hover:text-chart-4/40 dark:group-hover:text-chart-4/25', glow: 'from-chart-4/30 via-chart-4/8 to-transparent' },
 ]
 
 // ========== 对话测试 Mock 消息 ==========
@@ -222,7 +198,7 @@ const callLogs = [
             </h2>
             <div class="flex items-center gap-1.5">
               <span :class="cn('size-2 rounded-full', statusConfig[agent.status].dotClass)" />
-              <span class="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              <span class="text-xs font-medium text-success">
                 {{ statusConfig[agent.status].label }}
               </span>
             </div>
@@ -237,34 +213,25 @@ const callLogs = [
       </Button>
     </div>
 
-    <!-- 指标卡片 — 渐变背景 + 毛玻璃图标容器 -->
+    <!-- 指标卡片 — HUD 水印风格 -->
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <Card
+      <div
         v-for="item in metrics"
         :key="item.label"
-        class="overflow-hidden border-0 shadow-sm transition-all hover:shadow-md"
+        class="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm px-6 py-6 transition-all duration-500 hover:border-border/50 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20"
       >
-        <div :class="cn('bg-gradient-to-br', item.color)">
-          <CardHeader class="flex flex-row items-center justify-between pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground">
-              {{ item.label }}
-            </CardTitle>
-            <div
-              :class="cn(
-                'rounded-lg bg-background/60 p-2 backdrop-blur-sm',
-                item.iconColor,
-              )"
-            >
-              <component :is="item.icon" class="size-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div class="text-3xl font-bold tracking-tight">
-              {{ item.value }}
-            </div>
-          </CardContent>
+        <component
+          :is="item.icon"
+          :class="cn('absolute right-4 top-1/2 -translate-y-1/2 size-20 transition-all duration-700 ease-out group-hover:scale-125 group-hover:rotate-6', item.iconBase, item.iconHover)"
+        />
+        <div :class="cn('absolute right-0 top-1/2 -translate-y-1/2 size-40 rounded-full bg-gradient-radial opacity-0 group-hover:opacity-100 transition-all duration-700 blur-3xl scale-75 group-hover:scale-100', item.glow)" />
+        <div class="relative z-10">
+          <span class="text-[13px] font-medium text-muted-foreground">{{ item.label }}</span>
+          <div class="mt-3 text-[32px] font-bold tracking-tighter tabular-nums leading-none">
+            {{ item.value }}
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
 
     <!-- Tab 区域：对话测试 / 配置信息 / 调用日志 -->
