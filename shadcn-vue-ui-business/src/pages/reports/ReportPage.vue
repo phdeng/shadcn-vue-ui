@@ -49,8 +49,9 @@ const stats = [
     trend: 'up' as const,
     desc: '较上月',
     icon: DollarSign,
-    color: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    iconBase: 'text-success/20 dark:text-success/10',
+    iconHover: 'group-hover:text-success/40 dark:group-hover:text-success/25',
+    glow: 'from-success/30 via-success/8 to-transparent',
   },
   {
     title: '订单总量',
@@ -59,8 +60,9 @@ const stats = [
     trend: 'up' as const,
     desc: '较上月',
     icon: ShoppingCart,
-    color: 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20',
-    iconColor: 'text-blue-600 dark:text-blue-400',
+    iconBase: 'text-chart-1/20 dark:text-chart-1/10',
+    iconHover: 'group-hover:text-chart-1/40 dark:group-hover:text-chart-1/25',
+    glow: 'from-chart-1/30 via-chart-1/8 to-transparent',
   },
   {
     title: '用户转化率',
@@ -69,8 +71,9 @@ const stats = [
     trend: 'up' as const,
     desc: '较上月',
     icon: TrendingUp,
-    color: 'from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20',
-    iconColor: 'text-violet-600 dark:text-violet-400',
+    iconBase: 'text-chart-4/20 dark:text-chart-4/10',
+    iconHover: 'group-hover:text-chart-4/40 dark:group-hover:text-chart-4/25',
+    glow: 'from-chart-4/30 via-chart-4/8 to-transparent',
   },
   {
     title: '平均客单价',
@@ -79,8 +82,9 @@ const stats = [
     trend: 'down' as const,
     desc: '较上月',
     icon: CreditCard,
-    color: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
+    iconBase: 'text-chart-5/20 dark:text-chart-5/10',
+    iconHover: 'group-hover:text-chart-5/40 dark:group-hover:text-chart-5/25',
+    glow: 'from-chart-5/30 via-chart-5/8 to-transparent',
   },
 ]
 
@@ -237,7 +241,7 @@ function formatAmount(amount: number): string {
             <Skeleton class="h-[240px] w-full rounded-lg" />
           </CardContent>
         </Card>
-        <Card class="lg:col-span-3 border-0 shadow-sm">
+        <Card class="lg:col-span-3 border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader>
             <Skeleton class="h-5 w-32" />
             <Skeleton class="h-4 w-28 mt-1" />
@@ -283,46 +287,34 @@ function formatAmount(amount: number): string {
       </div>
     </div>
 
-    <!-- 统计卡片 — 渐变背景风格 -->
+    <!-- 统计卡片 — HUD 水印风格 -->
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <Card
+      <div
         v-for="item in stats"
         :key="item.title"
-        class="overflow-hidden border-0 shadow-sm transition-all hover:shadow-md"
+        class="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm px-6 py-6 transition-all duration-500 hover:border-border/50 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20"
       >
-        <div :class="cn('bg-gradient-to-br', item.color)">
-          <CardHeader class="flex flex-row items-center justify-between pb-2">
-            <CardTitle class="text-sm font-medium text-muted-foreground">
-              {{ item.title }}
-            </CardTitle>
-            <div :class="cn('rounded-lg bg-background/60 p-2 backdrop-blur-sm', item.iconColor)">
-              <component :is="item.icon" class="size-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div class="text-3xl font-bold tracking-tight">
-              {{ item.value }}
-            </div>
-            <div class="mt-2 flex items-center gap-1.5 text-xs">
-              <Badge
-                :variant="item.trend === 'up' ? 'secondary' : 'destructive'"
-                class="gap-0.5 rounded-full px-1.5 py-0 text-[10px] font-medium"
-              >
-                <ArrowUpRight v-if="item.trend === 'up'" class="size-3" />
-                <ArrowDownRight v-else class="size-3" />
-                {{ item.change }}
-              </Badge>
-              <span class="text-muted-foreground">{{ item.desc }}</span>
-            </div>
-          </CardContent>
+        <component :is="item.icon" :class="cn('absolute right-4 top-1/2 -translate-y-1/2 size-20 transition-all duration-700 ease-out group-hover:scale-125 group-hover:rotate-6', item.iconBase, item.iconHover)" />
+        <div :class="cn('absolute right-0 top-1/2 -translate-y-1/2 size-40 rounded-full bg-gradient-radial opacity-0 group-hover:opacity-100 transition-all duration-700 blur-3xl scale-75 group-hover:scale-100', item.glow)" />
+        <div class="relative z-10">
+          <span class="text-[13px] font-medium text-muted-foreground">{{ item.title }}</span>
+          <div class="mt-3 text-[32px] font-bold tracking-tighter tabular-nums leading-none">{{ item.value }}</div>
+          <div class="mt-4 flex items-center gap-1.5 text-xs">
+            <Badge variant="secondary" :class="['gap-0.5 rounded-full px-1.5 py-0 text-[10px] font-medium', item.trend === 'down' && 'bg-destructive/10 text-destructive']">
+              <ArrowUpRight v-if="item.trend === 'up'" class="size-3" />
+              <ArrowDownRight v-else class="size-3" />
+              {{ item.change }}
+            </Badge>
+            <span class="text-muted-foreground/50">{{ item.desc }}</span>
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
 
     <!-- 中间区 — 营收趋势 + 热门商品 -->
     <div class="grid gap-4 lg:grid-cols-7">
       <!-- 营收趋势 -->
-      <Card class="lg:col-span-4 border-0 shadow-sm">
+      <Card class="lg:col-span-4 border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
         <CardHeader>
           <div class="flex items-center justify-between">
             <div>
@@ -341,7 +333,7 @@ function formatAmount(amount: number): string {
       </Card>
 
       <!-- 热门商品 TOP 5 -->
-      <Card class="lg:col-span-3 border-0 shadow-sm">
+      <Card class="lg:col-span-3 border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
         <CardHeader>
           <CardTitle class="text-base">
             热门商品 TOP 5
@@ -378,7 +370,7 @@ function formatAmount(amount: number): string {
     </div>
 
     <!-- 近期订单统计表 -->
-    <Card class="border-0 shadow-sm">
+    <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
       <CardHeader>
         <CardTitle class="text-base">
           近期订单统计
