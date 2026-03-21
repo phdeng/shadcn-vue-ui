@@ -238,7 +238,7 @@ const quickActions = [
       </div>
       <!-- 统计卡片骨架 -->
       <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card v-for="i in 4" :key="i" class="border-0 shadow-sm overflow-hidden">
+        <Card v-for="i in 4" :key="i" class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs overflow-hidden">
           <CardHeader class="flex flex-row items-center justify-between pb-2">
             <Skeleton class="h-4 w-16" />
             <Skeleton class="size-8 rounded-lg" />
@@ -251,7 +251,7 @@ const quickActions = [
       </div>
       <!-- 图表区骨架 -->
       <div class="grid gap-4 lg:grid-cols-7">
-        <Card class="lg:col-span-4 border-0 shadow-sm">
+        <Card class="lg:col-span-4 border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader>
             <Skeleton class="h-5 w-32" />
             <Skeleton class="h-4 w-24 mt-1" />
@@ -260,7 +260,7 @@ const quickActions = [
             <Skeleton class="h-[240px] w-full rounded-lg" />
           </CardContent>
         </Card>
-        <Card class="lg:col-span-3 border-0 shadow-sm">
+        <Card class="lg:col-span-3 border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader>
             <Skeleton class="h-5 w-28" />
             <Skeleton class="h-4 w-20 mt-1" />

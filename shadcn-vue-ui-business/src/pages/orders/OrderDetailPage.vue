@@ -147,7 +147,7 @@ function handleBack() {
     </div>
 
     <!-- 订单信息卡片 -->
-    <Card class="border-0 shadow-sm">
+    <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
       <CardHeader>
         <CardTitle class="text-base">
           订单信息
@@ -198,7 +198,7 @@ function handleBack() {
     </Card>
 
     <!-- 订单流程时间线卡片 -->
-    <Card class="border-0 shadow-sm">
+    <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
       <CardHeader>
         <CardTitle class="text-base">
           订单流程
@@ -255,7 +255,7 @@ function handleBack() {
     </Card>
 
     <!-- 操作记录卡片 -->
-    <Card class="border-0 shadow-sm">
+    <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
       <CardHeader>
         <CardTitle class="text-base">
           操作记录

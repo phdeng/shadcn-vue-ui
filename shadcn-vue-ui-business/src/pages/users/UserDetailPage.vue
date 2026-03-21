@@ -130,7 +130,7 @@ function handleBack() {
     <!-- 用户信息区域 -->
     <template v-if="user">
       <!-- 基本信息卡片 -->
-      <Card class="border-0 shadow-sm">
+      <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
         <CardHeader>
           <CardTitle class="text-base">
             基本信息
@@ -167,7 +167,7 @@ function handleBack() {
       </Card>
 
       <!-- 操作记录卡片 -->
-      <Card class="border-0 shadow-sm">
+      <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
         <CardHeader>
           <CardTitle class="text-base">
             操作记录

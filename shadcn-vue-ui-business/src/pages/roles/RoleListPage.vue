@@ -169,7 +169,7 @@ function handleDelete() {
         <Skeleton class="h-9 w-24 rounded-md" />
       </div>
       <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <Card v-for="i in 5" :key="i" class="border-0 shadow-sm">
+        <Card v-for="i in 5" :key="i" class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader class="pb-3">
             <Skeleton class="h-5 w-24" />
             <Skeleton class="h-4 w-full mt-2" />
@@ -210,7 +210,7 @@ function handleDelete() {
       <Card
         v-for="role in roles"
         :key="role.id"
-        class="group border-0 shadow-sm transition-all hover:shadow-md"
+        class="group border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs transition-all hover:shadow-md"
       >
         <CardHeader class="pb-3">
           <div class="flex items-start justify-between gap-3">

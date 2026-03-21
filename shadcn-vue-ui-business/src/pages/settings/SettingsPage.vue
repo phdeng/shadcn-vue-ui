@@ -118,7 +118,7 @@ function saveNotificationSettings() {
 
       <!-- Tab 1: 基本设置 -->
       <TabsContent value="basic" class="mt-6">
-        <Card class="border-0 shadow-sm">
+        <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader>
             <CardTitle class="text-base">
               基本设置
@@ -232,7 +232,7 @@ function saveNotificationSettings() {
 
       <!-- Tab 2: 安全设置 -->
       <TabsContent value="security" class="mt-6">
-        <Card class="border-0 shadow-sm">
+        <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader>
             <CardTitle class="text-base">
               安全设置
@@ -356,7 +356,7 @@ function saveNotificationSettings() {
 
       <!-- Tab 3: 通知设置 -->
       <TabsContent value="notification" class="mt-6">
-        <Card class="border-0 shadow-sm">
+        <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader>
             <CardTitle class="text-base">
               通知设置

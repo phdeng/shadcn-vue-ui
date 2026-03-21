@@ -252,7 +252,7 @@ function handleDelete() {
           <Skeleton class="h-4 w-20" />
         </div>
       </div>
-      <Card class="border-0 shadow-sm">
+      <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
         <CardContent class="p-4 space-y-4">
           <div v-for="i in 6" :key="i" class="flex items-center gap-4">
             <Skeleton class="h-4 w-56" />
@@ -317,7 +317,7 @@ function handleDelete() {
     </div>
 
     <!-- 表格区域 -->
-    <Card class="border-0 shadow-sm">
+    <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
       <CardContent class="p-0">
         <Table>
           <TableHeader>
