@@ -15,12 +15,15 @@ import { Switch } from '@ui/components/ui/switch'
 import { cn } from '@ui/lib/utils'
 import {
   ArrowLeft,
+  ChevronDown,
+  ChevronUp,
   Clock,
   Copy,
   Database,
   FileText,
   Hash,
   Layers,
+  Pencil,
   Search,
 } from 'lucide-vue-next'
 /**
@@ -78,7 +81,9 @@ interface Segment {
   index: number
   content: string
   tokens: number
+  chars: number
   enabled: boolean
+  collapsed: boolean
   keywords: string[]
 }
 
