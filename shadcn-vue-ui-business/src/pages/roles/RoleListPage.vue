@@ -22,6 +22,7 @@ import {
   MoreHorizontal,
   Pencil,
   Plus,
+  Search,
   Shield,
   Trash2,
   Users,
@@ -290,6 +291,15 @@ function handleDelete() {
           </div>
         </CardFooter>
       </Card>
+    </div>
+
+    <!-- 空状态 -->
+    <div v-if="roles.length === 0" class="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border/50 py-16">
+      <Search class="size-10 text-muted-foreground/30" />
+      <div class="text-center">
+        <p class="text-sm font-medium text-muted-foreground">未找到匹配的角色</p>
+        <p class="mt-1 text-xs text-muted-foreground/60">尝试调整搜索关键词或筛选条件</p>
+      </div>
     </div>
 
     <!-- 删除确认对话框 -->

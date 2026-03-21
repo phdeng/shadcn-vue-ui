@@ -10,11 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from '@ui/components/ui/table'
-import { ArrowLeft, Check, Circle } from 'lucide-vue-next'
+import { ArrowLeft, Check, Circle, SearchX } from 'lucide-vue-next'
 /**
  * @description 订单详情页 — Dify 风格订单详情，含订单信息、流程时间线、操作记录
  * @author Timon
  */
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 
@@ -22,7 +23,7 @@ import { toast } from 'vue-sonner'
 const router = useRouter()
 const route = useRoute()
 
-// ==================== 订单模拟数据 ====================
+// ==================== 订单模拟数据池 ====================
 type OrderStatus = 'pending' | 'processing' | 'completed' | 'cancelled'
 
 interface OrderDetail {
@@ -40,14 +41,20 @@ interface OrderDetail {
   createdAt: string
 }
 
-const orderData: OrderDetail = {
-  id: route.params.id as string || 'ORD-2026-0001',
-  customer: '上海星辰科技有限公司',
-  product: '企业版年度订阅',
-  amount: 128000,
-  status: 'processing',
-  createdAt: '2026-03-18 14:23',
-}
+/** 订单数据池，根据路由 ID 查找对应订单 */
+const ordersData: OrderDetail[] = [
+  { id: 'ORD-2026-0001', customer: '上海星辰科技有限公司', product: '企业版年度订阅', amount: 128000, status: 'completed', createdAt: '2026-03-18 14:23' },
+  { id: 'ORD-2026-0002', customer: '北京云端数据咨询', product: 'API 调用额度包 - 100万次', amount: 45000, status: 'pending', createdAt: '2026-03-19 09:15' },
+  { id: 'ORD-2026-0003', customer: '深圳智远信息技术', product: '专业版季度订阅', amount: 32000, status: 'processing', createdAt: '2026-03-19 11:42' },
+  { id: 'ORD-2026-0004', customer: '杭州碧海网络', product: '定制化部署服务', amount: 256000, status: 'completed', createdAt: '2026-03-20 08:30' },
+  { id: 'ORD-2026-0005', customer: '广州锐思营销集团', product: '基础版月度订阅', amount: 5800, status: 'cancelled', createdAt: '2026-03-20 10:05' },
+  { id: 'ORD-2026-0006', customer: '成都天府软件园', product: 'API 调用额度包 - 50万次', amount: 24000, status: 'pending', createdAt: '2026-03-20 15:38' },
+  { id: 'ORD-2026-0007', customer: '南京紫金大数据', product: '企业版年度订阅', amount: 128000, status: 'processing', createdAt: '2026-03-21 09:12' },
+  { id: 'ORD-2026-0008', customer: '武汉光谷创新科技', product: '专业版年度订阅', amount: 96000, status: 'pending', createdAt: '2026-03-21 10:45' },
+]
+
+/** 根据路由参数查找订单 */
+const orderData = computed(() => ordersData.find(o => o.id === route.params.id) ?? null)
 
 // ==================== 状态配置 ====================
 const statusConfig: Record<OrderStatus, { label: string, class: string, dotClass: string }> = {
@@ -124,10 +131,34 @@ function handleBack() {
 
 <template>
   <div class="flex flex-col gap-6">
+    <!-- 订单不存在提示 -->
+    <template v-if="!orderData">
+      <div class="flex items-center gap-4">
+        <Button variant="ghost" size="icon-sm" aria-label="返回" @click="handleBack">
+          <ArrowLeft class="size-4" />
+        </Button>
+        <h2 class="text-2xl font-semibold tracking-tight">
+          订单详情
+        </h2>
+      </div>
+      <div class="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border/50 py-16">
+        <SearchX class="size-10 text-muted-foreground/30" />
+        <div class="text-center">
+          <p class="text-sm font-medium text-muted-foreground">订单不存在</p>
+          <p class="mt-1 text-xs text-muted-foreground/60">订单「{{ route.params.id }}」未找到，请检查订单号是否正确</p>
+        </div>
+        <Button variant="outline" size="sm" class="mt-2" @click="handleBack">
+          返回列表
+        </Button>
+      </div>
+    </template>
+
+    <!-- 订单详情内容 -->
+    <template v-else>
     <!-- 页面头部：返回按钮 + 订单号 + 状态 + 操作按钮 -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <Button variant="ghost" size="icon-sm" @click="handleBack">
+        <Button variant="ghost" size="icon-sm" aria-label="返回" @click="handleBack">
           <ArrowLeft class="size-4" />
         </Button>
         <h2 class="text-2xl font-semibold tracking-tight">
@@ -288,5 +319,6 @@ function handleBack() {
         </Table>
       </CardContent>
     </Card>
+    </template>
   </div>
 </template>

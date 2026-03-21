@@ -5,6 +5,9 @@ import { routes } from './routes'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+  scrollBehavior(_to, _from, savedPosition) {
+    return savedPosition || { top: 0 }
+  },
 })
 
 // 注册路由守卫 — 认证拦截 & 标题更新

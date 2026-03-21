@@ -284,7 +284,7 @@ function handleDelete() {
     </div>
 
     <!-- 工具栏：搜索 + Tabs 筛选 + 计数 -->
-    <div class="flex items-center justify-between gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-4 gap-y-3">
       <div class="relative w-64">
         <Search class="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -318,7 +318,7 @@ function handleDelete() {
 
     <!-- 表格区域 -->
     <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
-      <CardContent class="p-0">
+      <CardContent class="p-0 overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -411,6 +411,15 @@ function handleDelete() {
         </Table>
       </CardContent>
     </Card>
+
+    <!-- 空状态 -->
+    <div v-if="filteredContents.length === 0" class="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border/50 py-16">
+      <Search class="size-10 text-muted-foreground/30" />
+      <div class="text-center">
+        <p class="text-sm font-medium text-muted-foreground">未找到匹配的内容</p>
+        <p class="mt-1 text-xs text-muted-foreground/60">尝试调整搜索关键词或筛选条件</p>
+      </div>
+    </div>
 
     <!-- 删除确认对话框 -->
     <ConfirmDialog

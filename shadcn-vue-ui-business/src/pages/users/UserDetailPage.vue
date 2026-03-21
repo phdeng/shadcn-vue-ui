@@ -82,7 +82,7 @@ function handleBack() {
     <!-- 页面头部 -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <Button variant="ghost" size="icon-sm" @click="handleBack">
+        <Button variant="ghost" size="icon-sm" aria-label="返回" @click="handleBack">
           <ArrowLeft class="size-4" />
         </Button>
 
