@@ -15,7 +15,9 @@ import {
   MessageCircle,
   Rocket,
   Settings,
-  Store,
+  Shield,
+  Workflow,
+  Wrench,
 } from 'lucide-vue-next'
 
 export interface NavItem {
@@ -40,24 +42,34 @@ export const modelNavGroup: NavGroup = {
   title: '模型',
   icon: Box,
   children: [
+    { title: '模型目录', icon: Box, path: '/models' },
     { title: '数据集', icon: Database, path: '/datasets' },
-    { title: '模型管理', icon: Box, path: '/models' },
     { title: '模型训练', icon: GraduationCap, path: '/training' },
-    { title: '模型部署', icon: Rocket, path: '/deployments' },
     { title: '模型评测', icon: ClipboardCheck, path: '/evaluation' },
+    { title: '模型部署', icon: Rocket, path: '/deployments' },
+  ],
+}
+
+/** Agent 子菜单 */
+export const agentNavGroup: NavGroup = {
+  title: 'Agent',
+  icon: Bot,
+  children: [
+    { title: 'Agent 管理', icon: Bot, path: '/agents' },
+    { title: '工作流编排', icon: Workflow, path: '/workflows' },
+    { title: 'Playground', icon: MessageCircle, path: '/playground' },
   ],
 }
 
 /** 功能模块导航 */
 export const featureNavItems: NavItem[] = [
   { title: '知识库', icon: BookOpen, path: '/knowledge' },
-  { title: '推理监控', icon: Activity, path: '/monitoring' },
-  { title: 'Agent 管理', icon: Bot, path: '/agents' },
-  { title: '插件市场', icon: Store, path: '/plugins' },
-  { title: 'ChatAgent', icon: MessageCircle, path: '/chat' },
+  { title: '工具与集成', icon: Wrench, path: '/tools' },
+  { title: '可观测性', icon: Activity, path: '/observability' },
 ]
 
 /** 系统导航 */
 export const systemNavItems: NavItem[] = [
+  { title: '安全合规', icon: Shield, path: '/security' },
   { title: '系统设置', icon: Settings, path: '/settings' },
 ]

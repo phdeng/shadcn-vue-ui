@@ -226,7 +226,8 @@ function handleScale(d: Deployment) {
               <TableRow
                 v-for="d in filteredDeployments"
                 :key="d.id"
-                class="border-border/50 transition-colors duration-200 hover:bg-muted/30"
+                class="border-border/50 transition-colors duration-200 hover:bg-muted/30 cursor-pointer"
+                @click="router.push(`/deployments/${d.id}`)"
               >
                 <TableCell>
                   <div>

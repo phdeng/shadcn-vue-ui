@@ -32,6 +32,7 @@ import { ChevronDown, ChevronRight, HelpCircle, LogOut, Settings } from 'lucide-
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
+  agentNavGroup,
   featureNavItems,
   mainNavItems,
   modelNavGroup,
@@ -43,6 +44,7 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const modelMenuOpen = ref(true)
+const agentMenuOpen = ref(true)
 
 // 用户信息 — 从 Auth Store 动态读取
 const userAvatar = computed(() => authStore.user?.avatar || authStore.user?.name?.charAt(0) || 'U')
@@ -57,6 +59,10 @@ function isActive(path: string) {
 
 function isModelActive() {
   return modelNavGroup.children.some(c => route.path.startsWith(c.path))
+}
+
+function isAgentActive() {
+  return agentNavGroup.children.some(c => route.path.startsWith(c.path))
 }
 </script>
 
@@ -109,6 +115,31 @@ function isModelActive() {
               </SidebarMenuButton>
               <SidebarMenuSub v-show="modelMenuOpen">
                 <SidebarMenuSubItem v-for="child in modelNavGroup.children" :key="child.path">
+                  <SidebarMenuSubButton as-child :is-active="isActive(child.path)">
+                    <RouterLink :to="child.path">
+                      <span>{{ child.title }}</span>
+                    </RouterLink>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              </SidebarMenuSub>
+            </SidebarMenuItem>
+
+            <!-- Agent 子菜单 -->
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                :is-active="isAgentActive()"
+                :tooltip="agentNavGroup.title"
+                @click="agentMenuOpen = !agentMenuOpen"
+              >
+                <component :is="agentNavGroup.icon" />
+                <span>{{ agentNavGroup.title }}</span>
+                <ChevronRight
+                  class="ml-auto size-4 transition-transform duration-200"
+                  :class="agentMenuOpen && 'rotate-90'"
+                />
+              </SidebarMenuButton>
+              <SidebarMenuSub v-show="agentMenuOpen">
+                <SidebarMenuSubItem v-for="child in agentNavGroup.children" :key="child.path">
                   <SidebarMenuSubButton as-child :is-active="isActive(child.path)">
                     <RouterLink :to="child.path">
                       <span>{{ child.title }}</span>

@@ -42,12 +42,12 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: '数据集详情' },
       },
 
-      // 模型 — 模型管理
+      // 模型 — 模型目录
       {
         path: 'models',
         name: 'ModelList',
         component: () => import('@/pages/models/ModelListPage.vue'),
-        meta: { title: '模型管理' },
+        meta: { title: '模型目录' },
       },
       {
         path: 'models/create',
@@ -94,6 +94,12 @@ export const routes: RouteRecordRaw[] = [
         name: 'DeploymentCreate',
         component: () => import('@/pages/deployments/DeploymentCreatePage.vue'),
         meta: { title: '创建部署' },
+      },
+      {
+        path: 'deployments/:id',
+        name: 'DeploymentDetail',
+        component: () => import('@/pages/deployments/DeploymentDetailPage.vue'),
+        meta: { title: '部署详情' },
       },
 
       // 模型 — 模型评测
@@ -148,6 +154,22 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: '文档详情' },
       },
 
+      // 工作流编排
+      {
+        path: 'workflows',
+        name: 'Workflows',
+        component: () => import('@/pages/workflows/WorkflowsPage.vue'),
+        meta: { title: '工作流编排' },
+      },
+
+      // 安全合规
+      {
+        path: 'security',
+        name: 'Security',
+        component: () => import('@/pages/security/SecurityPage.vue'),
+        meta: { title: '安全合规' },
+      },
+
       // Agent 管理
       {
         path: 'agents',
@@ -168,28 +190,44 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: 'Agent 详情' },
       },
 
-      // 插件市场
+      // 工作流编排
       {
-        path: 'plugins',
-        name: 'PluginMarket',
-        component: () => import('@/pages/plugins/PluginMarketPage.vue'),
-        meta: { title: '插件市场' },
+        path: 'workflows',
+        name: 'Workflows',
+        component: () => import('@/pages/workflows/WorkflowsPage.vue'),
+        meta: { title: '工作流编排' },
       },
 
-      // ChatAgent
+      // Playground（原 ChatAgent）
       {
-        path: 'chat',
-        name: 'ChatAgent',
+        path: 'playground',
+        name: 'Playground',
         component: () => import('@/pages/chat/ChatAgentPage.vue'),
-        meta: { title: 'ChatAgent' },
+        meta: { title: 'Playground' },
       },
 
-      // 推理监控
+      // 工具与集成（原插件市场）
       {
-        path: 'monitoring',
-        name: 'Monitoring',
+        path: 'tools',
+        name: 'Tools',
+        component: () => import('@/pages/plugins/PluginMarketPage.vue'),
+        meta: { title: '工具与集成' },
+      },
+
+      // 可观测性（原推理监控）
+      {
+        path: 'observability',
+        name: 'Observability',
         component: () => import('@/pages/monitoring/MonitoringPage.vue'),
-        meta: { title: '推理监控' },
+        meta: { title: '可观测性' },
+      },
+
+      // 安全合规
+      {
+        path: 'security',
+        name: 'Security',
+        component: () => import('@/pages/security/SecurityPage.vue'),
+        meta: { title: '安全合规' },
       },
 
       // 系统设置
