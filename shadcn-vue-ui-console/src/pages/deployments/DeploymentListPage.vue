@@ -43,10 +43,12 @@ import {
  * @author Timon
  */
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import PageLoading from '@/components/common/PageLoading.vue'
 
+const router = useRouter()
 const loading = ref(true)
 setTimeout(() => { loading.value = false }, 600)
 const searchQuery = ref('')
@@ -104,7 +106,7 @@ const deleteTarget = ref<Deployment | null>(null)
 // ==================== 事件处理 ====================
 
 function handleCreate() {
-  toast.info('创建部署服务', { description: '配置模型推理服务' })
+  router.push('/deployments/create')
 }
 
 function handleDeleteConfirm(d: Deployment) {

@@ -51,7 +51,6 @@ import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import PageError from '@/components/common/PageError.vue'
 import PageLoading from '@/components/common/PageLoading.vue'
-import ModelRegisterDialog from '@/components/models/ModelRegisterDialog.vue'
 import { useModels } from '@/composables/useModels'
 
 // 路由实例
@@ -60,9 +59,6 @@ const router = useRouter()
 // 通过 composable 获取数据（支持 Mock/API 切换）
 const { models: rawModels, loading, error: loadError, fetchModels } = useModels()
 onMounted(fetchModels)
-
-// 注册对话框开关
-const showRegisterDialog = ref(false)
 
 // 搜索关键词
 const searchQuery = ref('')
@@ -177,14 +173,6 @@ function navigateToDetail(modelId: string) {
   router.push(`/models/${modelId}`)
 }
 
-/**
- * 模型注册表单提交回调
- */
-function handleModelSubmit(data: { name: string }) {
-  toast.success('模型注册成功', { description: data.name })
-  showRegisterDialog.value = false
-}
-
 // ==================== 删除确认 ====================
 
 const showDeleteDialog = ref(false)
@@ -230,18 +218,18 @@ function handleDelete() {
     <PageLoading v-if="loading" :count="4" :cols="4" />
     <PageError v-else-if="loadError" :message="loadError" @retry="fetchModels()" />
 
-  <div v-else class="flex flex-col gap-6">
+  <div v-else class="flex flex-col gap-8">
     <!-- 页面头部：标题 + 操作按钮 -->
     <div class="flex items-start justify-between">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold tracking-tight">
+        <h1 class="text-2xl font-bold tracking-tight">
           模型管理
         </h1>
-        <p class="text-sm text-muted-foreground leading-relaxed">
+        <p class="text-[13px] text-muted-foreground leading-relaxed">
           管理已注册的大语言模型及推理服务，监控运行状态与调用指标
         </p>
       </div>
-      <Button class="shrink-0" @click="showRegisterDialog = true">
+      <Button class="shrink-0" @click="router.push('/models/create')">
         <Plus class="mr-2 size-4" />
         注册模型
       </Button>
@@ -258,7 +246,7 @@ function handleDelete() {
           <Input
             v-model="searchQuery"
             placeholder="搜索模型名称或提供商..."
-            class="pl-9"
+            class="h-10 rounded-xl pl-9"
           />
         </div>
 
@@ -306,13 +294,13 @@ function handleDelete() {
       <Card
         v-for="model in filteredModels"
         :key="model.id"
-        class="group relative cursor-pointer border-0 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+        class="group relative cursor-pointer border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs transition-all duration-300 hover:border-border/50 hover:shadow-sm"
         @click="navigateToDetail(model.id)"
       >
         <!-- 卡片顶部渐变装饰条 -->
         <div
           :class="cn(
-            'absolute inset-x-0 top-0 h-24 rounded-t-xl bg-gradient-to-br opacity-80 transition-opacity group-hover:opacity-100',
+            'absolute inset-x-0 top-0 h-24 rounded-t-2xl bg-gradient-to-br opacity-80 transition-opacity group-hover:opacity-100',
             model.brandColor,
           )"
         />
@@ -321,7 +309,7 @@ function handleDelete() {
           <div class="flex items-start justify-between">
             <div class="space-y-1.5">
               <!-- 模型名称 -->
-              <CardTitle class="text-base font-semibold leading-none tracking-tight">
+              <CardTitle class="text-[15px] font-semibold leading-none tracking-tight">
                 {{ model.name }}
               </CardTitle>
               <!-- 提供商 -->
@@ -396,7 +384,7 @@ function handleDelete() {
             <Badge
               variant="secondary"
               :class="cn(
-                'gap-1.5 border-0 text-[11px] font-medium',
+                'gap-1.5 border-0 text-[10px] tracking-wide font-medium',
                 statusConfig[model.status].badgeClass,
               )"
             >
@@ -446,7 +434,7 @@ function handleDelete() {
       v-if="filteredModels.length === 0"
       class="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16"
     >
-      <Search class="size-10 text-muted-foreground/40" />
+      <Search class="size-16 text-muted-foreground/15" />
       <div class="text-center">
         <p class="text-sm font-medium text-muted-foreground">
           未找到匹配的模型
@@ -456,12 +444,6 @@ function handleDelete() {
         </p>
       </div>
     </div>
-
-    <!-- 模型注册对话框 -->
-    <ModelRegisterDialog
-      v-model:open="showRegisterDialog"
-      @submit="handleModelSubmit"
-    />
 
     <!-- 删除确认对话框 -->
     <ConfirmDialog

@@ -19,7 +19,7 @@ import { Input } from '@ui/components/ui/input'
 import { Separator } from '@ui/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
 import { cn } from '@ui/lib/utils'
-import { Clock, MoreHorizontal, Plus, Search } from 'lucide-vue-next'
+import { Bot, Clock, MoreHorizontal, Plus, Search } from 'lucide-vue-next'
 /**
  * @description Agent 管理页面 — 管理智能体、工作流与编排规则
  * @author Timon
@@ -29,7 +29,6 @@ import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import PageLoading from '@/components/common/PageLoading.vue'
-import AgentCreateDialog from '@/components/agents/AgentCreateDialog.vue'
 
 const router = useRouter()
 
@@ -132,11 +131,6 @@ const agents = ref<Agent[]>([
   },
 ])
 
-// ========== 对话框状态 ==========
-
-/** 创建 Agent 对话框开关 */
-const showCreateDialog = ref(false)
-
 // ========== 搜索与筛选 ==========
 
 /** 搜索关键词 */
@@ -168,15 +162,9 @@ function handleCardClick(agent: Agent) {
   router.push(`/agents/${agent.id}`)
 }
 
-/** 创建 Agent 按钮点击 */
+/** 创建 Agent — 跳转至独立创建页 */
 function handleCreate() {
-  showCreateDialog.value = true
-}
-
-/** Agent 创建表单提交回调 */
-function handleAgentSubmit(data: { name: string }) {
-  toast.success('Agent 创建成功', { description: data.name })
-  showCreateDialog.value = false
+  router.push('/agents/create')
 }
 
 // ==================== 删除确认 ====================
@@ -211,14 +199,14 @@ function handleDelete() {
     <!-- 骨架屏加载态 -->
     <PageLoading v-if="loading" :count="6" :cols="3" />
 
-  <div v-else class="flex flex-col gap-6">
+  <div v-else class="flex flex-col gap-8">
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight">
+        <h2 class="text-2xl font-bold tracking-tight">
           Agent 管理
         </h2>
-        <p class="text-sm text-muted-foreground">
+        <p class="text-[13px] text-muted-foreground">
           管理智能体、工作流与编排规则
         </p>
       </div>
@@ -238,7 +226,7 @@ function handleDelete() {
         <Input
           v-model="searchQuery"
           placeholder="搜索 Agent 名称或标签..."
-          class="pl-9"
+          class="h-10 rounded-xl pl-9"
         />
       </div>
 
@@ -269,7 +257,7 @@ function handleDelete() {
       <Card
         v-for="agent in filteredAgents"
         :key="agent.id"
-        class="group cursor-pointer border-0 shadow-sm transition-all hover:shadow-md"
+        class="group cursor-pointer border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs transition-all duration-300 hover:border-border/50 hover:shadow-sm"
         @click="handleCardClick(agent)"
       >
         <CardHeader class="pb-3">
@@ -286,7 +274,7 @@ function handleDelete() {
                 {{ agent.name.charAt(0) }}
               </div>
               <div class="min-w-0 space-y-1">
-                <CardTitle class="text-sm font-semibold leading-tight">
+                <CardTitle class="text-[15px] font-semibold leading-tight">
                   {{ agent.name }}
                 </CardTitle>
                 <p class="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
@@ -336,7 +324,7 @@ function handleDelete() {
               v-for="tag in agent.tags"
               :key="tag"
               variant="secondary"
-              class="text-[11px] px-2 py-0"
+              class="text-[10px] tracking-wide px-2 py-0"
             >
               {{ tag }}
             </Badge>
@@ -367,21 +355,16 @@ function handleDelete() {
     <!-- 空状态提示 -->
     <div
       v-if="filteredAgents.length === 0"
-      class="flex flex-col items-center justify-center py-20 text-center"
+      class="flex flex-col items-center justify-center gap-3 py-20 text-center"
     >
-      <p class="text-sm text-muted-foreground">
+      <Bot class="size-16 text-muted-foreground/15" />
+      <p class="text-sm font-medium text-muted-foreground">
         没有找到匹配的 Agent
       </p>
       <p class="mt-1 text-xs text-muted-foreground/60">
         尝试更换搜索关键词或筛选条件
       </p>
     </div>
-
-    <!-- 创建 Agent 对话框 -->
-    <AgentCreateDialog
-      v-model:open="showCreateDialog"
-      @submit="handleAgentSubmit"
-    />
 
     <!-- 删除确认对话框 -->
     <ConfirmDialog

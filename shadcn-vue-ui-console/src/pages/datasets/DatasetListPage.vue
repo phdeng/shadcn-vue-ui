@@ -276,7 +276,7 @@ const deleteTarget = ref<DatasetItem | null>(null)
 
 /** 查看详情 */
 function handleView(dataset: DatasetItem) {
-  toast.info(`查看数据集：${dataset.name}`, { description: `ID: ${dataset.id}` })
+  router.push(`/datasets/${dataset.id}`)
 }
 
 /** 下载数据集 */
@@ -437,7 +437,8 @@ function handleDelete() {
             <TableRow
               v-for="dataset in pagedDatasets"
               :key="dataset.id"
-              class="group"
+              class="group cursor-pointer"
+              @click="handleView(dataset)"
             >
               <!-- 名称 -->
               <TableCell class="font-medium">

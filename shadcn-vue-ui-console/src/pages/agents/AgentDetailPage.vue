@@ -170,7 +170,7 @@ const callLogs = [
     <Skeleton class="h-[400px] rounded-xl" />
   </div>
 
-  <div v-else class="flex flex-col gap-6">
+  <div v-else class="flex flex-col gap-8">
     <!-- 顶部区域：返回按钮 + Agent 名称 + 头像 + 状态 + 编辑按钮 -->
     <div class="flex items-start justify-between">
       <div class="flex items-start gap-3">
@@ -193,7 +193,7 @@ const callLogs = [
         </div>
         <div>
           <div class="flex items-center gap-3">
-            <h2 class="text-2xl font-semibold tracking-tight text-foreground">
+            <h2 class="text-2xl font-bold tracking-tight text-foreground">
               {{ agent.name }}
             </h2>
             <div class="flex items-center gap-1.5">
@@ -203,7 +203,7 @@ const callLogs = [
               </span>
             </div>
           </div>
-          <p class="mt-1.5 text-sm text-muted-foreground">
+          <p class="mt-1.5 text-[13px] text-muted-foreground">
             {{ agent.description }} · 创建于 {{ agent.createdAt }}
           </p>
         </div>
@@ -253,9 +253,9 @@ const callLogs = [
 
       <!-- 对话测试 -->
       <TabsContent value="chat">
-        <Card class="border-0 shadow-sm">
+        <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader>
-            <CardTitle class="text-base">
+            <CardTitle class="text-[15px] font-semibold">
               对话测试
             </CardTitle>
             <CardDescription>在此处测试 Agent 的对话能力</CardDescription>
@@ -332,9 +332,9 @@ const callLogs = [
 
       <!-- 配置信息 -->
       <TabsContent value="config">
-        <Card class="border-0 shadow-sm">
+        <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader>
-            <CardTitle class="text-base">
+            <CardTitle class="text-[15px] font-semibold">
               配置详情
             </CardTitle>
             <CardDescription>Agent 的运行参数与关联信息</CardDescription>
@@ -376,7 +376,7 @@ const callLogs = [
                   v-for="tag in agent.tags"
                   :key="tag"
                   variant="secondary"
-                  class="text-[11px] px-2.5 py-0.5"
+                  class="text-[10px] tracking-wide px-2.5 py-0.5"
                 >
                   {{ tag }}
                 </Badge>
@@ -388,9 +388,9 @@ const callLogs = [
 
       <!-- 调用日志 -->
       <TabsContent value="logs">
-        <Card class="border-0 shadow-sm">
+        <Card class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs">
           <CardHeader>
-            <CardTitle class="text-base">
+            <CardTitle class="text-[15px] font-semibold">
               调用日志
             </CardTitle>
             <CardDescription>最近 5 条 Agent 调用记录</CardDescription>
@@ -399,12 +399,12 @@ const callLogs = [
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>时间</TableHead>
-                  <TableHead>用户</TableHead>
-                  <TableHead>输入摘要</TableHead>
-                  <TableHead>Token 数</TableHead>
-                  <TableHead>延迟</TableHead>
-                  <TableHead>状态</TableHead>
+                  <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">时间</TableHead>
+                  <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">用户</TableHead>
+                  <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">输入摘要</TableHead>
+                  <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">Token 数</TableHead>
+                  <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">延迟</TableHead>
+                  <TableHead class="text-xs font-medium uppercase tracking-wider text-muted-foreground">状态</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

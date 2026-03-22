@@ -35,6 +35,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/datasets/DatasetCreatePage.vue'),
         meta: { title: '新增数据集' },
       },
+      {
+        path: 'datasets/:id',
+        name: 'DatasetDetail',
+        component: () => import('@/pages/datasets/DatasetDetailPage.vue'),
+        meta: { title: '数据集详情' },
+      },
 
       // 模型 — 模型管理
       {
@@ -42,6 +48,12 @@ export const routes: RouteRecordRaw[] = [
         name: 'ModelList',
         component: () => import('@/pages/models/ModelListPage.vue'),
         meta: { title: '模型管理' },
+      },
+      {
+        path: 'models/create',
+        name: 'ModelCreate',
+        component: () => import('@/pages/models/ModelCreatePage.vue'),
+        meta: { title: '注册模型' },
       },
       {
         path: 'models/:id',
@@ -57,6 +69,18 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/training/TrainingListPage.vue'),
         meta: { title: '模型训练' },
       },
+      {
+        path: 'training/create',
+        name: 'TrainingCreate',
+        component: () => import('@/pages/training/TrainingCreatePage.vue'),
+        meta: { title: '创建训练任务' },
+      },
+      {
+        path: 'training/:id',
+        name: 'TrainingDetail',
+        component: () => import('@/pages/training/TrainingDetailPage.vue'),
+        meta: { title: '训练详情' },
+      },
 
       // 模型 — 模型部署
       {
@@ -64,6 +88,26 @@ export const routes: RouteRecordRaw[] = [
         name: 'DeploymentList',
         component: () => import('@/pages/deployments/DeploymentListPage.vue'),
         meta: { title: '模型部署' },
+      },
+      {
+        path: 'deployments/create',
+        name: 'DeploymentCreate',
+        component: () => import('@/pages/deployments/DeploymentCreatePage.vue'),
+        meta: { title: '创建部署' },
+      },
+
+      // 模型 — 模型评测
+      {
+        path: 'evaluation',
+        name: 'EvaluationList',
+        component: () => import('@/pages/evaluation/EvaluationListPage.vue'),
+        meta: { title: '模型评测' },
+      },
+      {
+        path: 'evaluation/:id',
+        name: 'EvaluationDetail',
+        component: () => import('@/pages/evaluation/EvaluationDetailPage.vue'),
+        meta: { title: '评测报告' },
       },
 
       // 知识库
@@ -112,6 +156,12 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: 'Agent 管理' },
       },
       {
+        path: 'agents/create',
+        name: 'AgentCreate',
+        component: () => import('@/pages/agents/AgentCreatePage.vue'),
+        meta: { title: '创建 Agent' },
+      },
+      {
         path: 'agents/:id',
         name: 'AgentDetail',
         component: () => import('@/pages/agents/AgentDetailPage.vue'),
@@ -132,6 +182,14 @@ export const routes: RouteRecordRaw[] = [
         name: 'ChatAgent',
         component: () => import('@/pages/chat/ChatAgentPage.vue'),
         meta: { title: 'ChatAgent' },
+      },
+
+      // 推理监控
+      {
+        path: 'monitoring',
+        name: 'Monitoring',
+        component: () => import('@/pages/monitoring/MonitoringPage.vue'),
+        meta: { title: '推理监控' },
       },
 
       // 系统设置

@@ -4,9 +4,11 @@
  */
 import type { Component } from 'vue'
 import {
+  Activity,
   BookOpen,
   Bot,
   Box,
+  ClipboardCheck,
   Database,
   GraduationCap,
   LayoutDashboard,
@@ -42,12 +44,14 @@ export const modelNavGroup: NavGroup = {
     { title: '模型管理', icon: Box, path: '/models' },
     { title: '模型训练', icon: GraduationCap, path: '/training' },
     { title: '模型部署', icon: Rocket, path: '/deployments' },
+    { title: '模型评测', icon: ClipboardCheck, path: '/evaluation' },
   ],
 }
 
 /** 功能模块导航 */
 export const featureNavItems: NavItem[] = [
   { title: '知识库', icon: BookOpen, path: '/knowledge' },
+  { title: '推理监控', icon: Activity, path: '/monitoring' },
   { title: 'Agent 管理', icon: Bot, path: '/agents' },
   { title: '插件市场', icon: Store, path: '/plugins' },
   { title: 'ChatAgent', icon: MessageCircle, path: '/chat' },

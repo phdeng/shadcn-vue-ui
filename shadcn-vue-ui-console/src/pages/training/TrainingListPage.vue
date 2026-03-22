@@ -40,9 +40,11 @@ import {
  */
 import { Skeleton } from '@ui/components/ui/skeleton'
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import TrainingCreateDialog from '@/components/training/TrainingCreateDialog.vue'
+
+const router = useRouter()
 
 const searchQuery = ref('')
 const loading = ref(true)
@@ -102,20 +104,19 @@ const stats = computed(() => ({
 
 // ==================== 对话框状态 ====================
 
-const showCreateDialog = ref(false)
 const showDeleteDialog = ref(false)
 const deleteTarget = ref<TrainingJob | null>(null)
 
 // ==================== 事件处理 ====================
 
-/** 创建训练任务提交 */
-function handleCreateSubmit(data: { name: string }) {
-  toast.success('训练任务已创建', { description: data.name })
+/** 查看详情 */
+function handleViewDetail(job: TrainingJob) {
+  router.push(`/training/${job.id}`)
 }
 
 /** 查看日志 */
 function handleViewLogs(job: TrainingJob) {
-  toast.info(`查看训练日志：${job.name}`, { description: `状态: ${statusConfig[job.status].label}` })
+  router.push(`/training/${job.id}`)
 }
 
 /** 导出模型 */
@@ -185,7 +186,7 @@ function handleDelete() {
           管理微调任务、训练参数与训练日志
         </p>
       </div>
-      <Button size="sm" @click="showCreateDialog = true">
+      <Button size="sm" @click="router.push('/training/create')">
         <Plus class="mr-2 size-4" />
         创建训练任务
       </Button>
@@ -253,7 +254,7 @@ function handleDelete() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow v-for="job in filteredJobs" :key="job.id" class="group">
+            <TableRow v-for="job in filteredJobs" :key="job.id" class="group cursor-pointer" @click="handleViewDetail(job)">
               <TableCell class="font-medium">
                 {{ job.name }}
               </TableCell>
@@ -324,12 +325,6 @@ function handleDelete() {
         </Table>
       </CardContent>
     </Card>
-
-    <!-- 创建训练任务对话框 -->
-    <TrainingCreateDialog
-      v-model:open="showCreateDialog"
-      @submit="handleCreateSubmit"
-    />
 
     <!-- 删除确认对话框 -->
     <ConfirmDialog

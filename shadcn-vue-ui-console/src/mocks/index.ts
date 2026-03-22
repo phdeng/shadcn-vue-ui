@@ -16,3 +16,8 @@ export type {
   ModelItem,
   ModelStatus,
 } from './models'
+
+export {
+  mockTrainingJobs,
+  mockDeployments,
+} from './training-deploy'
