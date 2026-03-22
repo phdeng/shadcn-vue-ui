@@ -1,29 +1,39 @@
 <script setup lang="ts">
+/**
+ * @description 工作流详情/编辑页 — 可视化画布式编排
+ * @author Timon
+ */
 import { Badge } from '@ui/components/ui/badge'
 import { Button } from '@ui/components/ui/button'
 import {
   Card,
   CardContent,
 } from '@ui/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu'
+import { Input } from '@ui/components/ui/input'
+import { Separator } from '@ui/components/ui/separator'
 import { Skeleton } from '@ui/components/ui/skeleton'
 import { cn } from '@ui/lib/utils'
 import {
   ArrowLeft,
   Braces,
-  CircleDot,
   GitBranch,
-  Globe,
-  Pencil,
+  Maximize,
+  MoreHorizontal,
   Plus,
   Send,
   Sparkles,
+  X,
   Zap,
+  ZoomIn,
+  ZoomOut,
 } from 'lucide-vue-next'
-/**
- * @description 工作流详情/编辑页 — 竖向节点链式编排 MVP
- * @author Timon
- */
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 
@@ -48,56 +58,75 @@ const statusConfig: Record<string, { label: string, dotClass: string, badgeClass
   disabled: { label: '已停用', dotClass: 'bg-destructive', badgeClass: 'bg-destructive/10 text-destructive' },
 }
 
+// ==================== 节点类型配置 ====================
+
+const nodeTypeConfig: Record<string, { label: string, icon: typeof Zap, borderColor: string }> = {
+  trigger: { label: '触发器', icon: Zap, borderColor: 'border-l-primary' },
+  model: { label: '模型调用', icon: Sparkles, borderColor: 'border-l-chart-1' },
+  condition: { label: '条件分支', icon: GitBranch, borderColor: 'border-l-chart-5' },
+  output: { label: '输出', icon: Braces, borderColor: 'border-l-success' },
+}
+
 // ==================== 节点数据 ====================
 
 interface WorkflowNode {
   id: string
   type: 'trigger' | 'model' | 'condition' | 'output'
   name: string
-  description: string
   config: string
-  icon: typeof Zap
-  iconBg: string
+  x: number
+  y: number
+}
+
+interface WorkflowEdge {
+  from: string
+  to: string
 }
 
 const nodes = ref<WorkflowNode[]>([
-  {
-    id: 'n1',
-    type: 'trigger',
-    name: '触发器',
-    description: 'API 调用触发',
-    config: 'POST /api/workflow/run',
-    icon: Zap,
-    iconBg: 'bg-amber-500/10 text-amber-500',
-  },
-  {
-    id: 'n2',
-    type: 'model',
-    name: '模型调用',
-    description: 'GPT-4o',
-    config: '提示词："根据用户输入生成回答"',
-    icon: Sparkles,
-    iconBg: 'bg-primary/10 text-primary',
-  },
-  {
-    id: 'n3',
-    type: 'condition',
-    name: '条件分支',
-    description: '置信度判断',
-    config: '> 0.8 → 直接输出，否则 → 人工审核',
-    icon: GitBranch,
-    iconBg: 'bg-violet-500/10 text-violet-500',
-  },
-  {
-    id: 'n4',
-    type: 'output',
-    name: '输出',
-    description: 'JSON 返回',
-    config: '结构化 JSON 响应体',
-    icon: Braces,
-    iconBg: 'bg-success/10 text-success',
-  },
+  { id: 'n1', type: 'trigger', name: 'API 触发器', config: 'POST /api/workflow/run', x: 80, y: 80 },
+  { id: 'n2', type: 'model', name: '模型调用', config: 'GPT-4o · Temperature 0.7', x: 380, y: 60 },
+  { id: 'n3', type: 'condition', name: '条件分支', config: '置信度 > 0.8', x: 680, y: 40 },
+  { id: 'n4', type: 'output', name: 'JSON 输出', config: '返回结构化结果', x: 680, y: 250 },
 ])
+
+const edges = ref<WorkflowEdge[]>([
+  { from: 'n1', to: 'n2' },
+  { from: 'n2', to: 'n3' },
+  { from: 'n3', to: 'n4' },
+])
+
+// ==================== 画布状态 ====================
+
+const zoom = ref(1)
+const selectedNodeId = ref<string | null>(null)
+
+const selectedNode = computed(() =>
+  nodes.value.find(n => n.id === selectedNodeId.value) ?? null,
+)
+
+// 节点尺寸常量（用于连线计算）
+const NODE_W = 220
+const NODE_H = 90
+
+// ==================== 连线路径计算 ====================
+
+function getEdgePath(edge: WorkflowEdge): string {
+  const from = nodes.value.find(n => n.id === edge.from)
+  const to = nodes.value.find(n => n.id === edge.to)
+  if (!from || !to) return ''
+
+  // 起点：源节点右侧中点
+  const x1 = from.x + NODE_W
+  const y1 = from.y + NODE_H / 2
+  // 终点：目标节点左侧中点
+  const x2 = to.x
+  const y2 = to.y + NODE_H / 2
+
+  // 贝塞尔曲线控制点
+  const dx = Math.abs(x2 - x1) * 0.5
+  return `M ${x1},${y1} C ${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`
+}
 
 // ==================== 事件处理 ====================
 
@@ -115,12 +144,48 @@ function handlePublish() {
   }
 }
 
-function handleEditNode(node: WorkflowNode) {
-  toast.info('节点编辑', { description: `编辑「${node.name}」— 功能开发中` })
+function handleZoomIn() {
+  zoom.value = Math.min(zoom.value + 0.1, 2)
 }
 
-function handleAddNode() {
-  toast.info('添加节点', { description: '功能开发中' })
+function handleZoomOut() {
+  zoom.value = Math.max(zoom.value - 0.1, 0.5)
+}
+
+function handleFitCanvas() {
+  zoom.value = 1
+}
+
+function handleSelectNode(nodeId: string) {
+  selectedNodeId.value = selectedNodeId.value === nodeId ? null : nodeId
+}
+
+function handleClosePanel() {
+  selectedNodeId.value = null
+}
+
+function handleAddNode(type: WorkflowNode['type']) {
+  const id = `n${Date.now()}`
+  const config = nodeTypeConfig[type]
+  nodes.value.push({
+    id,
+    type,
+    name: config.label,
+    config: '',
+    x: 200 + Math.random() * 300,
+    y: 100 + Math.random() * 200,
+  })
+  selectedNodeId.value = id
+  toast.success(`已添加「${config.label}」节点`)
+}
+
+function handleDeleteNode(nodeId: string) {
+  nodes.value = nodes.value.filter(n => n.id !== nodeId)
+  edges.value = edges.value.filter(e => e.from !== nodeId && e.to !== nodeId)
+  if (selectedNodeId.value === nodeId) {
+    selectedNodeId.value = null
+  }
+  toast.info('节点已删除')
 }
 </script>
 
@@ -135,9 +200,7 @@ function handleAddNode() {
           <Skeleton class="h-4 w-32" />
         </div>
       </div>
-      <div class="max-w-2xl mx-auto w-full space-y-4">
-        <Skeleton v-for="i in 4" :key="i" class="h-24 rounded-xl" />
-      </div>
+      <Skeleton class="h-[600px] rounded-2xl" />
     </div>
 
     <div v-else class="flex flex-col gap-6">
@@ -169,75 +232,197 @@ function handleAddNode() {
         </Button>
       </div>
 
-      <!-- 节点链 -->
-      <div class="mx-auto w-full max-w-2xl">
-        <div class="relative">
-          <!-- 竖向连接线 -->
-          <div class="absolute left-[27px] top-0 bottom-0 w-px border-l-2 border-dashed border-border/60" />
+      <!-- 工具栏 -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-1">
+          <Button variant="outline" size="icon" class="size-8" @click="handleZoomOut">
+            <ZoomOut class="size-3.5" />
+          </Button>
+          <span class="w-12 text-center text-xs text-muted-foreground tabular-nums">
+            {{ Math.round(zoom * 100) }}%
+          </span>
+          <Button variant="outline" size="icon" class="size-8" @click="handleZoomIn">
+            <ZoomIn class="size-3.5" />
+          </Button>
+          <Button variant="outline" size="icon" class="size-8 ml-1" @click="handleFitCanvas">
+            <Maximize class="size-3.5" />
+          </Button>
+        </div>
 
-          <!-- 节点列表 -->
-          <div class="space-y-0">
-            <div v-for="(node, index) in nodes" :key="node.id" class="relative flex gap-4">
-              <!-- 左侧圆点标记 -->
-              <div class="relative z-10 flex flex-col items-center">
-                <div
-                  :class="cn(
-                    'flex size-[22px] items-center justify-center rounded-full border-2 border-background bg-background',
-                    index === 0 ? 'mt-5' : 'mt-5',
-                  )"
-                >
-                  <CircleDot class="size-3.5 text-primary" />
-                </div>
-              </div>
-
-              <!-- 节点卡片 -->
-              <Card
-                class="mb-4 flex-1 border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs transition-all hover:border-border/60 hover:shadow-md hover:shadow-black/5"
-              >
-                <CardContent class="flex items-center gap-4 p-5">
-                  <!-- 节点图标 -->
-                  <div :class="cn('flex size-10 shrink-0 items-center justify-center rounded-xl', node.iconBg)">
-                    <component :is="node.icon" class="size-5" />
-                  </div>
-                  <!-- 节点信息 -->
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2">
-                      <span class="text-sm font-medium">{{ node.name }}</span>
-                      <span class="text-xs text-muted-foreground">{{ node.description }}</span>
-                    </div>
-                    <p class="mt-1 text-xs text-muted-foreground/80 font-mono truncate">
-                      {{ node.config }}
-                    </p>
-                  </div>
-                  <!-- 编辑按钮 -->
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    class="size-8 shrink-0 opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity"
-                    @click.stop="handleEditNode(node)"
-                  >
-                    <Pencil class="size-3.5" />
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          <!-- 添加节点按钮 -->
-          <div class="relative flex gap-4">
-            <div class="relative z-10 flex flex-col items-center">
-              <div class="flex size-[22px] items-center justify-center rounded-full border-2 border-dashed border-border/60 bg-background mt-2.5">
-                <Plus class="size-3 text-muted-foreground" />
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              class="mb-4 flex-1 h-12 rounded-2xl border-dashed border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
-              @click="handleAddNode"
-            >
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button variant="outline" size="sm">
               <Plus class="mr-2 size-4" />
               添加节点
             </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" class="w-48">
+            <DropdownMenuItem @click="handleAddNode('trigger')">
+              <Zap class="mr-2 size-4 text-primary" />
+              触发器
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="handleAddNode('model')">
+              <Sparkles class="mr-2 size-4 text-chart-1" />
+              模型调用
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="handleAddNode('condition')">
+              <GitBranch class="mr-2 size-4 text-chart-5" />
+              条件分支
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="handleAddNode('output')">
+              <Braces class="mr-2 size-4 text-success" />
+              输出
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <!-- 画布 + 属性面板 -->
+      <div class="grid lg:grid-cols-[1fr_300px] gap-4">
+        <!-- 画布区域 -->
+        <div
+          class="relative min-h-[600px] rounded-2xl border border-border/40 bg-muted/10 overflow-auto"
+          style="background-image: radial-gradient(circle, oklch(var(--border)) 1px, transparent 1px); background-size: 20px 20px;"
+        >
+          <!-- 缩放容器 -->
+          <div
+            class="relative origin-top-left transition-transform duration-200"
+            :style="{ transform: `scale(${zoom})`, minWidth: '1000px', minHeight: '500px' }"
+          >
+            <!-- SVG 连接线层 -->
+            <svg class="absolute inset-0 w-full h-full pointer-events-none">
+              <path
+                v-for="edge in edges"
+                :key="`${edge.from}-${edge.to}`"
+                :d="getEdgePath(edge)"
+                stroke="oklch(var(--border))"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="6,4"
+              />
+            </svg>
+
+            <!-- 节点层 -->
+            <div
+              v-for="node in nodes"
+              :key="node.id"
+              :class="cn(
+                'absolute w-[220px] rounded-xl border border-border/50 bg-card shadow-sm cursor-pointer transition-all border-l-[3px]',
+                nodeTypeConfig[node.type].borderColor,
+                selectedNodeId === node.id
+                  ? 'border-primary shadow-md ring-2 ring-primary/20 border-l-primary'
+                  : 'hover:shadow-md',
+              )"
+              :style="{ left: `${node.x}px`, top: `${node.y}px` }"
+              @click="handleSelectNode(node.id)"
+            >
+              <!-- 节点头部 -->
+              <div class="flex items-center justify-between px-3 pt-3 pb-1">
+                <div class="flex items-center gap-2">
+                  <component
+                    :is="nodeTypeConfig[node.type].icon"
+                    class="size-3.5 text-muted-foreground"
+                  />
+                  <span class="text-sm font-medium truncate">{{ node.name }}</span>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger as-child>
+                    <button
+                      class="flex size-6 items-center justify-center rounded-md opacity-0 hover:bg-muted transition-opacity group-hover:opacity-100"
+                      :class="{ 'opacity-100': selectedNodeId === node.id }"
+                      @click.stop
+                    >
+                      <MoreHorizontal class="size-3.5 text-muted-foreground" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" class="w-36">
+                    <DropdownMenuItem class="text-destructive" @click.stop="handleDeleteNode(node.id)">
+                      删除节点
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <!-- 节点配置摘要 -->
+              <div class="px-3 pb-2">
+                <p class="text-xs text-muted-foreground/80 font-mono truncate">
+                  {{ node.config || '未配置' }}
+                </p>
+              </div>
+              <!-- 输出端口 -->
+              <div class="flex items-center gap-1.5 px-3 pb-2.5">
+                <span class="size-2 rounded-full bg-border" />
+                <span class="text-[10px] text-muted-foreground/60">output</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧属性面板 -->
+        <div
+          class="hidden lg:block rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm shadow-xs"
+        >
+          <!-- 有选中节点 -->
+          <template v-if="selectedNode">
+            <div class="flex items-center justify-between p-4">
+              <h3 class="text-sm font-semibold">节点属性</h3>
+              <Button variant="ghost" size="icon" class="size-7" @click="handleClosePanel">
+                <X class="size-3.5" />
+              </Button>
+            </div>
+            <Separator />
+            <div class="p-4 space-y-4">
+              <!-- 节点名称 -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-medium text-muted-foreground">名称</label>
+                <Input v-model="selectedNode.name" class="h-8 text-sm" />
+              </div>
+              <!-- 节点类型 -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-medium text-muted-foreground">类型</label>
+                <div class="flex items-center gap-2 h-8 px-3 rounded-md bg-muted/50 text-sm text-muted-foreground">
+                  <component :is="nodeTypeConfig[selectedNode.type].icon" class="size-3.5" />
+                  {{ nodeTypeConfig[selectedNode.type].label }}
+                </div>
+              </div>
+              <!-- 节点配置 -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-medium text-muted-foreground">配置</label>
+                <Input v-model="selectedNode.config" class="h-8 text-sm font-mono" />
+              </div>
+              <!-- 位置 -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-medium text-muted-foreground">位置</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] text-muted-foreground/60 w-3">X</span>
+                    <Input v-model.number="selectedNode.x" type="number" class="h-8 text-sm font-mono" />
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] text-muted-foreground/60 w-3">Y</span>
+                    <Input v-model.number="selectedNode.y" type="number" class="h-8 text-sm font-mono" />
+                  </div>
+                </div>
+              </div>
+              <Separator />
+              <!-- 删除按钮 -->
+              <Button
+                variant="outline"
+                size="sm"
+                class="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                @click="handleDeleteNode(selectedNode.id)"
+              >
+                删除节点
+              </Button>
+            </div>
+          </template>
+
+          <!-- 无选中节点 -->
+          <div v-else class="flex flex-col items-center justify-center h-full min-h-[300px] p-6 text-center">
+            <div class="size-10 rounded-xl bg-muted/50 flex items-center justify-center mb-3">
+              <Sparkles class="size-5 text-muted-foreground/50" />
+            </div>
+            <p class="text-sm text-muted-foreground">点击节点查看属性</p>
+            <p class="text-xs text-muted-foreground/60 mt-1">选中画布中的节点以编辑配置</p>
           </div>
         </div>
       </div>

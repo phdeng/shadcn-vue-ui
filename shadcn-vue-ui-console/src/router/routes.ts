@@ -201,6 +201,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/agents/AgentDetailPage.vue'),
         meta: { title: 'Agent 详情' },
       },
+      {
+        path: 'agents/:id/memory',
+        name: 'AgentMemory',
+        component: () => import('@/pages/agents/AgentMemoryPage.vue'),
+        meta: { title: 'Agent 记忆' },
+      },
 
       // Playground（原 ChatAgent）
       {

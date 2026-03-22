@@ -35,8 +35,12 @@ import {
   TabsList,
   TabsTrigger,
 } from '@ui/components/ui/tabs'
+import { Separator } from '@ui/components/ui/separator'
+import { Textarea } from '@ui/components/ui/textarea'
 import { cn } from '@ui/lib/utils'
 import {
+  FlaskConical,
+  Plus,
   ScrollText,
   Search,
   Settings,
@@ -127,27 +131,60 @@ const complianceStatusConfig: Record<ComplianceStatus, { badgeVariant: 'default'
   '不合规': { badgeVariant: 'secondary', badgeClass: 'bg-destructive/10 text-destructive border-0' },
 }
 
-// ==================== Tab 3: 安全策略 ====================
+// ==================== Tab 3: Guardrails 规则引擎 ====================
 
-interface SecurityPolicy {
+type RulePriority = '高' | '中' | '低'
+
+interface GuardrailRule {
   id: string
   name: string
-  description: string
+  condition: string
+  action: string
+  scope: string
+  priority: RulePriority
+  hitCount: number
   enabled: boolean
-  extraLabel?: string
-  extraValue?: string
 }
 
-const policies = ref<SecurityPolicy[]>([
-  { id: 'p1', name: '内容安全审核', description: '对模型输入输出进行实时内容安全检测，拦截违规内容', enabled: true },
-  { id: 'p2', name: '敏感词过滤', description: '基于自定义敏感词库，自动过滤或替换敏感内容', enabled: true },
-  { id: 'p3', name: '输出长度限制', description: '限制模型单次响应的最大 Token 数量', enabled: false, extraLabel: '最大 Token 数', extraValue: '4096' },
-  { id: 'p4', name: 'API 速率限制', description: '限制单个用户或 API Key 的请求频率', enabled: true, extraLabel: '每分钟请求数', extraValue: '60' },
+const guardrailRules = ref<GuardrailRule[]>([
+  { id: 'r1', name: '输入内容过滤', condition: '检测到敏感词或违规内容时拦截', action: '拒绝并返回提示信息', scope: '全部模型', priority: '高', hitCount: 127, enabled: true },
+  { id: 'r2', name: '输出安全审核', condition: '审核模型输出的安全性', action: '替换为安全内容', scope: '全部模型', priority: '高', hitCount: 43, enabled: true },
+  { id: 'r3', name: 'PII 脱敏', condition: '检测个人身份信息(姓名/身份证/手机号)', action: '自动脱敏处理', scope: '客服模型', priority: '中', hitCount: 256, enabled: true },
+  { id: 'r4', name: 'Token 限制', condition: '单次请求超过 8192 Token', action: '截断并警告', scope: '全部模型', priority: '低', hitCount: 12, enabled: false },
+  { id: 'r5', name: 'Prompt 注入防护', condition: '检测 Prompt 注入攻击模式', action: '拒绝请求', scope: '全部模型', priority: '高', hitCount: 8, enabled: true },
+  { id: 'r6', name: '版权内容过滤', condition: '检测可能的版权内容生成', action: '添加免责声明', scope: '内容生成模型', priority: '中', hitCount: 31, enabled: false },
 ])
 
-/** 保存安全策略配置 */
-function handleSavePolicies() {
-  toast.success('安全策略已保存')
+/** 规则优先级样式配置 */
+const priorityConfig: Record<RulePriority, string> = {
+  '高': 'bg-destructive/10 text-destructive',
+  '中': 'bg-warning/10 text-warning',
+  '低': 'bg-muted text-muted-foreground',
+}
+
+/** 规则测试输入 */
+const ruleTestInput = ref('')
+const ruleTestResult = ref<{ ruleName: string, action: string }[]>([])
+const ruleTestExecuted = ref(false)
+
+/** 创建规则 */
+function handleCreateRule() {
+  toast.success('规则创建功能开发中')
+}
+
+/** 执行规则测试 */
+function handleRuleTest() {
+  if (!ruleTestInput.value.trim()) {
+    toast.warning('请输入测试内容')
+    return
+  }
+  // Mock 返回 2 条命中结果
+  ruleTestResult.value = [
+    { ruleName: '输入内容过滤', action: '拒绝并返回提示信息' },
+    { ruleName: 'PII 脱敏', action: '自动脱敏处理' },
+  ]
+  ruleTestExecuted.value = true
+  toast.success('规则测试完成，命中 2 条规则')
 }
 </script>
 
@@ -291,32 +328,114 @@ function handleSavePolicies() {
         </Card>
       </TabsContent>
 
-      <!-- Tab 3: 安全策略 -->
+      <!-- Tab 3: Guardrails 规则引擎 -->
       <TabsContent value="policies">
-        <div class="space-y-4">
-          <Card
-            v-for="policy in policies"
-            :key="policy.id"
-            class="border border-border/40 bg-card/80 backdrop-blur-sm rounded-2xl shadow-xs"
-          >
-            <CardContent class="flex items-center justify-between py-6">
-              <div class="space-y-1.5 pr-8">
-                <h3 class="text-sm font-semibold">{{ policy.name }}</h3>
-                <p class="text-[13px] text-muted-foreground leading-relaxed">{{ policy.description }}</p>
-                <!-- 附加参数 -->
-                <p v-if="policy.extraLabel" class="text-xs text-muted-foreground/70">
-                  {{ policy.extraLabel }}：<span class="font-mono tabular-nums text-foreground/80">{{ policy.extraValue }}</span>
+        <div class="space-y-6">
+          <!-- 顶部操作栏 -->
+          <div class="flex items-end justify-between">
+            <div>
+              <h3 class="text-[15px] font-semibold">Guardrails 规则引擎</h3>
+              <p class="mt-1 text-[13px] text-muted-foreground">
+                定义输入输出安全规则，实时拦截违规内容与异常请求
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <Button variant="outline" size="sm" class="gap-1.5 rounded-xl" @click="handleRuleTest">
+                <FlaskConical class="size-3.5" />
+                规则测试
+              </Button>
+              <Button size="sm" class="gap-1.5 rounded-xl" @click="handleCreateRule">
+                <Plus class="size-3.5" />
+                创建规则
+              </Button>
+            </div>
+          </div>
+
+          <!-- 规则列表 -->
+          <div class="space-y-3">
+            <div
+              v-for="rule in guardrailRules"
+              :key="rule.id"
+              :class="cn(
+                'border border-border/40 bg-card/80 rounded-xl p-5 transition-opacity',
+                rule.enabled ? 'border-l-[3px] border-l-success' : 'opacity-60',
+              )"
+            >
+              <!-- 头部：名称 + 开关 -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span
+                    :class="cn(
+                      'size-2 rounded-full shrink-0',
+                      rule.enabled ? 'bg-success' : 'bg-muted-foreground',
+                    )"
+                  />
+                  <h4 class="text-sm font-semibold">{{ rule.name }}</h4>
+                </div>
+                <Switch v-model:checked="rule.enabled" />
+              </div>
+
+              <!-- 条件与动作 -->
+              <div class="mt-3 space-y-1.5 pl-4">
+                <p class="text-[13px] text-muted-foreground">
+                  <span class="text-foreground/70 font-medium">触发条件：</span>{{ rule.condition }}
+                </p>
+                <p class="text-[13px] text-muted-foreground">
+                  <span class="text-foreground/70 font-medium">处理方式：</span>{{ rule.action }}
                 </p>
               </div>
-              <Switch v-model:checked="policy.enabled" />
-            </CardContent>
-          </Card>
 
-          <!-- 保存按钮 -->
-          <div class="flex justify-end pt-2">
-            <Button @click="handleSavePolicies">
-              保存配置
-            </Button>
+              <!-- 底部信息 -->
+              <Separator class="my-3" />
+              <div class="flex items-center gap-4 pl-4 text-xs text-muted-foreground">
+                <span>作用范围：<span class="text-foreground/80">{{ rule.scope }}</span></span>
+                <span class="text-border">|</span>
+                <span>
+                  优先级：
+                  <Badge
+                    variant="secondary"
+                    :class="cn('text-[11px] font-medium border-0 ml-0.5', priorityConfig[rule.priority])"
+                  >
+                    {{ rule.priority }}
+                  </Badge>
+                </span>
+                <span class="text-border">|</span>
+                <span>命中：<span class="font-mono tabular-nums text-foreground/80">{{ rule.hitCount }}</span> 次</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 规则测试区域 -->
+          <Separator />
+          <div class="space-y-4">
+            <h3 class="text-[15px] font-semibold">规则测试</h3>
+            <Textarea
+              v-model="ruleTestInput"
+              placeholder="输入测试内容，验证规则是否正确触发..."
+              class="min-h-[100px] rounded-xl resize-none"
+            />
+            <div class="flex items-center justify-between">
+              <Button size="sm" class="gap-1.5 rounded-xl" @click="handleRuleTest">
+                <FlaskConical class="size-3.5" />
+                测试
+              </Button>
+            </div>
+
+            <!-- 测试结果 -->
+            <div v-if="ruleTestExecuted" class="space-y-2">
+              <p class="text-[13px] font-medium text-foreground/80">
+                命中规则（{{ ruleTestResult.length }} 条）
+              </p>
+              <div
+                v-for="(result, idx) in ruleTestResult"
+                :key="idx"
+                class="flex items-center gap-3 border border-border/40 bg-card/80 rounded-lg px-4 py-3"
+              >
+                <span class="size-2 rounded-full bg-destructive shrink-0" />
+                <span class="text-sm font-medium">{{ result.ruleName }}</span>
+                <span class="text-xs text-muted-foreground">→ {{ result.action }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </TabsContent>

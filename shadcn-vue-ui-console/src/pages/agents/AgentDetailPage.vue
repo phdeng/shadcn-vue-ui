@@ -24,6 +24,7 @@ import {
   Activity,
   ArrowLeft,
   Bot,
+  Brain,
   Clock,
   LayoutGrid,
   MessageSquare,
@@ -208,9 +209,15 @@ const callLogs = [
           </p>
         </div>
       </div>
-      <Button variant="outline" class="shrink-0" @click="toast.info('编辑 Agent', { description: `${agent.name} — 修改配置后将立即生效` })">
-        编辑
-      </Button>
+      <div class="flex gap-2 shrink-0">
+        <Button variant="outline" class="gap-1.5" @click="router.push({ name: 'AgentMemory', params: { id: agentId } })">
+          <Brain class="size-4" />
+          记忆管理
+        </Button>
+        <Button variant="outline" @click="toast.info('编辑 Agent', { description: `${agent.name} — 修改配置后将立即生效` })">
+          编辑
+        </Button>
+      </div>
     </div>
 
     <!-- 指标卡片 — HUD 水印风格 -->
