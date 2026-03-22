@@ -19,7 +19,7 @@ import { Separator } from '@ui/components/ui/separator'
 import { Label } from '@ui/components/ui/label'
 import { Slider } from '@ui/components/ui/slider'
 import { cn } from '@ui/lib/utils'
-import { Bot, FileText, Image, Layers, Mic, Music, Pause, Play, RotateCcw, Send, Settings2, Sparkles, Upload, User } from 'lucide-vue-next'
+import { Bot, FileText, Image, Layers, Mic, Music, Play, RotateCcw, Send, Settings2, Sparkles, Upload, User } from 'lucide-vue-next'
 /**
  * @description Playground 多模态推理调试环境
  * @author Timon
@@ -145,10 +145,13 @@ function sendMessage() {
   if (!inputMessage.value.trim() || isTyping.value)
     return
 
+  const currentModality = activeModal.value
+
   messages.value.push({
     role: 'user',
     content: inputMessage.value,
     time: now(),
+    modality: currentModality,
   })
 
   const userMsg = inputMessage.value
@@ -157,13 +160,15 @@ function sendMessage() {
   isTyping.value = true
   scrollToBottom()
 
-  // 模拟 AI 回复（根据当前 Agent 类型生成）
+  // 模拟 AI 回复（根据当前 Agent 类型和模态生成）
   setTimeout(() => {
     isTyping.value = false
+    const replyModality = currentModality === 'image' ? 'image' : currentModality === 'audio' ? 'audio' : 'text'
     messages.value.push({
       role: 'assistant',
       content: `${agent.replyPrefix}收到你的消息：「${userMsg}」\n\n这是一个模拟回复。实际使用时，这里会调用 **${agent.label}** 的后端 API 进行处理。`,
       time: now(),
+      modality: replyModality,
     })
     scrollToBottom()
   }, 800)
@@ -173,38 +178,70 @@ function sendMessage() {
 <template>
   <div class="flex h-[calc(100vh-8rem)] flex-col">
     <!-- 顶部工具栏 -->
-    <div class="flex items-center justify-between pb-4">
-      <div class="flex items-center gap-3">
-        <h2 class="text-lg font-semibold tracking-tight">
-          ChatAgent
-        </h2>
-        <Separator orientation="vertical" class="!h-5" />
-        <Select v-model="selectedAgent">
-          <SelectTrigger class="h-8 w-40 text-xs">
-            <SelectValue placeholder="选择 Agent" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem v-for="a in agents" :key="a.value" :value="a.value" class="text-xs">
-              {{ a.label }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        <Badge variant="secondary" class="gap-1.5 text-[10px]">
-          <span class="size-1.5 rounded-full bg-emerald-500" />
-          在线
-        </Badge>
+    <div class="flex flex-col gap-3 pb-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div>
+            <h2 class="text-lg font-semibold tracking-tight">
+              Playground
+            </h2>
+            <p class="text-xs text-muted-foreground">
+              统一多模态推理调试环境
+            </p>
+          </div>
+          <Separator orientation="vertical" class="!h-8" />
+          <Select v-model="selectedAgent">
+            <SelectTrigger class="h-8 w-40 text-xs">
+              <SelectValue placeholder="选择 Agent" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="a in agents" :key="a.value" :value="a.value" class="text-xs">
+                {{ a.label }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <Badge variant="secondary" class="gap-1.5 text-[10px]">
+            <span class="size-1.5 rounded-full bg-emerald-500" />
+            在线
+          </Badge>
+        </div>
+        <div class="flex items-center gap-1">
+          <Button variant="ghost" size="icon" class="size-8" @click="clearMessages">
+            <RotateCcw class="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            class="size-8"
+            :class="showConfig && 'bg-muted'"
+            @click="showConfig = !showConfig"
+          >
+            <Settings2 class="size-4" />
+          </Button>
+        </div>
       </div>
-      <div class="flex items-center gap-1">
-        <Button variant="ghost" size="icon" class="size-8" @click="clearMessages">
-          <RotateCcw class="size-4" />
-        </Button>
-        <Button variant="ghost" size="icon" class="size-8" @click="toast.info('Agent 设置', { description: '可调整 Temperature、Max Tokens 等参数' })">
-          <Settings2 class="size-4" />
-        </Button>
+
+      <!-- 模态切换按钮组 -->
+      <div class="flex gap-1 rounded-xl bg-muted/40 p-1 w-fit">
+        <button
+          v-for="mode in modes"
+          :key="mode.value"
+          :class="cn(
+            'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+            activeModal === mode.value
+              ? 'bg-background text-foreground shadow-sm'
+              : 'text-muted-foreground hover:text-foreground',
+          )"
+          @click="activeModal = mode.value"
+        >
+          <component :is="mode.icon" class="size-3.5" />
+          {{ mode.label }}
+        </button>
       </div>
     </div>
 
-    <!-- 对话区域 -->
+    <!-- 对话区域 + 侧边配置 -->
+    <div class="flex flex-1 gap-4 overflow-hidden">
     <Card class="flex flex-1 flex-col border-0 shadow-sm overflow-hidden">
       <ScrollArea class="flex-1 px-6 py-4">
         <div class="mx-auto max-w-3xl space-y-5">
@@ -238,6 +275,38 @@ function sendMessage() {
                 <span v-if="msg.role === 'user'">{{ msg.content }}</span>
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <div v-else class="prose prose-sm dark:prose-invert max-w-none" v-html="renderMarkdown(msg.content)" />
+
+                <!-- 图片模态内容占位 -->
+                <div v-if="msg.modality === 'image'" class="mt-2">
+                  <div
+                    v-if="msg.role === 'user'"
+                    class="flex items-center justify-center rounded-xl border-2 border-dashed border-border/60 h-32 w-32 bg-muted/20"
+                  >
+                    <Image class="size-8 text-muted-foreground/40" />
+                  </div>
+                  <div
+                    v-else
+                    class="flex items-center justify-center rounded-xl bg-muted/30 h-48 w-full"
+                  >
+                    <div class="text-center">
+                      <Image class="size-10 text-muted-foreground/30 mx-auto mb-1" />
+                      <span class="text-xs text-muted-foreground/50">AI 生成图片</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 音频模态内容占位 -->
+                <div v-if="msg.modality === 'audio'" class="mt-2">
+                  <div class="flex items-center gap-2 rounded-xl bg-muted/30 h-10 px-3 w-full">
+                    <button class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground shrink-0">
+                      <Play class="size-3" />
+                    </button>
+                    <div class="flex-1 h-1 rounded-full bg-muted-foreground/20">
+                      <div class="h-full w-1/3 rounded-full bg-primary/60" />
+                    </div>
+                    <span class="text-[10px] text-muted-foreground/50 shrink-0">0:12</span>
+                  </div>
+                </div>
               </div>
               <p class="text-[10px] text-muted-foreground/60 px-1">
                 {{ msg.time }}
@@ -278,21 +347,104 @@ function sendMessage() {
 
       <!-- 输入区域 -->
       <CardContent class="border-t border-border/50 p-4">
-        <div class="mx-auto flex max-w-3xl items-center gap-2">
-          <div class="relative flex-1">
-            <Input
-              v-model="inputMessage"
-              placeholder="输入消息，按 Enter 发送..."
-              class="pr-10 h-10 rounded-xl"
-              @keyup.enter="sendMessage"
-            />
-            <Sparkles class="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/40 pointer-events-none" />
+        <div class="mx-auto max-w-3xl space-y-3">
+          <!-- 图片上传区域 -->
+          <div
+            v-if="activeModal === 'image' || activeModal === 'multimodal'"
+            class="flex items-center gap-3"
+          >
+            <div class="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/60 h-32 w-32 cursor-pointer transition-colors hover:border-primary/40 hover:bg-primary/5">
+              <Upload class="size-6 text-muted-foreground/40 mb-1" />
+              <span class="text-[10px] text-muted-foreground/50">点击上传图片</span>
+            </div>
           </div>
-          <Button size="icon" class="size-10 shrink-0 rounded-xl" :disabled="isTyping" @click="sendMessage">
-            <Send class="size-4" />
-          </Button>
+
+          <!-- 音频录制区域 -->
+          <div
+            v-if="activeModal === 'audio'"
+            class="flex items-center gap-3"
+          >
+            <button class="flex items-center justify-center rounded-full size-12 bg-destructive text-destructive-foreground transition-transform hover:scale-105 shrink-0">
+              <Mic class="size-5" />
+            </button>
+            <span class="text-xs text-muted-foreground">点击录音或上传音频文件</span>
+          </div>
+
+          <!-- 文本输入 -->
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <Input
+                v-model="inputMessage"
+                :placeholder="activeModal === 'audio' ? '添加音频描述...' : activeModal === 'image' ? '添加图片描述...' : '输入消息，按 Enter 发送...'"
+                class="pr-10 h-10 rounded-xl"
+                @keyup.enter="sendMessage"
+              />
+              <Sparkles class="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/40 pointer-events-none" />
+            </div>
+            <Button size="icon" class="size-10 shrink-0 rounded-xl" :disabled="isTyping" @click="sendMessage">
+              <Send class="size-4" />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
+
+    <!-- 右侧配置面板 -->
+    <Card
+      v-if="showConfig"
+      class="w-72 shrink-0 border-0 shadow-sm overflow-hidden flex flex-col"
+    >
+      <CardContent class="p-4 space-y-5">
+        <div>
+          <h3 class="text-sm font-medium mb-3">模型配置</h3>
+          <Separator />
+        </div>
+
+        <!-- 模型选择 -->
+        <div class="space-y-2">
+          <Label class="text-xs text-muted-foreground">模型</Label>
+          <Select v-model="selectedModel">
+            <SelectTrigger class="h-8 text-xs">
+              <SelectValue placeholder="选择模型" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="m in modelOptions" :key="m.value" :value="m.value" class="text-xs">
+                {{ m.label }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <!-- Temperature -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <Label class="text-xs text-muted-foreground">Temperature</Label>
+            <span class="text-xs font-mono text-muted-foreground">{{ temperature[0].toFixed(1) }}</span>
+          </div>
+          <Slider v-model="temperature" :min="0" :max="2" :step="0.1" class="w-full" />
+        </div>
+
+        <!-- Max Tokens -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <Label class="text-xs text-muted-foreground">Max Tokens</Label>
+            <span class="text-xs font-mono text-muted-foreground">{{ maxTokens[0] }}</span>
+          </div>
+          <Slider v-model="maxTokens" :min="256" :max="8192" :step="256" class="w-full" />
+        </div>
+
+        <Separator />
+
+        <!-- 当前模态信息 -->
+        <div class="space-y-2">
+          <Label class="text-xs text-muted-foreground">当前模态</Label>
+          <Badge variant="outline" class="gap-1.5 text-xs">
+            <component :is="modes.find(m => m.value === activeModal)?.icon" class="size-3" />
+            {{ modes.find(m => m.value === activeModal)?.label }}
+          </Badge>
+        </div>
+      </CardContent>
+    </Card>
+    </div>
   </div>
 </template>

@@ -75,6 +75,13 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/training/TrainingCreatePage.vue'),
         meta: { title: '创建训练任务' },
       },
+      // 模型 — 蒸馏与量化
+      {
+        path: 'training/distillation',
+        name: 'Distillation',
+        component: () => import('@/pages/training/DistillationPage.vue'),
+        meta: { title: '蒸馏与量化' },
+      },
       {
         path: 'training/:id',
         name: 'TrainingDetail',
@@ -180,6 +187,28 @@ export const routes: RouteRecordRaw[] = [
         name: 'Security',
         component: () => import('@/pages/security/SecurityPage.vue'),
         meta: { title: '安全合规' },
+      },
+
+      // 联邦学习
+      {
+        path: 'federated',
+        name: 'FederatedLearning',
+        component: () => import('@/pages/federated/FederatedLearningPage.vue'),
+        meta: { title: '联邦学习' },
+      },
+
+      // Prompt 工程台
+      {
+        path: 'prompts',
+        name: 'PromptList',
+        component: () => import('@/pages/prompts/PromptListPage.vue'),
+        meta: { title: 'Prompt 工程台' },
+      },
+      {
+        path: 'prompts/:id',
+        name: 'PromptDetail',
+        component: () => import('@/pages/prompts/PromptDetailPage.vue'),
+        meta: { title: 'Prompt 详情' },
       },
 
       // Agent 管理
