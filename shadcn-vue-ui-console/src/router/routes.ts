@@ -157,9 +157,21 @@ export const routes: RouteRecordRaw[] = [
       // 工作流编排
       {
         path: 'workflows',
-        name: 'Workflows',
+        name: 'WorkflowList',
         component: () => import('@/pages/workflows/WorkflowsPage.vue'),
         meta: { title: '工作流编排' },
+      },
+      {
+        path: 'workflows/create',
+        name: 'WorkflowCreate',
+        component: () => import('@/pages/workflows/WorkflowCreatePage.vue'),
+        meta: { title: '创建工作流' },
+      },
+      {
+        path: 'workflows/:id',
+        name: 'WorkflowDetail',
+        component: () => import('@/pages/workflows/WorkflowDetailPage.vue'),
+        meta: { title: '工作流详情' },
       },
 
       // 安全合规
@@ -190,14 +202,6 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: 'Agent 详情' },
       },
 
-      // 工作流编排
-      {
-        path: 'workflows',
-        name: 'Workflows',
-        component: () => import('@/pages/workflows/WorkflowsPage.vue'),
-        meta: { title: '工作流编排' },
-      },
-
       // Playground（原 ChatAgent）
       {
         path: 'playground',
@@ -220,14 +224,6 @@ export const routes: RouteRecordRaw[] = [
         name: 'Observability',
         component: () => import('@/pages/monitoring/MonitoringPage.vue'),
         meta: { title: '可观测性' },
-      },
-
-      // 安全合规
-      {
-        path: 'security',
-        name: 'Security',
-        component: () => import('@/pages/security/SecurityPage.vue'),
-        meta: { title: '安全合规' },
       },
 
       // 系统设置

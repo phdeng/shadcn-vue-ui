@@ -9,6 +9,9 @@ export type DatasetStatus = 'processed' | 'processing' | 'pending'
 /** 数据集格式 */
 export type DatasetFormat = 'JSONL' | 'JSON' | 'CSV' | 'TXT' | 'XLSX'
 
+/** 数据模态类型 */
+export type DataModality = 'text' | 'image' | 'audio' | 'video' | 'multimodal'
+
 /** 数据集项 */
 export interface DatasetItem {
   id: string
@@ -16,6 +19,7 @@ export interface DatasetItem {
   records: number
   size: string
   format: DatasetFormat
+  modality?: DataModality
   status: DatasetStatus
   updatedAt: string
 }

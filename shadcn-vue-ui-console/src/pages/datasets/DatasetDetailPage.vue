@@ -29,8 +29,11 @@ import {
   Database,
   FileText,
   HardDrive,
+  ImageIcon,
   Layers,
+  Music,
   Sparkles,
+  Video,
   Zap,
 } from 'lucide-vue-next'
 /**
@@ -49,10 +52,23 @@ const datasetId = route.params.id as string
 
 // ==================== 数据集信息 ====================
 
+/** 数据模态类型 */
+type DataModality = 'text' | 'image' | 'audio' | 'video' | 'multimodal'
+
+/** 模态标签配置 */
+const modalityConfig: Record<DataModality, { label: string, icon: typeof FileText }> = {
+  text: { label: '文本', icon: FileText },
+  image: { label: '图片', icon: ImageIcon },
+  audio: { label: '音频', icon: Music },
+  video: { label: '视频', icon: Video },
+  multimodal: { label: '多模态', icon: Layers },
+}
+
 const dataset = {
   id: datasetId,
   name: '客服对话数据',
   status: 'processed' as const,
+  modality: 'text' as DataModality,
   format: 'jsonl',
   records: 12340,
   size: '256 MB',
@@ -173,6 +189,13 @@ const timelineDotClass: Record<string, string> = {
               >
                 <span :class="cn('size-1.5 rounded-full', statusConfig[dataset.status].dotClass)" />
                 {{ statusConfig[dataset.status].label }}
+              </Badge>
+              <Badge
+                variant="outline"
+                class="gap-1 text-[10px] tracking-wide"
+              >
+                <component :is="modalityConfig[dataset.modality].icon" class="size-3" />
+                {{ modalityConfig[dataset.modality].label }}
               </Badge>
               <Badge
                 variant="secondary"

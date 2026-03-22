@@ -18,8 +18,11 @@ import {
   Download,
   FileText,
   ImageIcon,
+  Layers,
+  Music,
   Trash2,
   Upload,
+  Video,
   X,
 } from 'lucide-vue-next'
 /**
@@ -35,11 +38,16 @@ const router = useRouter()
 
 // ==================== 表单数据 ====================
 
+/** 数据模态类型 */
+type DataModality = 'text' | 'image' | 'audio' | 'video' | 'multimodal'
+
 interface FormData {
   /** 数据集名称 */
   name: string
   /** 数据集类型：训练集 / 评测集 */
   type: 'training' | 'evaluation'
+  /** 数据模态 */
+  modality: DataModality
   /** 训练场景：文本生成 / 图片理解 */
   scene: 'text_generation' | 'image_understanding'
   /** 训练方式：SFT / DPO / CPT */
@@ -55,6 +63,7 @@ interface FormData {
 const form = reactive<FormData>({
   name: '',
   type: 'training',
+  modality: 'text',
   scene: 'text_generation',
   method: 'sft',
   description: '',
@@ -115,9 +124,26 @@ const methodOptions = [
   },
 ]
 
-/** 支持的文件格式 */
-const supportedTypes = ['.jsonl', '.json', '.csv', '.xlsx', '.txt']
-const supportedTypesAccept = '.jsonl,.json,.csv,.xlsx,.txt'
+/** 模态选项 */
+const modalityOptions: { value: DataModality, label: string, icon: typeof FileText }[] = [
+  { value: 'text', label: '文本', icon: FileText },
+  { value: 'image', label: '图片', icon: ImageIcon },
+  { value: 'audio', label: '音频', icon: Music },
+  { value: 'video', label: '视频', icon: Video },
+  { value: 'multimodal', label: '多模态', icon: Layers },
+]
+
+/** 根据模态动态计算支持的文件格式 */
+const supportedTypesMap: Record<DataModality, string[]> = {
+  text: ['.jsonl', '.json', '.csv', '.xlsx', '.txt'],
+  image: ['.jsonl', '.json'],
+  audio: ['.jsonl', '.json'],
+  video: ['.jsonl', '.json'],
+  multimodal: ['.jsonl', '.json'],
+}
+
+const supportedTypes = computed(() => supportedTypesMap[form.modality])
+const supportedTypesAccept = computed(() => supportedTypesMap[form.modality].join(','))
 
 // ==================== 文件上传 ====================
 
@@ -271,6 +297,38 @@ function handleCancel() {
 
           <Separator class="!bg-border/40" />
 
+          <!-- ==================== 数据模态 ==================== -->
+          <div class="grid gap-3">
+            <Label class="text-[13px] font-medium">数据模态</Label>
+            <div class="flex gap-2">
+              <button
+                v-for="opt in modalityOptions"
+                :key="opt.value"
+                type="button"
+                :class="cn(
+                  'flex flex-1 flex-col items-center gap-1.5 rounded-xl border px-3 py-3.5 transition-all',
+                  form.modality === opt.value
+                    ? 'border-primary/30 bg-primary/[0.03] shadow-xs shadow-primary/5'
+                    : 'border-border/40 hover:border-border/60 hover:bg-muted/20',
+                )"
+                @click="form.modality = opt.value"
+              >
+                <div class="flex size-8 items-center justify-center rounded-lg bg-muted/50 backdrop-blur-sm">
+                  <component :is="opt.icon" class="size-4 text-muted-foreground" />
+                </div>
+                <span class="text-xs font-medium">{{ opt.label }}</span>
+                <div
+                  v-if="form.modality === opt.value"
+                  class="flex size-4 items-center justify-center rounded-full bg-primary"
+                >
+                  <Check class="size-2.5 text-primary-foreground" />
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <Separator class="!bg-border/40" />
+
           <!-- ==================== 数据格式 ==================== -->
           <div class="grid gap-5">
             <Label class="text-[13px] font-medium">数据格式</Label>
@@ -417,6 +475,9 @@ function handleCancel() {
                 </p>
                 <p class="mt-2 text-xs text-muted-foreground">
                   支持 {{ supportedTypes.join('、') }} 格式，单文件最大 500MB，最多 {{ maxFiles }} 个文件
+                </p>
+                <p v-if="form.modality !== 'text'" class="mt-1 text-xs text-muted-foreground/60">
+                  {{ form.modality === 'image' ? '文件中需包含图片 URL 字段' : form.modality === 'audio' ? '文件中需包含音频 URL 字段' : form.modality === 'video' ? '文件中需包含视频 URL 字段' : '文件中需包含多模态资源 URL 字段' }}
                 </p>
               </div>
             </div>

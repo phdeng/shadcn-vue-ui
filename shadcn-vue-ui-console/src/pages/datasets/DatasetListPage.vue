@@ -25,11 +25,16 @@ import {
   Database,
   Download,
   Eye,
+  FileText,
+  ImageIcon,
+  Layers,
   MoreHorizontal,
+  Music,
   Plus,
   RefreshCw,
   Search,
   Trash2,
+  Video,
 } from 'lucide-vue-next'
 /**
  * @description 数据集管理列表页 — 表格布局，支持搜索与状态筛选
@@ -47,6 +52,9 @@ import SimplePagination from '@/components/common/SimplePagination.vue'
 /** 数据集状态 */
 type DatasetStatus = 'processed' | 'processing' | 'pending'
 
+/** 数据模态类型 */
+type DataModality = 'text' | 'image' | 'audio' | 'video' | 'multimodal'
+
 /** 数据集项接口 */
 interface DatasetItem {
   id: string
@@ -54,6 +62,7 @@ interface DatasetItem {
   records: number
   size: string
   format: string
+  modality: DataModality
   status: DatasetStatus
   updatedAt: string
 }
@@ -78,6 +87,7 @@ const datasets = ref<DatasetItem[]>([
     records: 12340,
     size: '256 MB',
     format: 'jsonl',
+    modality: 'text',
     status: 'processed',
     updatedAt: '2026-03-20 14:30',
   },
@@ -87,6 +97,7 @@ const datasets = ref<DatasetItem[]>([
     records: 890,
     size: '45 MB',
     format: 'txt',
+    modality: 'text',
     status: 'processing',
     updatedAt: '2026-03-20 11:15',
   },
@@ -96,6 +107,7 @@ const datasets = ref<DatasetItem[]>([
     records: 5670,
     size: '128 MB',
     format: 'json',
+    modality: 'text',
     status: 'processed',
     updatedAt: '2026-03-19 09:42',
   },
@@ -105,6 +117,7 @@ const datasets = ref<DatasetItem[]>([
     records: 2340,
     size: '18 MB',
     format: 'csv',
+    modality: 'text',
     status: 'pending',
     updatedAt: '2026-03-18 16:20',
   },
@@ -114,15 +127,17 @@ const datasets = ref<DatasetItem[]>([
     records: 8900,
     size: '320 MB',
     format: 'jsonl',
+    modality: 'text',
     status: 'processed',
     updatedAt: '2026-03-17 22:05',
   },
   {
     id: 'ds-006',
-    name: '用户反馈语料',
+    name: '商品图片标注',
     records: 4560,
     size: '78 MB',
-    format: 'csv',
+    format: 'json',
+    modality: 'image',
     status: 'processed',
     updatedAt: '2026-03-16 14:20',
   },
@@ -132,6 +147,7 @@ const datasets = ref<DatasetItem[]>([
     records: 15200,
     size: '410 MB',
     format: 'json',
+    modality: 'text',
     status: 'processed',
     updatedAt: '2026-03-15 08:45',
   },
@@ -141,15 +157,17 @@ const datasets = ref<DatasetItem[]>([
     records: 6780,
     size: '92 MB',
     format: 'jsonl',
+    modality: 'text',
     status: 'pending',
     updatedAt: '2026-03-14 17:30',
   },
   {
     id: 'ds-009',
-    name: '翻译平行语料',
+    name: '语音识别语料',
     records: 22100,
     size: '540 MB',
-    format: 'txt',
+    format: 'jsonl',
+    modality: 'audio',
     status: 'processing',
     updatedAt: '2026-03-14 10:15',
   },
@@ -159,24 +177,27 @@ const datasets = ref<DatasetItem[]>([
     records: 3400,
     size: '65 MB',
     format: 'jsonl',
+    modality: 'text',
     status: 'processed',
     updatedAt: '2026-03-13 21:00',
   },
   {
     id: 'ds-011',
-    name: '情感分析标注',
+    name: '图文理解数据',
     records: 9800,
     size: '145 MB',
-    format: 'csv',
+    format: 'json',
+    modality: 'image',
     status: 'processed',
     updatedAt: '2026-03-12 13:25',
   },
   {
     id: 'ds-012',
-    name: 'NER 实体标注',
+    name: '多模态对话数据',
     records: 7200,
     size: '210 MB',
     format: 'json',
+    modality: 'multimodal',
     status: 'processed',
     updatedAt: '2026-03-11 09:50',
   },
@@ -211,6 +232,15 @@ const formatBadgeClass: Record<string, string> = {
   json: 'bg-violet-50 text-violet-700 dark:bg-violet-950/50 dark:text-violet-400',
   csv: 'bg-teal-50 text-teal-700 dark:bg-teal-950/50 dark:text-teal-400',
   txt: 'bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-400',
+}
+
+/** 模态标签配置 */
+const modalityConfig: Record<DataModality, { label: string, icon: typeof FileText }> = {
+  text: { label: '文本', icon: FileText },
+  image: { label: '图片', icon: ImageIcon },
+  audio: { label: '音频', icon: Music },
+  video: { label: '视频', icon: Video },
+  multimodal: { label: '多模态', icon: Layers },
 }
 
 // ==================== 计算属性 ====================
@@ -422,6 +452,9 @@ function handleDelete() {
               <TableHead class="w-[90px]">
                 格式
               </TableHead>
+              <TableHead class="w-[100px]">
+                模态
+              </TableHead>
               <TableHead class="w-[110px]">
                 状态
               </TableHead>
@@ -470,6 +503,17 @@ function handleDelete() {
                   )"
                 >
                   {{ dataset.format }}
+                </Badge>
+              </TableCell>
+
+              <!-- 模态 -->
+              <TableCell>
+                <Badge
+                  variant="outline"
+                  class="gap-1 text-[10px] tracking-wide"
+                >
+                  <component :is="modalityConfig[dataset.modality].icon" class="size-3" />
+                  {{ modalityConfig[dataset.modality].label }}
                 </Badge>
               </TableCell>
 
