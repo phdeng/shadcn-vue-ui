@@ -152,7 +152,7 @@ function barColor(score: number): string {
     <div v-else class="flex flex-col gap-6">
       <!-- 页面头部 -->
       <div class="flex items-center gap-4">
-        <Button variant="ghost" size="icon" class="size-9 rounded-xl" @click="router.push('/evaluation')">
+        <Button variant="ghost" size="icon" class="size-9 rounded-xl" aria-label="返回" @click="router.push('/evaluation')">
           <ArrowLeft class="size-4" />
         </Button>
         <div class="flex-1">

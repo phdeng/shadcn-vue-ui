@@ -149,7 +149,7 @@ function handleCancel() {
   <div class="flex flex-col gap-8">
     <!-- 面包屑 + 标题 -->
     <div class="flex items-center gap-3">
-      <Button variant="ghost" size="icon" class="shrink-0" @click="handleCancel">
+      <Button variant="ghost" size="icon" class="shrink-0" aria-label="返回" @click="handleCancel">
         <ArrowLeft class="size-4" />
       </Button>
       <div>

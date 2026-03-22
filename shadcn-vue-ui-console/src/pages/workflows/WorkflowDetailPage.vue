@@ -207,7 +207,7 @@ function handleDeleteNode(nodeId: string) {
       <!-- 头部 -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <Button variant="ghost" size="icon" class="shrink-0" @click="handleBack">
+          <Button variant="ghost" size="icon" class="shrink-0" aria-label="返回" @click="handleBack">
             <ArrowLeft class="size-4" />
           </Button>
           <div>
@@ -235,16 +235,16 @@ function handleDeleteNode(nodeId: string) {
       <!-- 工具栏 -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-1">
-          <Button variant="outline" size="icon" class="size-8" @click="handleZoomOut">
+          <Button variant="outline" size="icon" class="size-8" aria-label="缩小" @click="handleZoomOut">
             <ZoomOut class="size-3.5" />
           </Button>
           <span class="w-12 text-center text-xs text-muted-foreground tabular-nums">
             {{ Math.round(zoom * 100) }}%
           </span>
-          <Button variant="outline" size="icon" class="size-8" @click="handleZoomIn">
+          <Button variant="outline" size="icon" class="size-8" aria-label="放大" @click="handleZoomIn">
             <ZoomIn class="size-3.5" />
           </Button>
-          <Button variant="outline" size="icon" class="size-8 ml-1" @click="handleFitCanvas">
+          <Button variant="outline" size="icon" class="size-8 ml-1" aria-label="适应画布" @click="handleFitCanvas">
             <Maximize class="size-3.5" />
           </Button>
         </div>
@@ -330,6 +330,7 @@ function handleDeleteNode(nodeId: string) {
                     <button
                       class="flex size-6 items-center justify-center rounded-md opacity-0 hover:bg-muted transition-opacity group-hover:opacity-100"
                       :class="{ 'opacity-100': selectedNodeId === node.id }"
+                      aria-label="更多操作"
                       @click.stop
                     >
                       <MoreHorizontal class="size-3.5 text-muted-foreground" />
@@ -365,7 +366,7 @@ function handleDeleteNode(nodeId: string) {
           <template v-if="selectedNode">
             <div class="flex items-center justify-between p-4">
               <h3 class="text-sm font-semibold">节点属性</h3>
-              <Button variant="ghost" size="icon" class="size-7" @click="handleClosePanel">
+              <Button variant="ghost" size="icon" class="size-7" aria-label="关闭面板" @click="handleClosePanel">
                 <X class="size-3.5" />
               </Button>
             </div>

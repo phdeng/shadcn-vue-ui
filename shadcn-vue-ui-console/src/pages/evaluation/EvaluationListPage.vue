@@ -272,7 +272,7 @@ function handleCreate() {
                 <TableCell @click.stop>
                   <DropdownMenu>
                     <DropdownMenuTrigger as-child>
-                      <Button variant="ghost" size="icon" class="size-7 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button variant="ghost" size="icon" class="size-7 opacity-0 group-hover:opacity-100 transition-opacity" aria-label="更多操作">
                         <MoreHorizontal class="size-4" />
                       </Button>
                     </DropdownMenuTrigger>

@@ -37,6 +37,7 @@ import {
 } from '@ui/components/ui/tabs'
 import { Separator } from '@ui/components/ui/separator'
 import { Textarea } from '@ui/components/ui/textarea'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import { cn } from '@ui/lib/utils'
 import {
   FlaskConical,
@@ -48,6 +49,9 @@ import {
 } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
+
+const loading = ref(true)
+setTimeout(() => { loading.value = false }, 500)
 
 // ==================== Tab 1: 审计日志 ====================
 
@@ -190,6 +194,17 @@ function handleRuleTest() {
 
 <template>
   <div>
+    <!-- 骨架屏 -->
+    <div v-if="loading" class="flex flex-col gap-6">
+      <div class="space-y-2">
+        <Skeleton class="h-8 w-32" />
+        <Skeleton class="h-4 w-72" />
+      </div>
+      <Skeleton class="h-10 w-80" />
+      <Skeleton class="h-[480px] rounded-xl" />
+    </div>
+
+    <div v-else>
     <!-- 页面头部 -->
     <div class="mb-6">
       <h2 class="text-2xl font-semibold tracking-tight">安全合规</h2>
@@ -440,5 +455,6 @@ function handleRuleTest() {
         </div>
       </TabsContent>
     </Tabs>
+    </div>
   </div>
 </template>

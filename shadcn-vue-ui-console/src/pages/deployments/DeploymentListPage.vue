@@ -251,7 +251,7 @@ function handleScale(d: Deployment) {
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger as-child>
-                      <Button variant="ghost" size="icon" class="size-7">
+                      <Button variant="ghost" size="icon" class="size-7" aria-label="更多操作">
                         <MoreHorizontal class="size-4" />
                       </Button>
                     </DropdownMenuTrigger>

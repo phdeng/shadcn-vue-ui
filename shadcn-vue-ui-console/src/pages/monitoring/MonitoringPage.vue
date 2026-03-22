@@ -13,6 +13,7 @@ import {
 } from '@ui/components/ui/card'
 import { Switch } from '@ui/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/components/ui/tabs'
+import { Skeleton } from '@ui/components/ui/skeleton'
 import { cn } from '@ui/lib/utils'
 import {
   Activity,
@@ -29,6 +30,9 @@ import {
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
 import { useCountUp } from '@/composables/useCountUp'
+
+const loading = ref(true)
+setTimeout(() => { loading.value = false }, 500)
 
 // ==================== 时间范围 ====================
 const timeRanges = ['Today', '7天', '30天'] as const
@@ -259,7 +263,24 @@ function handleAddRule() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div>
+    <!-- 骨架屏 -->
+    <div v-if="loading" class="flex flex-col gap-6">
+      <div class="flex items-end justify-between">
+        <div class="space-y-2">
+          <Skeleton class="h-8 w-32" />
+          <Skeleton class="h-4 w-72" />
+        </div>
+        <Skeleton class="h-9 w-48" />
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Skeleton v-for="i in 4" :key="i" class="h-[100px] rounded-xl" />
+      </div>
+      <Skeleton class="h-10 w-96" />
+      <Skeleton class="h-[400px] rounded-xl" />
+    </div>
+
+  <div v-else class="flex flex-col gap-6">
     <!-- 页面头部 -->
     <div class="flex items-end justify-between">
       <div>
@@ -548,5 +569,6 @@ function handleAddRule() {
         </Button>
       </TabsContent>
     </Tabs>
+  </div>
   </div>
 </template>

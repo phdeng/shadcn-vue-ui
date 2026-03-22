@@ -167,6 +167,7 @@ const knowledgeItems: KnowledgeItem[] = [
           variant="ghost"
           size="icon"
           class="shrink-0"
+          aria-label="返回"
           @click="router.push({ name: 'AgentDetail', params: { id: agentId } })"
         >
           <ArrowLeft class="size-4" />
@@ -267,10 +268,10 @@ const knowledgeItems: KnowledgeItem[] = [
                       {{ mem.importance }}
                     </Badge>
                     <div class="flex gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" class="size-7" @click="toast.info('编辑记忆', { description: mem.content })">
+                      <Button variant="ghost" size="icon" class="size-7" aria-label="编辑记忆" @click="toast.info('编辑记忆', { description: mem.content })">
                         <Pencil class="size-3" />
                       </Button>
-                      <Button variant="ghost" size="icon" class="size-7 text-destructive hover:text-destructive" @click="toast.error('记忆已删除', { description: mem.content })">
+                      <Button variant="ghost" size="icon" class="size-7 text-destructive hover:text-destructive" aria-label="删除记忆" @click="toast.error('记忆已删除', { description: mem.content })">
                         <Trash2 class="size-3" />
                       </Button>
                     </div>

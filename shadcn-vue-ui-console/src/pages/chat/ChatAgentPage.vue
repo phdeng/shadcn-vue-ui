@@ -16,15 +16,49 @@ import {
   SelectValue,
 } from '@ui/components/ui/select'
 import { Separator } from '@ui/components/ui/separator'
+import { Label } from '@ui/components/ui/label'
+import { Slider } from '@ui/components/ui/slider'
 import { cn } from '@ui/lib/utils'
-import { Bot, RotateCcw, Send, Settings2, Sparkles, User } from 'lucide-vue-next'
+import { Bot, FileText, Image, Layers, Mic, Music, Pause, Play, RotateCcw, Send, Settings2, Sparkles, Upload, User } from 'lucide-vue-next'
 /**
- * @description ChatAgent 对话页 — 类 Dify 对话界面
+ * @description Playground 多模态推理调试环境
  * @author Timon
  */
 import { nextTick, ref, watch } from 'vue'
 import { toast } from 'vue-sonner'
 import { renderMarkdown } from '@/composables/useMarkdown'
+
+// ==================== 模态配置 ====================
+
+type ModalType = 'text' | 'image' | 'audio' | 'multimodal'
+
+interface ModalMode {
+  value: ModalType
+  label: string
+  icon: typeof FileText
+}
+
+const modes: ModalMode[] = [
+  { value: 'text', label: '文本', icon: FileText },
+  { value: 'image', label: '图片', icon: Image },
+  { value: 'audio', label: '音频', icon: Music },
+  { value: 'multimodal', label: '多模态', icon: Layers },
+]
+
+const activeModal = ref<ModalType>('text')
+
+// ==================== 模型配置 ====================
+
+const showConfig = ref(false)
+const selectedModel = ref('gpt-4o')
+const temperature = ref([0.7])
+const maxTokens = ref([2048])
+
+const modelOptions = [
+  { value: 'gpt-4o', label: 'GPT-4o' },
+  { value: 'claude-3.5', label: 'Claude 3.5' },
+  { value: 'qwen-2.5', label: 'Qwen2.5' },
+]
 
 // ==================== Agent 配置 ====================
 
@@ -53,6 +87,8 @@ interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   time: string
+  /** 消息包含的模态类型 */
+  modality?: ModalType
 }
 
 function now() {
